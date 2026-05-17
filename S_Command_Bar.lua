@@ -1,12 +1,12 @@
 -- ============================================================
 --   S Command Bar Pro  |  v4.1
---   True 360° Fly  •  IY Fling (Player + Objects)
---   MaxZoom  •  Mobile+PC  •  Auto-Respawn Restore
+--   True 360Â° Fly  â€¢  IY Fling (Player + Objects)
+--   MaxZoom  â€¢  Mobile+PC  â€¢  Auto-Respawn Restore
 -- ============================================================
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                     SERVICES                            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                     SERVICES                            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -18,30 +18,34 @@ local ContextActionService   = game:GetService("ContextActionService")
 
 local LP = Players.LocalPlayer
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                  DUPLICATE GUARD                        ║
--- ╚══════════════════════════════════════════════════════════╝
-if getgenv().SCmdBar_Loaded then
-    pcall(function() getgenv().SCmdBar_Loaded:Destroy() end)
-    getgenv().SCmdBar_Loaded = nil
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                  DUPLICATE GUARD                        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+-- Safe environment accessor: falls back to _G on executors
+-- that don't provide getgenv, preventing "attempt to call nil"
+local _genv = (type(getgenv) == "function") and getgenv() or _G
+
+if _genv.SCmdBar_Loaded then
+    pcall(function() _genv.SCmdBar_Loaded:Destroy() end)
+    _genv.SCmdBar_Loaded = nil
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                  SAFE UI PARENT                         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                  SAFE UI PARENT                         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local UIParent = game:GetService("CoreGui")
 if not pcall(function() local _ = UIParent.ClassName end) then
     UIParent = LP:WaitForChild("PlayerGui")
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║               PLATFORM DETECTION                        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘               PLATFORM DETECTION                        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local IsMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║              RESPONSIVE CONFIG TABLE                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘              RESPONSIVE CONFIG TABLE                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local C = {
     -- Logo
     LogoSize     = IsMobile and UDim2.new(0,58,0,58)         or UDim2.new(0,42,0,42),
@@ -70,9 +74,9 @@ local C = {
     NotifTxtSize = IsMobile and 15 or 13,
 }
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                  SCREENGUI                              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                  SCREENGUI                              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local ScreenGui               = Instance.new("ScreenGui")
 ScreenGui.Name                = "S_CommandBar_Pro"
 ScreenGui.ResetOnSpawn        = false
@@ -80,11 +84,11 @@ ScreenGui.IgnoreGuiInset      = true
 ScreenGui.DisplayOrder        = 999
 ScreenGui.ZIndexBehavior      = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent              = UIParent
-getgenv().SCmdBar_Loaded      = ScreenGui
+_genv.SCmdBar_Loaded          = ScreenGui
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                  UI HELPERS                             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                  UI HELPERS                             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local function Corner(obj, r)
     local c = Instance.new("UICorner", obj)
     c.CornerRadius = UDim.new(0, r or 8)
@@ -110,9 +114,9 @@ local function TweenObj(obj, dur, props, style, dir)
         props)
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║              NOTIFICATION SYSTEM                        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘              NOTIFICATION SYSTEM                        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local notifQ   = {}
 local notifBusy = false
 local NOTIF_COLORS = {
@@ -169,11 +173,11 @@ local function Notify(msg, kind)
     end)
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║           LOGO BUTTON + FULL ANIMATION SUITE            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘           LOGO BUTTON + FULL ANIMATION SUITE            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ── Glow ring (sits behind logo, pulses independently) ───
+-- â”€â”€ Glow ring (sits behind logo, pulses independently) â”€â”€â”€
 local _glowSzOff = C.LogoSize.X.Offset + 16
 local _glowPosX  = IsMobile and (14 - 8)                          or (0)
 local _glowPosXS = IsMobile and (0)                               or (0.5)
@@ -192,13 +196,13 @@ GlowStroke.Thickness      = 2.5
 GlowStroke.Color          = Color3.fromRGB(80, 160, 255)
 GlowStroke.Transparency   = 0.2
 
--- ── Logo button (starts at size 0 for pop-in) ────────────
+-- â”€â”€ Logo button (starts at size 0 for pop-in) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 local Logo = Instance.new("TextButton", ScreenGui)
 Logo.Size             = UDim2.new(0, 0, 0, 0)   -- entrance starts hidden
 Logo.Position         = C.LogoPos
 Logo.AnchorPoint      = Vector2.new(0, 0)
 Logo.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
-Logo.Text             = "⚡"
+Logo.Text             = "âš¡"
 Logo.TextColor3       = Color3.fromRGB(255, 255, 255)
 Logo.Font             = Enum.Font.GothamBold
 Logo.TextSize         = C.LogoTxtSize
@@ -207,13 +211,13 @@ Logo.ClipsDescendants = false
 Corner(Logo, 10)
 local LogoStroke = Stroke(Logo, 1.5, Color3.fromRGB(80, 160, 255))
 
--- ── ENTRANCE: pop-in with Back overshoot after 0.15s ─────
+-- â”€â”€ ENTRANCE: pop-in with Back overshoot after 0.15s â”€â”€â”€â”€â”€
 task.delay(0.15, function()
     TweenObj(Logo, 0.5, {Size = C.LogoSize},
         Enum.EasingStyle.Back, Enum.EasingDirection.Out):Play()
 end)
 
--- ── GLOW RING: color-cycle + breathe transparency ────────
+-- â”€â”€ GLOW RING: color-cycle + breathe transparency â”€â”€â”€â”€â”€â”€â”€â”€
 task.spawn(function()
     local glowPalette = {
         Color3.fromRGB(80,  160, 255),   -- blue
@@ -242,7 +246,7 @@ task.spawn(function()
     end
 end)
 
--- ── TEXT: 3-color cycle synced with glow ─────────────────
+-- â”€â”€ TEXT: 3-color cycle synced with glow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 task.spawn(function()
     local textCols = {
         Color3.fromRGB(255, 255, 255),
@@ -259,7 +263,7 @@ task.spawn(function()
     end
 end)
 
--- ── CLICK RIPPLE: expanding ring on every press ──────────
+-- â”€â”€ CLICK RIPPLE: expanding ring on every press â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 local function LogoRipple()
     local abs = Logo.AbsolutePosition
     local sz  = Logo.AbsoluteSize
@@ -285,7 +289,7 @@ local function LogoRipple()
     task.delay(0.46, function() ripple:Destroy() end)
 end
 
--- ── PRESS SQUISH: logo briefly scales smaller on tap ─────
+-- â”€â”€ PRESS SQUISH: logo briefly scales smaller on tap â”€â”€â”€â”€â”€
 Logo.InputBegan:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.MouseButton1
     or i.UserInputType == Enum.UserInputType.Touch then
@@ -302,9 +306,9 @@ Logo.InputEnded:Connect(function(i)
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                  COMMAND BAR                            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                  COMMAND BAR                            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local BarFrame = Instance.new("Frame", ScreenGui)
 BarFrame.Size             = C.BarSize
 BarFrame.Position         = C.BarHide
@@ -317,7 +321,7 @@ local BarPrompt = Instance.new("TextLabel", BarFrame)
 BarPrompt.Size             = UDim2.new(0, 30, 1, 0)
 BarPrompt.Position         = UDim2.new(0, 10, 0, 0)
 BarPrompt.BackgroundTransparency = 1
-BarPrompt.Text             = "›"
+BarPrompt.Text             = "â€º"
 BarPrompt.TextColor3       = Color3.fromRGB(100, 180, 255)
 BarPrompt.Font             = Enum.Font.GothamBold
 BarPrompt.TextSize         = C.BarTxtSize + 4
@@ -337,9 +341,9 @@ TextBox.TextXAlignment    = Enum.TextXAlignment.Left
 TextBox.ClearTextOnFocus  = false
 TextBox.ZIndex            = 26
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║               COMMAND LIST WINDOW                       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘               COMMAND LIST WINDOW                       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local ListFrame = Instance.new("Frame", ScreenGui)
 ListFrame.Size             = C.ListSize
 ListFrame.Position         = C.ListPos
@@ -364,7 +368,7 @@ local Title = Instance.new("TextLabel", Header)
 Title.Size             = UDim2.new(1,-55,1,0)
 Title.Position         = UDim2.new(0,12,0,0)
 Title.BackgroundTransparency = 1
-Title.Text             = "⚡  S Commands"
+Title.Text             = "âš¡  S Commands"
 Title.TextColor3       = Color3.fromRGB(230,230,230)
 Title.Font             = Enum.Font.GothamBold
 Title.TextSize         = IsMobile and 15 or 13
@@ -374,7 +378,7 @@ Title.ZIndex           = 37
 local CloseBtn = Instance.new("TextButton", Header)
 CloseBtn.Size            = C.CloseSize
 CloseBtn.Position        = C.ClosePos
-CloseBtn.Text            = "✕"
+CloseBtn.Text            = "âœ•"
 CloseBtn.TextSize        = IsMobile and 15 or 12
 CloseBtn.BackgroundColor3 = Color3.fromRGB(175,42,42)
 CloseBtn.TextColor3      = Color3.new(1,1,1)
@@ -389,7 +393,7 @@ SearchBox.Size             = UDim2.new(1,-16,0,SearchH)
 SearchBox.Position         = UDim2.new(0,8,0,C.TitleH+6)
 SearchBox.BackgroundColor3 = Color3.fromRGB(25,25,25)
 SearchBox.Font             = Enum.Font.Code
-SearchBox.PlaceholderText  = "🔍  Search commands..."
+SearchBox.PlaceholderText  = "ðŸ”  Search commands..."
 SearchBox.PlaceholderColor3 = Color3.fromRGB(70,70,70)
 SearchBox.Text             = ""
 SearchBox.TextColor3       = Color3.fromRGB(210,210,210)
@@ -413,9 +417,9 @@ local UIList = Instance.new("UIListLayout", ScrollFrame)
 UIList.SortOrder = Enum.SortOrder.Name
 UIList.Padding   = UDim.new(0,3)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                   DRAG SYSTEM                           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                   DRAG SYSTEM                           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local function MakeDraggable(handle, target)
     local drag, di, ds, sp = false, nil, nil, nil
     handle.InputBegan:Connect(function(i)
@@ -444,9 +448,9 @@ end
 MakeDraggable(Header, ListFrame)
 if IsMobile then MakeDraggable(Logo, Logo) end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║               STATE & CONNECTIONS                       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘               STATE & CONNECTIONS                       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local Commands = {}
 local Aliases  = {}
 
@@ -480,9 +484,9 @@ local OrigLight = {
     FogEnd     = Lighting.FogEnd,
 }
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║              CHARACTER HELPERS                          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘              CHARACTER HELPERS                          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local function GetChar()  return LP.Character end
 local function GetHRP()   local c=GetChar(); return c and c:FindFirstChild("HumanoidRootPart") end
 local function GetHuman() local c=GetChar(); return c and c:FindFirstChildOfClass("Humanoid") end
@@ -494,9 +498,9 @@ local function SafeDisconn(key)
     end
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║              RESPAWN STATE RESTORE                      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘              RESPAWN STATE RESTORE                      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 LP.CharacterAdded:Connect(function(char)
     char:WaitForChild("HumanoidRootPart")
     task.wait(0.6)
@@ -528,9 +532,9 @@ LP.CharacterAdded:Connect(function(char)
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║               PLAYER RESOLVER                           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘               PLAYER RESOLVER                           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local function GetPlayers(str)
     local out = {}
     local s = (str or "me"):lower():match("^%s*(.-)%s*$")
@@ -550,9 +554,9 @@ local function GetPlayers(str)
     return #out > 0 and out or {LP}
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║              COMMAND REGISTRY                           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘              COMMAND REGISTRY                           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local function Cmd(name, alts, fn)
     Commands[name] = fn
     if alts then
@@ -560,9 +564,9 @@ local function Cmd(name, alts, fn)
     end
 end
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                     MOVEMENT COMMANDS
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("speed", {"ws","walkspeed","s"}, function(args)
     local amt = tonumber(args[2]) or tonumber(args[1]) or 16
@@ -570,7 +574,7 @@ Cmd("speed", {"ws","walkspeed","s"}, function(args)
         local h = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
         if h then h.WalkSpeed = amt end
     end
-    Notify("WalkSpeed → " .. amt)
+    Notify("WalkSpeed â†’ " .. amt)
 end)
 
 Cmd("jp", {"jumppower","jump","j"}, function(args)
@@ -579,7 +583,7 @@ Cmd("jp", {"jumppower","jump","j"}, function(args)
         local h = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
         if h then h.UseJumpPower = true; h.JumpPower = amt end
     end
-    Notify("JumpPower → " .. amt)
+    Notify("JumpPower â†’ " .. amt)
 end)
 
 Cmd("sit", {}, function()
@@ -590,20 +594,20 @@ end)
 Cmd("hipheight", {"hh"}, function(args)
     local amt = tonumber(args[1]) or 0
     local h = GetHuman(); if h then h.HipHeight = amt end
-    Notify("HipHeight → " .. amt)
+    Notify("HipHeight â†’ " .. amt)
 end)
 
--- ════════════════════════════════════════════════════════════
---   360° CAMERA-RELATIVE FLY  (user-requested style)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   360Â° CAMERA-RELATIVE FLY  (user-requested style)
 --
---   • Uses hum.MoveDirection projected into camera object-space
---     via CFrame:VectorToObjectSpace — same technique as the
+--   â€¢ Uses hum.MoveDirection projected into camera object-space
+--     via CFrame:VectorToObjectSpace â€” same technique as the
 --     reference script the user provided.
---   • RenderStepped for zero-jitter camera sync.
---   • BodyGyro tracks FULL cam CFrame (pitch included).
---   • stopFly / startFly are exposed so respawn auto-restarts.
---   • Speed-only update when already flying: fly 120
--- ════════════════════════════════════════════════════════════
+--   â€¢ RenderStepped for zero-jitter camera sync.
+--   â€¢ BodyGyro tracks FULL cam CFrame (pitch included).
+--   â€¢ stopFly / startFly are exposed so respawn auto-restarts.
+--   â€¢ Speed-only update when already flying: fly 120
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 local _flyBG  = nil   -- module-level so stopFly can always reach them
 local _flyBV  = nil
@@ -634,13 +638,13 @@ local function StartFly()
     State.Flying      = true
     hum.PlatformStand = true
 
-    -- Stability gyro — high P, tracks full camera CFrame
+    -- Stability gyro â€” high P, tracks full camera CFrame
     _flyBG = Instance.new("BodyGyro", root)
     _flyBG.P          = 9e4
     _flyBG.MaxTorque  = Vector3.new(9e9, 9e9, 9e9)
     _flyBG.CFrame     = root.CFrame
 
-    -- Movement — 9e9 MaxForce so nothing resists us
+    -- Movement â€” 9e9 MaxForce so nothing resists us
     _flyBV = Instance.new("BodyVelocity", root)
     _flyBV.Velocity  = Vector3.zero
     _flyBV.MaxForce  = Vector3.new(9e9, 9e9, 9e9)
@@ -665,12 +669,12 @@ local function StartFly()
 
             -- Reconstruct in world-space using camera vectors.
             -- LookVector carries pitch, so looking up + moving forward
-            -- means you actually fly upward — true 360° fly.
+            -- means you actually fly upward â€” true 360Â° fly.
             _flyBV.Velocity = (camCF.LookVector  * fwdFactor)
                             + (camCF.RightVector * rightFactor)
             _flyBV.Velocity = _flyBV.Velocity.Unit * State.FlySpeed
         else
-            -- No input → hover in place
+            -- No input â†’ hover in place
             _flyBV.Velocity = Vector3.zero
         end
 
@@ -706,23 +710,23 @@ Cmd("fly", {"f","fl"}, function(args)
 
     if State.Flying then
         -- Speed-only update, no restart needed
-        Notify("✈  Fly speed → " .. State.FlySpeed, "info")
+        Notify("âœˆ  Fly speed â†’ " .. State.FlySpeed, "info")
         return
     end
 
     StartFly()
-    Notify("✈  Fly ON  (speed " .. State.FlySpeed .. ")")
+    Notify("âœˆ  Fly ON  (speed " .. State.FlySpeed .. ")")
 end)
 
 Cmd("unfly", {"uf","nofly","stopfly"}, function()
     if not State.Flying then Notify("Fly is already off", "warn"); return end
     StopFly()
-    Notify("✈  Fly OFF")
+    Notify("âœˆ  Fly OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   NOCLIP / CLIP
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("noclip", {"nc","ghost"}, function()
     if State.Noclipping then Notify("Already noclipping","warn"); return end
@@ -736,7 +740,7 @@ Cmd("noclip", {"nc","ghost"}, function()
             end
         end
     end)
-    Notify("👻  Noclip ON")
+    Notify("ðŸ‘»  Noclip ON")
 end)
 
 Cmd("clip", {"unclip","solid","noghost"}, function()
@@ -749,23 +753,23 @@ Cmd("clip", {"unclip","solid","noghost"}, function()
             if p:IsA("BasePart") then p.CanCollide = true end
         end
     end
-    Notify("👻  Noclip OFF")
+    Notify("ðŸ‘»  Noclip OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
---   IY-STYLE FLING  —  v2  (player + unanchored objects)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   IY-STYLE FLING  â€”  v2  (player + unanchored objects)
 --
 --   Against PLAYERS:
---     Noclip into target → massive spin → physics launches them
+--     Noclip into target â†’ massive spin â†’ physics launches them
 --
 --   Against UNANCHORED OBJECTS (no player arg):
---     Touches any unanchored BasePart near you → launches it
+--     Touches any unanchored BasePart near you â†’ launches it
 --     with AssemblyLinearVelocity in your look direction
 --
 --   Usage:
---     fling <player>   — fling a specific player
---     fling            — arm object-fling mode (touch to yeet)
--- ════════════════════════════════════════════════════════════
+--     fling <player>   â€” fling a specific player
+--     fling            â€” arm object-fling mode (touch to yeet)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 -- Helper: blast an unanchored part away from origin point
 local function BlastPart(part, origin, power)
@@ -785,11 +789,11 @@ end
 Cmd("fling", {"fl2","yeet"}, function(args)
     if State.Flinging then Notify("Already flinging","warn"); return end
 
-    -- ── MODE A: fling a PLAYER ───────────────────────────────
+    -- â”€â”€ MODE A: fling a PLAYER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if args[1] and args[1] ~= "" then
         local target = GetPlayers(args[1])[1]
         if not target then Notify("Player not found","error"); return end
-        if target == LP then Notify("Can't fling yourself — use spin","warn"); return end
+        if target == LP then Notify("Can't fling yourself â€” use spin","warn"); return end
 
         local tChar = target.Character
         local tHRP  = tChar and tChar:FindFirstChild("HumanoidRootPart")
@@ -874,18 +878,18 @@ Cmd("fling", {"fl2","yeet"}, function(args)
             end
         end)
 
-        Notify("🌪  Flinging " .. target.Name)
+        Notify("ðŸŒª  Flinging " .. target.Name)
         return
     end
 
-    -- ── MODE B: OBJECT FLING (touch any unanchored part) ─────
-    -- Arms a Touched listener on your HRP — every unanchored
+    -- â”€â”€ MODE B: OBJECT FLING (touch any unanchored part) â”€â”€â”€â”€â”€
+    -- Arms a Touched listener on your HRP â€” every unanchored
     -- BasePart you walk/run into gets blasted away.
     local myHRP = GetHRP()
     if not myHRP then Notify("No character","error"); return end
 
     State.Flinging = true
-    Notify("🌪  Object Fling ARMED  (unfling to stop)", "info")
+    Notify("ðŸŒª  Object Fling ARMED  (unfling to stop)", "info")
 
     local debounce = {}   -- per-part cooldown so one part doesn't fire 60x
 
@@ -924,12 +928,12 @@ Cmd("unfling", {"nofling","stopfling"}, function()
     end
     SafeDisconn("FlingNoclip")
     SafeDisconn("ObjFling")
-    Notify("🌪  Fling stopped")
+    Notify("ðŸŒª  Fling stopped")
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   SPIN (self)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("spin", {"sp"}, function(args)
     local spd = tonumber(args[1]) or 50
@@ -939,7 +943,7 @@ Cmd("spin", {"sp"}, function(args)
     local existing = hrp:FindFirstChild("S_Spin")
     if existing then
         existing.AngularVelocity = Vector3.new(0, spd, 0)
-        Notify("Spin speed → " .. spd, "info"); return
+        Notify("Spin speed â†’ " .. spd, "info"); return
     end
 
     State.Spinning = true
@@ -947,7 +951,7 @@ Cmd("spin", {"sp"}, function(args)
     av.Name           = "S_Spin"
     av.MaxTorque      = Vector3.new(0, 1e6, 0)
     av.AngularVelocity = Vector3.new(0, spd, 0)
-    Notify("🔄  Spin ON (" .. spd .. ")")
+    Notify("ðŸ”„  Spin ON (" .. spd .. ")")
 end)
 
 Cmd("unspin", {"nospin","stopspin"}, function()
@@ -957,12 +961,12 @@ Cmd("unspin", {"nospin","stopspin"}, function()
         local av = hrp:FindFirstChild("S_Spin")
         if av then av:Destroy() end
     end
-    Notify("🔄  Spin OFF")
+    Notify("ðŸ”„  Spin OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   BANG (troll)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("bang", {"hump"}, function(args)
     local target = GetPlayers(args[1])[1]
@@ -981,17 +985,17 @@ Cmd("bang", {"hump"}, function(args)
             task.wait()
         end
     end)
-    Notify("💥  Bang → " .. target.Name)
+    Notify("ðŸ’¥  Bang â†’ " .. target.Name)
 end)
 
 Cmd("unbang", {"nobang"}, function()
     State.Banging = false
-    Notify("💥  Bang OFF")
+    Notify("ðŸ’¥  Bang OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   TELEPORT
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("tp", {"goto","teleport"}, function(args)
     if not args[1] then Notify("Usage: tp <player>","warn"); return end
@@ -1001,7 +1005,7 @@ Cmd("tp", {"goto","teleport"}, function(args)
     local tHRP = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
     if hrp and tHRP then
         hrp.CFrame = tHRP.CFrame + Vector3.new(3, 0, 0)
-        Notify("📍  TP → " .. target.Name)
+        Notify("ðŸ“  TP â†’ " .. target.Name)
     end
 end)
 
@@ -1014,7 +1018,7 @@ Cmd("tpme", {"bring","bringme"}, function(args)
     local tHRP = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
     if hrp and tHRP then
         tHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
-        Notify("📍  Brought " .. target.Name)
+        Notify("ðŸ“  Brought " .. target.Name)
     end
 end)
 
@@ -1022,19 +1026,19 @@ Cmd("gotocam", {"tpcam","camtp"}, function()
     local hrp = GetHRP()
     if hrp then
         hrp.CFrame = workspace.CurrentCamera.CFrame + workspace.CurrentCamera.CFrame.LookVector * 3
-        Notify("📸  Teleported to camera")
+        Notify("ðŸ“¸  Teleported to camera")
     end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                  RESPAWN COMMAND
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("respawn", {"re","spawn","reset"}, function()
     local h = GetHuman()
     if h then
         h.Health = 0
-        Notify("♻  Respawning...")
+        Notify("â™»  Respawning...")
     else
         -- Fallback: use LoadCharacter if possible
         local ok = pcall(function() LP:LoadCharacter() end)
@@ -1042,21 +1046,21 @@ Cmd("respawn", {"re","spawn","reset"}, function()
     end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   REJOIN
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("rejoin", {"rj","reconnect"}, function()
-    Notify("🔄  Rejoining...", "warn")
+    Notify("ðŸ”„  Rejoining...", "warn")
     task.wait(0.5)
     pcall(function()
         TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LP)
     end)
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   ESP
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("esp", {"wallhack","wh"}, function()
     if State.ESP then Notify("ESP already ON","warn"); return end
@@ -1078,7 +1082,7 @@ Cmd("esp", {"wallhack","wh"}, function()
     end
     for _, p in ipairs(Players:GetPlayers()) do attachESP(p) end
     Conns.ESP = Players.PlayerAdded:Connect(attachESP)
-    Notify("👁  ESP ON")
+    Notify("ðŸ‘  ESP ON")
 end)
 
 Cmd("unesp", {"noesp","nowall"}, function()
@@ -1091,12 +1095,12 @@ Cmd("unesp", {"noesp","nowall"}, function()
             if hl then hl:Destroy() end
         end
     end
-    Notify("👁  ESP OFF")
+    Notify("ðŸ‘  ESP OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   INVISIBLE / VISIBLE
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("invisible", {"invis","hide","inv"}, function()
     State.Invisible = true
@@ -1107,7 +1111,7 @@ Cmd("invisible", {"invis","hide","inv"}, function()
         if p:IsA("Decal")    then p.Transparency = 1 end
         if p:IsA("SpecialMesh") then p.Scale = Vector3.zero end
     end
-    Notify("🫥  Invisible ON")
+    Notify("ðŸ«¥  Invisible ON")
 end)
 
 Cmd("visible", {"vis","show","uninv"}, function()
@@ -1119,12 +1123,12 @@ Cmd("visible", {"vis","show","uninv"}, function()
         if p:IsA("Decal")    then p.Transparency = 0 end
         if p:IsA("SpecialMesh") then p.Scale = Vector3.new(1,1,1) end
     end
-    Notify("🫥  Visible ON")
+    Notify("ðŸ«¥  Visible ON")
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   FULLBRIGHT
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("fullbright", {"fb","bright"}, function()
     if State.Fullbright then
@@ -1133,7 +1137,7 @@ Cmd("fullbright", {"fb","bright"}, function()
         Lighting.Brightness = OrigLight.Brightness
         Lighting.ClockTime  = OrigLight.ClockTime
         Lighting.FogEnd     = OrigLight.FogEnd
-        Notify("💡  Fullbright OFF")
+        Notify("ðŸ’¡  Fullbright OFF")
     else
         OrigLight.Ambient    = Lighting.Ambient
         OrigLight.Brightness = Lighting.Brightness
@@ -1144,34 +1148,34 @@ Cmd("fullbright", {"fb","bright"}, function()
         Lighting.Brightness  = 2
         Lighting.ClockTime   = 14
         Lighting.FogEnd      = 1e6
-        Notify("💡  Fullbright ON")
+        Notify("ðŸ’¡  Fullbright ON")
     end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   TIME
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("time", {"daytime","settime"}, function(args)
     local t = tonumber(args[1])
     if t then
         Lighting.ClockTime = t % 24
-        Notify("🕒  Time → " .. (t % 24))
+        Notify("ðŸ•’  Time â†’ " .. (t % 24))
     else
         Notify("Usage: time <0-24>","warn")
     end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   GOD MODE (client)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("god", {"godmode","inf"}, function()
     local h = GetHuman()
     if h then
         h.MaxHealth = math.huge
         h.Health    = math.huge
-        Notify("🛡  God mode (client-side)")
+        Notify("ðŸ›¡  God mode (client-side)")
     end
 end)
 
@@ -1180,13 +1184,13 @@ Cmd("ungod", {"mortal"}, function()
     if h then
         h.MaxHealth = 100
         h.Health    = 100
-        Notify("🛡  God mode OFF")
+        Notify("ðŸ›¡  God mode OFF")
     end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   INFINITE JUMP
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("infjump", {"ij","infinitejump"}, function()
     if State.InfJump then Notify("Inf Jump already ON","warn"); return end
@@ -1198,51 +1202,51 @@ Cmd("infjump", {"ij","infinitejump"}, function()
             h:ChangeState(Enum.HumanoidStateType.Jumping)
         end
     end)
-    Notify("🦘  Infinite Jump ON")
+    Notify("ðŸ¦˜  Infinite Jump ON")
 end)
 
 Cmd("uninfjump", {"noij","noinfjump"}, function()
     State.InfJump = false
     SafeDisconn("InfJump")
-    Notify("🦘  Infinite Jump OFF")
+    Notify("ðŸ¦˜  Infinite Jump OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   FREEZE SELF
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("freeze", {"fr","stop"}, function()
     local hrp = GetHRP()
-    if hrp then hrp.Anchored = true; Notify("🧊  Frozen") end
+    if hrp then hrp.Anchored = true; Notify("ðŸ§Š  Frozen") end
 end)
 
 Cmd("unfreeze", {"unfr","unstop","thaw"}, function()
     local hrp = GetHRP()
-    if hrp then hrp.Anchored = false; Notify("🧊  Unfrozen") end
+    if hrp then hrp.Anchored = false; Notify("ðŸ§Š  Unfrozen") end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   ZOOM
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("zoom", {"fov"}, function(args)
     local amt = tonumber(args[1]) or 70
     workspace.CurrentCamera.FieldOfView = amt
-    Notify("🔭  FOV → " .. amt)
+    Notify("ðŸ”­  FOV â†’ " .. amt)
 end)
 
--- ════════════════════════════════════════════════════════════
---   MAXZOOM  —  Customisable camera zoom-out distance
---   maxzoom 500    → zoom out up to 500 studs
---   maxzoom 9999   → effectively unlimited
---   maxzoom reset  → restore Roblox default (400)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   MAXZOOM  â€”  Customisable camera zoom-out distance
+--   maxzoom 500    â†’ zoom out up to 500 studs
+--   maxzoom 9999   â†’ effectively unlimited
+--   maxzoom reset  â†’ restore Roblox default (400)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("maxzoom", {"mz","zoomout","camzoom","cameramax"}, function(args)
     local raw = args[1]
     if not raw or raw:lower() == "reset" or raw:lower() == "default" then
         LP.CameraMaxZoomDistance = 400
         LP.CameraMinZoomDistance = 0.5
-        Notify("🔭  MaxZoom reset → 400 studs")
+        Notify("ðŸ”­  MaxZoom reset â†’ 400 studs")
         return
     end
     local amt = tonumber(raw)
@@ -1253,64 +1257,64 @@ Cmd("maxzoom", {"mz","zoomout","camzoom","cameramax"}, function(args)
     if LP.CameraMinZoomDistance > amt then
         LP.CameraMinZoomDistance = amt
     end
-    Notify(string.format("🔭  MaxZoom → %d studs", amt))
+    Notify(string.format("ðŸ”­  MaxZoom â†’ %d studs", amt))
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   TOOLS / EXPLOITS
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("dex", {"explorer"}, function()
     local ok, err = pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
     end)
-    Notify(ok and "🔧  Dex loaded" or "🔧  Dex failed", ok and "success" or "error")
+    Notify(ok and "ðŸ”§  Dex loaded" or "ðŸ”§  Dex failed", ok and "success" or "error")
 end)
 
 Cmd("remotespy", {"rspy","spy"}, function()
     local ok, err = pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
     end)
-    Notify(ok and "📡  RemoteSpy loaded" or "📡  RemoteSpy failed", ok and "success" or "error")
+    Notify(ok and "ðŸ“¡  RemoteSpy loaded" or "ðŸ“¡  RemoteSpy failed", ok and "success" or "error")
 end)
 
 Cmd("aimbot", {"aim","ab"}, function()
     Notify("Paste your own aimbot loader here","info")
 end)
 
--- ════════════════════════════════════════════════════════════
---   GRAVITY  —  gravity <number>   (default 196.2)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   GRAVITY  â€”  gravity <number>   (default 196.2)
 --               gravity reset
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local _origGravity = workspace.Gravity
 
 Cmd("gravity", {"grav","g"}, function(args)
     local raw = args[1]
     if not raw or raw:lower() == "reset" then
         workspace.Gravity = _origGravity
-        Notify("🌍  Gravity reset → " .. _origGravity); return
+        Notify("ðŸŒ  Gravity reset â†’ " .. _origGravity); return
     end
     local amt = tonumber(raw)
     if not amt then Notify("Usage: gravity <number>  |  gravity reset","warn"); return end
     workspace.Gravity = amt
-    Notify("🌍  Gravity → " .. amt)
+    Notify("ðŸŒ  Gravity â†’ " .. amt)
 end)
 
 Cmd("lowgrav", {"lg","moon"}, function(args)
     local amt = tonumber(args[1]) or 20
     workspace.Gravity = amt
-    Notify("🌍  Low gravity → " .. amt)
+    Notify("ðŸŒ  Low gravity â†’ " .. amt)
 end)
 
--- ════════════════════════════════════════════════════════════
---   LOOPKILL  —  loopkill <player>   (client-side health set)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   LOOPKILL  â€”  loopkill <player>   (client-side health set)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("loopkill", {"lk"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target then Notify("No target","error"); return end
     if target == LP then Notify("Can't loopkill yourself","warn"); return end
     State["LoopKill_"..target.Name] = true
-    Notify("💀  LoopKill → " .. target.Name)
+    Notify("ðŸ’€  LoopKill â†’ " .. target.Name)
     task.spawn(function()
         while State["LoopKill_"..target.Name] do
             local tChar = target.Character
@@ -1328,15 +1332,15 @@ Cmd("unloopkill", {"unlk","stopkill"}, function(args)
         for k in pairs(State) do
             if k:sub(1,9) == "LoopKill_" then State[k] = false end
         end
-        Notify("💀  All LoopKills stopped"); return
+        Notify("ðŸ’€  All LoopKills stopped"); return
     end
     State["LoopKill_"..target.Name] = false
-    Notify("💀  LoopKill stopped for " .. target.Name)
+    Notify("ðŸ’€  LoopKill stopped for " .. target.Name)
 end)
 
--- ════════════════════════════════════════════════════════════
---   LOOPHEAL  —  constant self-heal loop
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   LOOPHEAL  â€”  constant self-heal loop
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("loopheal", {"lh","autoheal"}, function()
     if State.LoopHeal then Notify("LoopHeal already ON","warn"); return end
     State.LoopHeal = true
@@ -1347,35 +1351,35 @@ Cmd("loopheal", {"lh","autoheal"}, function()
             task.wait(0.1)
         end
     end)
-    Notify("💚  LoopHeal ON")
+    Notify("ðŸ’š  LoopHeal ON")
 end)
 
 Cmd("unloopheal", {"unlh","noautoheal"}, function()
     State.LoopHeal = false
-    Notify("💚  LoopHeal OFF")
+    Notify("ðŸ’š  LoopHeal OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
---   HEAL  —  instantly restore health to max
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   HEAL  â€”  instantly restore health to max
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("heal", {"hp","health"}, function(args)
     local amt = tonumber(args[1])
     local h = GetHuman()
     if h then
         h.Health = amt or h.MaxHealth
-        Notify("💚  Healed → " .. (amt or "max"))
+        Notify("ðŸ’š  Healed â†’ " .. (amt or "max"))
     end
 end)
 
--- ════════════════════════════════════════════════════════════
---   FOLLOW  —  follow <player>  (walk toward them every tick)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   FOLLOW  â€”  follow <player>  (walk toward them every tick)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("follow", {"fw","walkto"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or target == LP then Notify("Invalid target","error"); return end
     State.Following = true
     SafeDisconn("Follow")
-    Notify("🏃  Following " .. target.Name)
+    Notify("ðŸƒ  Following " .. target.Name)
     Conns.Follow = RunService.Heartbeat:Connect(function()
         if not State.Following then SafeDisconn("Follow"); return end
         local tChar = target.Character
@@ -1394,17 +1398,17 @@ end)
 Cmd("unfollow", {"unfw","stopfollow"}, function()
     State.Following = false
     SafeDisconn("Follow")
-    Notify("🏃  Follow stopped")
+    Notify("ðŸƒ  Follow stopped")
 end)
 
--- ════════════════════════════════════════════════════════════
---   ANNOY  —  annoy <player>  (teleport on top of them every 0.1s)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   ANNOY  â€”  annoy <player>  (teleport on top of them every 0.1s)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("annoy", {"an"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or target == LP then Notify("Invalid target","error"); return end
     State.Annoying = true
-    Notify("😈  Annoying " .. target.Name)
+    Notify("ðŸ˜ˆ  Annoying " .. target.Name)
     task.spawn(function()
         while State.Annoying do
             local tChar = target.Character
@@ -1420,12 +1424,12 @@ end)
 
 Cmd("unannoy", {"unan"}, function()
     State.Annoying = false
-    Notify("😈  Annoy stopped")
+    Notify("ðŸ˜ˆ  Annoy stopped")
 end)
 
--- ════════════════════════════════════════════════════════════
---   ANTIAFK  —  prevent AFK kick by firing jump every 60s
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   ANTIAFK  â€”  prevent AFK kick by firing jump every 60s
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("antiafk", {"aafk","noafk"}, function()
     if State.AntiAFK then Notify("AntiAFK already ON","warn"); return end
     State.AntiAFK = true
@@ -1452,19 +1456,19 @@ Cmd("antiafk", {"aafk","noafk"}, function()
         end)
     end
     Conns.AntiAFK = VPConn
-    Notify("⏰  AntiAFK ON")
+    Notify("â°  AntiAFK ON")
 end)
 
 Cmd("unantiafk", {"noaafk"}, function()
     State.AntiAFK = false
     SafeDisconn("AntiAFK")
-    Notify("⏰  AntiAFK OFF")
+    Notify("â°  AntiAFK OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
---   TRAIL  —  adds a colourful trail behind the character
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   TRAIL  â€”  adds a colourful trail behind the character
 --   trail [R G B]   e.g. trail 255 0 128
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("trail", {"tr"}, function(args)
     local char = LP.Character
     if not char then Notify("No character","error"); return end
@@ -1496,7 +1500,7 @@ Cmd("trail", {"tr"}, function(args)
         NumberSequenceKeypoint.new(0, 1),
         NumberSequenceKeypoint.new(1, 0),
     })
-    Notify(string.format("✨  Trail ON  (%d,%d,%d)", r, g, b))
+    Notify(string.format("âœ¨  Trail ON  (%d,%d,%d)", r, g, b))
 end)
 
 Cmd("notrail", {"untrail","rmtrail"}, function()
@@ -1508,13 +1512,13 @@ Cmd("notrail", {"untrail","rmtrail"}, function()
             end
         end
     end
-    Notify("✨  Trail OFF")
+    Notify("âœ¨  Trail OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
---   GLOW  —  SelectionBox highlight around your character
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   GLOW  â€”  SelectionBox highlight around your character
 --   glow [R G B]
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("glow", {"gl"}, function(args)
     local char = LP.Character
     if not char then Notify("No character","error"); return end
@@ -1530,18 +1534,18 @@ Cmd("glow", {"gl"}, function(args)
     box.LineThickness = 0.04
     box.SurfaceTransparency = 0.85
     box.SurfaceColor3 = Color3.fromRGB(r,g,b)
-    Notify(string.format("✨  Glow ON  (%d,%d,%d)", r, g, b))
+    Notify(string.format("âœ¨  Glow ON  (%d,%d,%d)", r, g, b))
 end)
 
 Cmd("noglow", {"unglow"}, function()
     local old = ScreenGui:FindFirstChild("S_GlowBox")
     if old then old:Destroy() end
-    Notify("✨  Glow OFF")
+    Notify("âœ¨  Glow OFF")
 end)
 
--- ════════════════════════════════════════════════════════════
---   HAT  —  hat off / on  (toggle accessories visibility)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   HAT  â€”  hat off / on  (toggle accessories visibility)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("hat", {"accessory"}, function(args)
     local char = LP.Character
     if not char then return end
@@ -1552,12 +1556,12 @@ Cmd("hat", {"accessory"}, function(args)
             if handle then handle.Transparency = hide and 1 or 0 end
         end
     end
-    Notify("🎩  Hat " .. (hide and "hidden" or "shown"))
+    Notify("ðŸŽ©  Hat " .. (hide and "hidden" or "shown"))
 end)
 
--- ════════════════════════════════════════════════════════════
---   ATTACH / DETACH  —  weld yourself to another player's HRP
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   ATTACH / DETACH  â€”  weld yourself to another player's HRP
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("attach", {"weld"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or target == LP then Notify("Invalid target","error"); return end
@@ -1571,7 +1575,7 @@ Cmd("attach", {"weld"}, function(args)
     weld.Name  = "S_AttachWeld"
     weld.Part0 = myHRP
     weld.Part1 = tHRP
-    Notify("🔗  Attached to " .. target.Name)
+    Notify("ðŸ”—  Attached to " .. target.Name)
 end)
 
 Cmd("detach", {"unweld"}, function()
@@ -1580,42 +1584,42 @@ Cmd("detach", {"unweld"}, function()
         local w = myHRP:FindFirstChild("S_AttachWeld")
         if w then w:Destroy() end
     end
-    Notify("🔗  Detached")
+    Notify("ðŸ”—  Detached")
 end)
 
--- ════════════════════════════════════════════════════════════
---   KILL  —  attempt to set target health to 0 (client-side)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   KILL  â€”  attempt to set target health to 0 (client-side)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("kill", {"k"}, function(args)
     local targets = GetPlayers(args[1])
     for _, t in ipairs(targets) do
         local tHum = t.Character and t.Character:FindFirstChildOfClass("Humanoid")
         if tHum then tHum.Health = 0 end
     end
-    Notify("💀  Kill → " .. (args[1] or "me"))
+    Notify("ðŸ’€  Kill â†’ " .. (args[1] or "me"))
 end)
 
--- ════════════════════════════════════════════════════════════
---   MINZOOM  —  set minimum camera zoom distance
---   minzoom 0   → camera can go first-person
---   minzoom 10  → locked at least 10 studs back
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   MINZOOM  â€”  set minimum camera zoom distance
+--   minzoom 0   â†’ camera can go first-person
+--   minzoom 10  â†’ locked at least 10 studs back
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("minzoom", {"minz","cameramin"}, function(args)
     local raw = args[1]
     if not raw or raw:lower() == "reset" then
         LP.CameraMinZoomDistance = 0.5
-        Notify("🔭  MinZoom reset → 0.5"); return
+        Notify("ðŸ”­  MinZoom reset â†’ 0.5"); return
     end
     local amt = tonumber(raw)
     if not amt then Notify("Usage: minzoom <number>","warn"); return end
     amt = math.clamp(amt, 0, LP.CameraMaxZoomDistance)
     LP.CameraMinZoomDistance = amt
-    Notify(string.format("🔭  MinZoom → %d studs", amt))
+    Notify(string.format("ðŸ”­  MinZoom â†’ %d studs", amt))
 end)
 
--- ════════════════════════════════════════════════════════════
---   NAMETAG  —  change your overhead display name (client only)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   NAMETAG  â€”  change your overhead display name (client only)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("nametag", {"name","tag"}, function(args)
     local newName = table.concat(args," ")
     if newName == "" then Notify("Usage: nametag <text>","warn"); return end
@@ -1640,7 +1644,7 @@ Cmd("nametag", {"name","tag"}, function(args)
     lbl.TextColor3       = Color3.new(1,1,1)
     lbl.Font             = Enum.Font.GothamBold
     lbl.TextScaled       = true
-    Notify("🏷  Nametag → " .. newName)
+    Notify("ðŸ·  Nametag â†’ " .. newName)
 end)
 
 Cmd("nonametag", {"notag","rmtag"}, function()
@@ -1651,13 +1655,13 @@ Cmd("nonametag", {"notag","rmtag"}, function()
     end
     local hum = GetHuman()
     if hum then hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Automatic end
-    Notify("🏷  Nametag removed")
+    Notify("ðŸ·  Nametag removed")
 end)
 
--- ════════════════════════════════════════════════════════════
---   FLOATNAME  —  float a custom text label above any player
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   FLOATNAME  â€”  float a custom text label above any player
 --   floatname <player> <text>
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("floatname", {"fn","floatlabel"}, function(args)
     local target = GetPlayers(args[1])[1]
     local txt    = table.concat(args, " ", 2)
@@ -1678,12 +1682,12 @@ Cmd("floatname", {"fn","floatlabel"}, function(args)
     lbl.TextColor3 = Color3.fromRGB(255,220,60)
     lbl.Font       = Enum.Font.GothamBold
     lbl.TextScaled = true
-    Notify("💬  FloatName set on " .. target.Name)
+    Notify("ðŸ’¬  FloatName set on " .. target.Name)
 end)
 
--- ════════════════════════════════════════════════════════════
---   CHAT  —  send a chat message
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--   CHAT  â€”  send a chat message
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("chat", {"say","c"}, function(args)
     local msg = table.concat(args, " ")
     if msg == "" then Notify("Usage: chat <message>","warn"); return end
@@ -1702,30 +1706,30 @@ Cmd("chat", {"say","c"}, function(args)
     end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --   FPS / PING / COORDS  (utility read-outs)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("fps", {}, function()
     local t0 = tick()
     RunService.Heartbeat:Wait()
-    Notify(string.format("⚡  FPS: %.0f", 1/(tick()-t0)), "info")
+    Notify(string.format("âš¡  FPS: %.0f", 1/(tick()-t0)), "info")
 end)
 
 Cmd("ping", {}, function()
-    Notify(string.format("📶  Ping: %.0f ms", LP:GetNetworkPing()*1000), "info")
+    Notify(string.format("ðŸ“¶  Ping: %.0f ms", LP:GetNetworkPing()*1000), "info")
 end)
 
 Cmd("coords", {"pos","position"}, function()
     local hrp = GetHRP()
     if hrp then
         local p = hrp.Position
-        Notify(string.format("📍  %.1f, %.1f, %.1f", p.X, p.Y, p.Z), "info")
+        Notify(string.format("ðŸ“  %.1f, %.1f, %.1f", p.X, p.Y, p.Z), "info")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║           CATEGORY: ANIMATIONS & EMOTES                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘           CATEGORY: ANIMATIONS & EMOTES                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: AnimationTrack lifecycle, Humanoid:LoadAnimation,
 --           playing/stopping tracks, R6 vs R15 awareness.
 
@@ -1759,21 +1763,21 @@ local function PlayAnim(animId, looped)
     return track
 end
 
--- anim <ID> — play any animation by asset ID
+-- anim <ID> â€” play any animation by asset ID
 Cmd("anim", {"animation","playanim"}, function(args)
     local id = tonumber(args[1])
     if not id then Notify("Usage: anim <assetID>","warn"); return end
     PlayAnim(id, true)
-    Notify("🎭  Playing anim " .. id)
+    Notify("ðŸŽ­  Playing anim " .. id)
 end)
 
--- stopanim — stop all running S_ animations
+-- stopanim â€” stop all running S_ animations
 Cmd("stopanim", {"stopanimation","noanim"}, function()
     if _animTracks[LP.Name] then
         for _, t in ipairs(_animTracks[LP.Name]) do pcall(function() t:Stop() end) end
         _animTracks[LP.Name] = {}
     end
-    Notify("🎭  Animations stopped")
+    Notify("ðŸŽ­  Animations stopped")
 end)
 
 -- Built-in emote shortcuts (R15 default IDs)
@@ -1799,7 +1803,7 @@ Cmd("emote", {"e"}, function(args)
         Notify("Emotes: " .. table.concat(list,", "),"warn"); return
     end
     PlayAnim(id, false)
-    Notify("🕺  Emote: " .. name)
+    Notify("ðŸ•º  Emote: " .. name)
 end)
 
 Cmd("dance", {"d"}, function(args)
@@ -1807,16 +1811,16 @@ Cmd("dance", {"d"}, function(args)
     local ids = { _emoteIDs.dance, _emoteIDs.dance2, _emoteIDs.dance3 }
     local id  = ids[math.clamp(n,1,3)] or ids[1]
     PlayAnim(id, true)
-    Notify("🕺  Dance " .. n)
+    Notify("ðŸ•º  Dance " .. n)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: CHARACTER APPEARANCE                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: CHARACTER APPEARANCE                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: HumanoidDescription, body-part scaling,
 --           BodyColors, appearance replication limits.
 
--- size <scale>  — uniformly scale the whole character
+-- size <scale>  â€” uniformly scale the whole character
 Cmd("size", {"scale","charsize"}, function(args)
     local s   = tonumber(args[1]) or 1
     local hum = GetHuman(); if not hum then return end
@@ -1830,17 +1834,17 @@ Cmd("size", {"scale","charsize"}, function(args)
     desc.LowerTorsoScale  = sc(1)
     desc.UpperTorsoScale  = sc(1)
     hum:ApplyDescription(desc)
-    Notify(string.format("📐  Size → %.2f", s))
+    Notify(string.format("ðŸ“  Size â†’ %.2f", s))
 end)
 
--- headsize <scale>  — scale head only
+-- headsize <scale>  â€” scale head only
 Cmd("headsize", {"head","hs"}, function(args)
     local s   = tonumber(args[1]) or 1
     local hum = GetHuman(); if not hum then return end
     local desc = hum:GetAppliedDescription()
     desc.HeadScale = math.clamp(s, 0.05, 10)
     hum:ApplyDescription(desc)
-    Notify(string.format("🗣  HeadSize → %.2f", s))
+    Notify(string.format("ðŸ—£  HeadSize â†’ %.2f", s))
 end)
 
 -- bodycolor <part> <R> <G> <B>
@@ -1870,10 +1874,10 @@ Cmd("bodycolor", {"bc","color"}, function(args)
     else
         Notify("Parts: head torso leftarm rightarm leftleg rightleg all","warn"); return
     end
-    Notify(string.format("🎨  BodyColor %s → (%d,%d,%d)", part, r, g, b))
+    Notify(string.format("ðŸŽ¨  BodyColor %s â†’ (%d,%d,%d)", part, r, g, b))
 end)
 
--- shirt <ID>  /  pants <ID>  — apply clothing assets
+-- shirt <ID>  /  pants <ID>  â€” apply clothing assets
 Cmd("shirt", {}, function(args)
     local id = tonumber(args[1])
     if not id then Notify("Usage: shirt <assetID>","warn"); return end
@@ -1881,7 +1885,7 @@ Cmd("shirt", {}, function(args)
     local s = char:FindFirstChildOfClass("Shirt")
     if not s then s = Instance.new("Shirt", char) end
     s.ShirtTemplate = "rbxassetid://" .. id
-    Notify("👕  Shirt → " .. id)
+    Notify("ðŸ‘•  Shirt â†’ " .. id)
 end)
 
 Cmd("pants", {}, function(args)
@@ -1891,10 +1895,10 @@ Cmd("pants", {}, function(args)
     local p = char:FindFirstChildOfClass("Pants")
     if not p then p = Instance.new("Pants", char) end
     p.PantsTemplate = "rbxassetid://" .. id
-    Notify("👖  Pants → " .. id)
+    Notify("ðŸ‘–  Pants â†’ " .. id)
 end)
 
--- face <ID>  — swap face decal
+-- face <ID>  â€” swap face decal
 Cmd("face", {}, function(args)
     local id = tonumber(args[1])
     if not id then Notify("Usage: face <assetID>","warn"); return end
@@ -1902,24 +1906,24 @@ Cmd("face", {}, function(args)
     local head = char:FindFirstChild("Head"); if not head then return end
     local dec  = head:FindFirstChild("face") or head:FindFirstChildOfClass("Decal")
     if dec then dec.Texture = "rbxassetid://" .. id end
-    Notify("😮  Face → " .. id)
+    Notify("ðŸ˜®  Face â†’ " .. id)
 end)
 
--- resetappearance  — reload original HumanoidDescription
+-- resetappearance  â€” reload original HumanoidDescription
 Cmd("resetappearance", {"resetchar","defaultlook"}, function()
     local hum = GetHuman(); if not hum then return end
     pcall(function()
         local desc = Players:GetHumanoidDescriptionFromUserId(LP.UserId)
         hum:ApplyDescription(desc)
     end)
-    Notify("✅  Appearance reset")
+    Notify("âœ…  Appearance reset")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: CHARACTER EFFECTS (particles)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: CHARACTER EFFECTS (particles)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ParticleEmitter, Fire, Smoke, Sparkles,
---           SelectionBox, ForceField — all Instance-based.
+--           SelectionBox, ForceField â€” all Instance-based.
 
 local function ApplyEffect(effectName, props)
     local hrp = GetHRP(); if not hrp then return false end
@@ -1943,14 +1947,14 @@ Cmd("fire", {"flame"}, function(args)
         Color = Color3.fromRGB(r,g,b),
         SecondaryColor = Color3.fromRGB(255,200,0),
     })
-    Notify(off and "🔥  Fire OFF" or string.format("🔥  Fire ON (size %d)", size))
+    Notify(off and "ðŸ”¥  Fire OFF" or string.format("ðŸ”¥  Fire ON (size %d)", size))
 end)
 
 Cmd("nofire", {"unfire"}, function()
     local hrp = GetHRP()
     if hrp then
         local f = hrp:FindFirstChild("S_EFX_Fire")
-        if f then f:Destroy(); Notify("🔥  Fire OFF") return end
+        if f then f:Destroy(); Notify("ðŸ”¥  Fire OFF") return end
     end
     Notify("No fire active","warn")
 end)
@@ -1963,13 +1967,13 @@ Cmd("smoke", {}, function(args)
         RiseVelocity = density * 2,
         Size        = density * 2,
     })
-    Notify(off and "💨  Smoke OFF" or "💨  Smoke ON")
+    Notify(off and "ðŸ’¨  Smoke OFF" or "ðŸ’¨  Smoke ON")
 end)
 
 Cmd("nosmoke", {"unsmoke"}, function()
     local hrp = GetHRP()
     if hrp then local s = hrp:FindFirstChild("S_EFX_Smoke"); if s then s:Destroy() end end
-    Notify("💨  Smoke OFF")
+    Notify("ðŸ’¨  Smoke OFF")
 end)
 
 Cmd("sparkles", {"spark"}, function(args)
@@ -1977,25 +1981,25 @@ Cmd("sparkles", {"spark"}, function(args)
     local off = ApplyEffect("Sparkles", {
         SparkleColor = Color3.fromRGB(r,g,b),
     })
-    Notify(off and "✨  Sparkles OFF" or "✨  Sparkles ON")
+    Notify(off and "âœ¨  Sparkles OFF" or "âœ¨  Sparkles ON")
 end)
 
 Cmd("nosparkles", {"unspark"}, function()
     local hrp = GetHRP()
     if hrp then local s = hrp:FindFirstChild("S_EFX_Sparkles"); if s then s:Destroy() end end
-    Notify("✨  Sparkles OFF")
+    Notify("âœ¨  Sparkles OFF")
 end)
 
 Cmd("forcefield", {"ff","shield"}, function()
     local char = GetChar(); if not char then return end
     local old = char:FindFirstChildOfClass("ForceField")
-    if old then old:Destroy(); Notify("🛡  ForceField OFF")
-    else Instance.new("ForceField", char); Notify("🛡  ForceField ON") end
+    if old then old:Destroy(); Notify("ðŸ›¡  ForceField OFF")
+    else Instance.new("ForceField", char); Notify("ðŸ›¡  ForceField ON") end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: ENVIRONMENT & LIGHTING                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: ENVIRONMENT & LIGHTING                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Lighting service properties, Sky/Atmosphere
 --           instances, dynamic environment changes.
 
@@ -2006,13 +2010,13 @@ Cmd("fog", {}, function(args)
     Lighting.FogStart  = start
     Lighting.FogEnd    = finish
     Lighting.FogColor  = Color3.fromRGB(r,g,b)
-    Notify(string.format("🌫  Fog %d→%d", start, finish))
+    Notify(string.format("ðŸŒ«  Fog %dâ†’%d", start, finish))
 end)
 
 Cmd("nofog", {"clearfog"}, function()
     Lighting.FogEnd = 1e6
     Lighting.FogStart = 0
-    Notify("🌫  Fog cleared")
+    Notify("ðŸŒ«  Fog cleared")
 end)
 
 Cmd("ambient", {"setambient"}, function(args)
@@ -2020,7 +2024,7 @@ Cmd("ambient", {"setambient"}, function(args)
     local g = tonumber(args[2]) or 127
     local b = tonumber(args[3]) or 127
     Lighting.Ambient = Color3.fromRGB(r,g,b)
-    Notify(string.format("🌄  Ambient → (%d,%d,%d)", r, g, b))
+    Notify(string.format("ðŸŒ„  Ambient â†’ (%d,%d,%d)", r, g, b))
 end)
 
 Cmd("sky", {}, function(args)
@@ -2028,7 +2032,7 @@ Cmd("sky", {}, function(args)
     if (args[1] or ""):lower() == "reset" then
         local s = Lighting:FindFirstChildOfClass("Sky")
         if s then s:Destroy() end
-        Notify("☁  Sky reset"); return
+        Notify("â˜  Sky reset"); return
     end
     local id = tonumber(args[1])
     if not id then Notify("Usage: sky <assetID>  |  sky reset","warn"); return end
@@ -2037,37 +2041,37 @@ Cmd("sky", {}, function(args)
     sky.SkyboxBk = base .. id; sky.SkyboxDn = base .. id
     sky.SkyboxFt = base .. id; sky.SkyboxLf = base .. id
     sky.SkyboxRt = base .. id; sky.SkyboxUp = base .. id
-    Notify("☁  Sky → " .. id)
+    Notify("â˜  Sky â†’ " .. id)
 end)
 
 Cmd("sunpos", {"sun"}, function(args)
-    -- sunpos <clocktime 0-24>  — moves sun by adjusting ClockTime
+    -- sunpos <clocktime 0-24>  â€” moves sun by adjusting ClockTime
     local t = tonumber(args[1])
     if not t then Notify("Usage: sunpos <0-24>","warn"); return end
     Lighting.ClockTime = t % 24
-    Notify(string.format("☀  Sun position → %.1f", t % 24))
+    Notify(string.format("â˜€  Sun position â†’ %.1f", t % 24))
 end)
 
 Cmd("atmosphere", {"atmos"}, function(args)
-    -- atmosphere <density> <offset> — create/modify Atmosphere
+    -- atmosphere <density> <offset> â€” create/modify Atmosphere
     local density = tonumber(args[1]) or 0.35
     local offset  = tonumber(args[2]) or 0
     local atm = Lighting:FindFirstChildOfClass("Atmosphere")
               or Instance.new("Atmosphere", Lighting)
     atm.Density = math.clamp(density, 0, 2)
     atm.Offset  = math.clamp(offset, -1, 1)
-    Notify(string.format("🌍  Atmosphere density %.2f", density))
+    Notify(string.format("ðŸŒ  Atmosphere density %.2f", density))
 end)
 
 Cmd("noatmosphere", {"noatmos"}, function()
     local a = Lighting:FindFirstChildOfClass("Atmosphere")
     if a then a:Destroy() end
-    Notify("🌍  Atmosphere removed")
+    Notify("ðŸŒ  Atmosphere removed")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: CAMERA CONTROLS                       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: CAMERA CONTROLS                       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Camera CameraType enum, CFrame manipulation,
 --           FieldOfView, camera scripting patterns.
 
@@ -2095,43 +2099,43 @@ Cmd("shake", {"camshake"}, function(args)
         )
         cam.CFrame = cam.CFrame * offset
     end)
-    Notify(string.format("📷  Shake  %.1f intensity  %.1fs", intensity, duration))
+    Notify(string.format("ðŸ“·  Shake  %.1f intensity  %.1fs", intensity, duration))
 end)
 
 Cmd("fov", {"zoom","setfov"}, function(args)
     local amt = tonumber(args[1]) or 70
     workspace.CurrentCamera.FieldOfView = math.clamp(amt, 1, 120)
-    Notify("📷  FOV → " .. math.clamp(amt,1,120))
+    Notify("ðŸ“·  FOV â†’ " .. math.clamp(amt,1,120))
 end)
 
 Cmd("firstperson", {"fp","1p"}, function()
     LP.CameraMaxZoomDistance = 0
     LP.CameraMinZoomDistance = 0
-    Notify("📷  First person ON")
+    Notify("ðŸ“·  First person ON")
 end)
 
 Cmd("thirdperson", {"tp3","3p"}, function()
     LP.CameraMinZoomDistance = 0.5
     LP.CameraMaxZoomDistance = 128
-    Notify("📷  Third person restored")
+    Notify("ðŸ“·  Third person restored")
 end)
 
 Cmd("lockcam", {"lockCamera"}, function()
     -- Locks camera to current CFrame (frozen view)
     local cam = workspace.CurrentCamera
     cam.CameraType = Enum.CameraType.Scriptable
-    Notify("📷  Camera LOCKED  (unlockcam to free)")
+    Notify("ðŸ“·  Camera LOCKED  (unlockcam to free)")
 end)
 
 Cmd("unlockcam", {"freecam","unlockCamera"}, function()
     local cam = workspace.CurrentCamera
     cam.CameraType = Enum.CameraType.Custom
-    Notify("📷  Camera UNLOCKED")
+    Notify("ðŸ“·  Camera UNLOCKED")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: SOUND / MUSIC                         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: SOUND / MUSIC                         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Sound service, SoundId, Volume, looping, stopping
 --           sounds, parenting to workspace vs character.
 
@@ -2149,7 +2153,7 @@ Cmd("play", {"music","sound"}, function(args)
     _adminSound.Looped    = true
     _adminSound.RollOffMaxDistance = 1e4
     _adminSound:Play()
-    Notify("🎵  Playing " .. id .. " (vol " .. vol .. ")")
+    Notify("ðŸŽµ  Playing " .. id .. " (vol " .. vol .. ")")
 end)
 
 Cmd("stopsound", {"mute","stopmusic"}, function()
@@ -2157,33 +2161,33 @@ Cmd("stopsound", {"mute","stopmusic"}, function()
         pcall(function() _adminSound:Stop(); _adminSound:Destroy() end)
         _adminSound = nil
     end
-    Notify("🎵  Sound stopped")
+    Notify("ðŸŽµ  Sound stopped")
 end)
 
 Cmd("volume", {"vol"}, function(args)
     local vol = tonumber(args[1])
     if not vol then Notify("Usage: volume <0-10>","warn"); return end
     if _adminSound then _adminSound.Volume = math.clamp(vol,0,10) end
-    Notify("🔊  Volume → " .. vol)
+    Notify("ðŸ”Š  Volume â†’ " .. vol)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: INFORMATION / READOUTS               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: INFORMATION / READOUTS               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: game metadata, Players service enumeration,
 --           UserId lookups, property introspection.
 
 Cmd("serverinfo", {"si","info"}, function()
     local plrCount = #Players:GetPlayers()
     local maxPlrs  = Players.MaxPlayers
-    Notify(string.format("🖥  Game: %d | Players: %d/%d | PlaceID: %d",
+    Notify(string.format("ðŸ–¥  Game: %d | Players: %d/%d | PlaceID: %d",
         game.GameId, plrCount, maxPlrs, game.PlaceId), "info")
 end)
 
 Cmd("playerinfo", {"pi","whois"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target then Notify("Player not found","error"); return end
-    Notify(string.format("👤  %s  |  ID: %d  |  Ping: %.0fms",
+    Notify(string.format("ðŸ‘¤  %s  |  ID: %d  |  Ping: %.0fms",
         target.Name, target.UserId, target:GetNetworkPing()*1000), "info")
 end)
 
@@ -2192,28 +2196,28 @@ Cmd("players", {"who","listplayers"}, function()
     for _, p in ipairs(Players:GetPlayers()) do
         table.insert(names, p.Name)
     end
-    Notify("👥  " .. table.concat(names, ", "), "info")
+    Notify("ðŸ‘¥  " .. table.concat(names, ", "), "info")
 end)
 
 Cmd("uptime", {}, function()
     local s = math.floor(workspace.DistributedGameTime)
     local m = math.floor(s/60); s = s % 60
     local h = math.floor(m/60); m = m % 60
-    Notify(string.format("⏱  Uptime: %02d:%02d:%02d", h, m, s), "info")
+    Notify(string.format("â±  Uptime: %02d:%02d:%02d", h, m, s), "info")
 end)
 
 Cmd("gameversion", {"gv","version"}, function()
-    Notify("🎮  " .. game.Name .. "  v" .. game.PlaceVersion, "info")
+    Notify("ðŸŽ®  " .. game.Name .. "  v" .. game.PlaceVersion, "info")
 end)
 
 Cmd("userid", {"id"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
-    Notify("🆔  " .. target.Name .. " = " .. target.UserId, "info")
+    Notify("ðŸ†”  " .. target.Name .. " = " .. target.UserId, "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: TELEPORT SUITE                        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: TELEPORT SUITE                        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: CFrame construction from coordinates,
 --           workspace traversal, spawn point logic.
 
@@ -2228,11 +2232,11 @@ Cmd("tpcoords", {"tpc","setpos"}, function(args)
     local hrp = GetHRP()
     if hrp then
         hrp.CFrame = CFrame.new(x, y, z)
-        Notify(string.format("📍  TP → %.1f, %.1f, %.1f", x, y, z))
+        Notify(string.format("ðŸ“  TP â†’ %.1f, %.1f, %.1f", x, y, z))
     end
 end)
 
--- home / spawn  — teleport to team spawn or Vector3.zero
+-- home / spawn  â€” teleport to team spawn or Vector3.zero
 Cmd("home", {"spawn","respawnpoint"}, function()
     local hrp = GetHRP(); if not hrp then return end
     -- Try to find a SpawnLocation for the team
@@ -2246,10 +2250,10 @@ Cmd("home", {"spawn","respawnpoint"}, function()
         end
     end
     hrp.CFrame = spawnCF or CFrame.new(0, 10, 0)
-    Notify("🏠  Teleported home")
+    Notify("ðŸ   Teleported home")
 end)
 
--- tpall  — teleport every player to yourself (client perspective only)
+-- tpall  â€” teleport every player to yourself (client perspective only)
 Cmd("tpall", {"bringall"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local offset = 0
@@ -2262,16 +2266,16 @@ Cmd("tpall", {"bringall"}, function()
             end
         end
     end
-    Notify("📍  Brought all players to you")
+    Notify("ðŸ“  Brought all players to you")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: WORKSPACE TOOLS                       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: WORKSPACE TOOLS                       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: workspace traversal, FindPartOnRay, instance
 --           deletion, BasePart manipulation patterns.
 
--- delete <partname>  — remove all workspace parts matching name
+-- delete <partname>  â€” remove all workspace parts matching name
 Cmd("delete", {"del","remove"}, function(args)
     local name = args[1]
     if not name then Notify("Usage: delete <partName>","warn"); return end
@@ -2281,10 +2285,10 @@ Cmd("delete", {"del","remove"}, function(args)
             obj:Destroy(); count = count + 1
         end
     end
-    Notify(string.format("🗑  Deleted %d parts named '%s'", count, name))
+    Notify(string.format("ðŸ—‘  Deleted %d parts named '%s'", count, name))
 end)
 
--- explode  — create an explosion at your position (client-side)
+-- explode  â€” create an explosion at your position (client-side)
 Cmd("explode", {"boom","explosion"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local power = tonumber(args[1]) or 100
@@ -2293,28 +2297,28 @@ Cmd("explode", {"boom","explosion"}, function(args)
     exp.BlastRadius    = power / 10
     exp.BlastPressure  = 0          -- 0 = visual only, won't move parts server-side
     exp.DestroyJointRadiusPercent = 0
-    Notify("💥  Explosion (r=" .. (power/10) .. ")")
+    Notify("ðŸ’¥  Explosion (r=" .. (power/10) .. ")")
 end)
 
--- light  — toggle a PointLight attached to your HRP
+-- light  â€” toggle a PointLight attached to your HRP
 Cmd("light", {"torch","lamp"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local old = hrp:FindFirstChildOfClass("PointLight")
-    if old then old:Destroy(); Notify("💡  Light OFF"); return end
+    if old then old:Destroy(); Notify("ðŸ’¡  Light OFF"); return end
     local pl = Instance.new("PointLight", hrp)
     pl.Brightness = tonumber(args[1]) or 5
     pl.Range      = tonumber(args[2]) or 20
     pl.Color      = Color3.fromRGB(255, 240, 200)
-    Notify("💡  Light ON")
+    Notify("ðŸ’¡  Light ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║         CATEGORY: ADMIN UTILITY PATTERNS                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘         CATEGORY: ADMIN UTILITY PATTERNS                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: coroutine / task patterns, repeated execution,
 --           safe pcall wrappers, executor identity.
 
--- repeat <n> <cmd...>  — run a command N times
+-- repeat <n> <cmd...>  â€” run a command N times
 Cmd("repeat", {"rep","loop"}, function(args)
     local n    = tonumber(args[1]) or 1
     local rest = table.concat(args, " ", 2)
@@ -2332,10 +2336,10 @@ Cmd("repeat", {"rep","loop"}, function(args)
             task.wait(0.05)
         end
     end)
-    Notify(string.format("🔁  Repeat  ×%d  '%s'", n, rest))
+    Notify(string.format("ðŸ”  Repeat  Ã—%d  '%s'", n, rest))
 end)
 
--- alias <shortcut> <command>  — register a runtime alias
+-- alias <shortcut> <command>  â€” register a runtime alias
 Cmd("alias", {"bind"}, function(args)
     local shortcut = args[1]
     local target   = args[2]
@@ -2346,7 +2350,7 @@ Cmd("alias", {"bind"}, function(args)
         Notify("Unknown command: " .. target,"error"); return
     end
     Aliases[shortcut:lower()] = target:lower()
-    Notify("🔗  alias  '" .. shortcut .. "' → '" .. target .. "'")
+    Notify("ðŸ”—  alias  '" .. shortcut .. "' â†’ '" .. target .. "'")
 end)
 
 -- unalias <shortcut>
@@ -2354,10 +2358,10 @@ Cmd("unalias", {"unbind"}, function(args)
     local shortcut = args[1]
     if not shortcut then Notify("Usage: unalias <shortcut>","warn"); return end
     Aliases[shortcut:lower()] = nil
-    Notify("🔗  Alias '" .. shortcut .. "' removed")
+    Notify("ðŸ”—  Alias '" .. shortcut .. "' removed")
 end)
 
--- printenv  — dump all active State flags to console + notify
+-- printenv  â€” dump all active State flags to console + notify
 Cmd("printenv", {"env","status"}, function()
     local lines = {}
     for k, v in pairs(State) do
@@ -2367,10 +2371,10 @@ Cmd("printenv", {"env","status"}, function()
     end
     table.sort(lines)
     print("[S-Admin] State:\n  " .. table.concat(lines, "\n  "))
-    Notify("📋  Env printed to console", "info")
+    Notify("ðŸ“‹  Env printed to console", "info")
 end)
 
--- clear  — destroy all S_ GUI highlights/trails/effects from your char
+-- clear  â€” destroy all S_ GUI highlights/trails/effects from your char
 Cmd("clear", {"cleanup","cleanse"}, function()
     local char = GetChar()
     if char then
@@ -2387,10 +2391,10 @@ Cmd("clear", {"cleanup","cleanse"}, function()
     end
     local sgold = ScreenGui:FindFirstChild("S_GlowBox")
     if sgold then sgold:Destroy() end
-    Notify("🧹  Character effects cleared")
+    Notify("ðŸ§¹  Character effects cleared")
 end)
 
--- exectime  — measure how fast a command runs (ms)
+-- exectime  â€” measure how fast a command runs (ms)
 Cmd("exectime", {"bench","benchmark"}, function(args)
     local rest = table.concat(args, " ")
     if rest == "" then Notify("Usage: exectime <command>","warn"); return end
@@ -2401,29 +2405,29 @@ Cmd("exectime", {"bench","benchmark"}, function(args)
     if not Commands[name] then Notify("Unknown command: "..name,"error"); return end
     local t0 = tick()
     pcall(function() Commands[name](parts) end)
-    Notify(string.format("⏱  '%s' took %.2f ms", name, (tick()-t0)*1000), "info")
+    Notify(string.format("â±  '%s' took %.2f ms", name, (tick()-t0)*1000), "info")
 end)
 
--- savepos / loadpos  — bookmark one position and return to it
+-- savepos / loadpos  â€” bookmark one position and return to it
 local _savedPos = nil
 
 Cmd("savepos", {"markpos","bookmark"}, function()
     local hrp = GetHRP(); if not hrp then return end
     _savedPos = hrp.CFrame
     local p   = hrp.Position
-    Notify(string.format("📌  Position saved  %.1f, %.1f, %.1f", p.X, p.Y, p.Z))
+    Notify(string.format("ðŸ“Œ  Position saved  %.1f, %.1f, %.1f", p.X, p.Y, p.Z))
 end)
 
 Cmd("loadpos", {"returnpos","gotomark"}, function()
-    if not _savedPos then Notify("No position saved  →  use savepos first","warn"); return end
+    if not _savedPos then Notify("No position saved  â†’  use savepos first","warn"); return end
     local hrp = GetHRP(); if not hrp then return end
     hrp.CFrame = _savedPos
-    Notify("📌  Returned to saved position")
+    Notify("ðŸ“Œ  Returned to saved position")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: NAMED WAYPOINT SYSTEM  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: NAMED WAYPOINT SYSTEM  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: table management, string key lookups, persistent
 --           in-session data, CFrame tween vs instant TP.
 
@@ -2447,7 +2451,7 @@ Cmd("setwp", {"setwaypoint","swp"}, function(args)
         name = name,
         x = math.floor(p.X), y = math.floor(p.Y), z = math.floor(p.Z)
     })
-    Notify(string.format("📌  Waypoint '%s' saved  (%.0f,%.0f,%.0f)", name, p.X,p.Y,p.Z))
+    Notify(string.format("ðŸ“Œ  Waypoint '%s' saved  (%.0f,%.0f,%.0f)", name, p.X,p.Y,p.Z))
 end)
 
 Cmd("wp", {"waypoint","loadwp","gwp"}, function(args)
@@ -2457,7 +2461,7 @@ Cmd("wp", {"waypoint","loadwp","gwp"}, function(args)
     if not v then Notify("Waypoint not found: "..name,"error"); return end
     local hrp = GetHRP(); if not hrp then return end
     hrp.CFrame = CFrame.new(v.x, v.y, v.z)
-    Notify("📌  Teleported to '"..v.name.."'")
+    Notify("ðŸ“Œ  Teleported to '"..v.name.."'")
 end)
 
 Cmd("tweenwp", {"tweenwaypoint","twp"}, function(args)
@@ -2466,7 +2470,7 @@ Cmd("tweenwp", {"tweenwaypoint","twp"}, function(args)
     if not v then Notify("Waypoint not found: "..name,"error"); return end
     local hrp = GetHRP(); if not hrp then return end
     TweenObj(hrp, 2, {CFrame = CFrame.new(v.x, v.y, v.z)}, Enum.EasingStyle.Linear):Play()
-    Notify("📌  Tweening to '"..v.name.."'")
+    Notify("ðŸ“Œ  Tweening to '"..v.name.."'")
 end)
 
 Cmd("deletewp", {"delwaypoint","dwp"}, function(args)
@@ -2474,13 +2478,13 @@ Cmd("deletewp", {"delwaypoint","dwp"}, function(args)
     local idx  = _findWP(name)
     if not idx then Notify("Waypoint not found","error"); return end
     table.remove(_waypoints, idx)
-    Notify("🗑  Deleted waypoint: "..name)
+    Notify("ðŸ—‘  Deleted waypoint: "..name)
 end)
 
 Cmd("clearwp", {"clearwaypoints","cwp"}, function()
     local n = #_waypoints
     _waypoints = {}
-    Notify("🗑  Cleared "..n.." waypoints")
+    Notify("ðŸ—‘  Cleared "..n.." waypoints")
 end)
 
 Cmd("listwp", {"waypoints","wps"}, function()
@@ -2493,12 +2497,12 @@ Cmd("listwp", {"waypoints","wps"}, function()
     print("[S-Admin] Waypoints:\n  "..table.concat(t,"\n  "))
     local short = {}
     for i=1, math.min(3,#t) do table.insert(short, _waypoints[i].name) end
-    Notify("📌  "..table.concat(short,", ")..(#_waypoints>3 and "  +"..(#_waypoints-3).." more" or ""), "info")
+    Notify("ðŸ“Œ  "..table.concat(short,", ")..(#_waypoints>3 and "  +"..(#_waypoints-3).." more" or ""), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FLOAT / INVISIBLE PLATFORM  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FLOAT / INVISIBLE PLATFORM  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Anchored Part parented to workspace, Heartbeat
 --           sync to HRP CFrame, Q/E height adjustment.
 
@@ -2543,7 +2547,7 @@ Cmd("float", {"platform","hoverpad"}, function(args)
         end
     end)
 
-    Notify("🟦  Float ON  (Q = raise  E = lower)")
+    Notify("ðŸŸ¦  Float ON  (Q = raise  E = lower)")
 end)
 
 Cmd("unfloat", {"nofloat","noplatform","nohoverpad"}, function()
@@ -2551,12 +2555,12 @@ Cmd("unfloat", {"nofloat","noplatform","nohoverpad"}, function()
     if _floatPart  then pcall(function() _floatPart:Destroy() end); _floatPart = nil end
     if _floatConn  then _floatConn:Disconnect();  _floatConn  = nil end
     if _floatInput then _floatInput:Disconnect(); _floatInput = nil end
-    Notify("🟦  Float OFF")
+    Notify("ðŸŸ¦  Float OFF")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SWIM MODE  (IY-ported)                      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SWIM MODE  (IY-ported)                      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: HumanoidStateType manipulation, SetStateEnabled,
 --           zero-gravity physics via workspace.Gravity.
 
@@ -2583,7 +2587,7 @@ Cmd("swim", {}, function()
             pcall(function() hrp.AssemblyLinearVelocity = Vector3.zero end)
         end
     end)
-    Notify("🏊  Swim ON  (zero-gravity, holds position)")
+    Notify("ðŸŠ  Swim ON  (zero-gravity, holds position)")
 end)
 
 Cmd("unswim", {"noswim"}, function()
@@ -2598,12 +2602,12 @@ Cmd("unswim", {"noswim"}, function()
             end
         end
     end
-    Notify("🏊  Swim OFF")
+    Notify("ðŸŠ  Swim OFF")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SPECTATE / VIEW  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SPECTATE / VIEW  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: CameraSubject property, CharacterAdded auto-
 --           reconnect, camera property change guard.
 
@@ -2638,7 +2642,7 @@ Cmd("view", {"spectate","spec"}, function(args)
         end
     end)
 
-    Notify("👁  Spectating "..target.Name)
+    Notify("ðŸ‘  Spectating "..target.Name)
 end)
 
 Cmd("unview", {"unspectate","unspec","stopspec"}, function()
@@ -2650,17 +2654,17 @@ Cmd("unview", {"unspectate","unspec","stopspec"}, function()
         workspace.CurrentCamera.CameraSubject = char:FindFirstChildOfClass("Humanoid") or char.PrimaryPart
     end
     workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-    Notify("👁  Spectate OFF")
+    Notify("ðŸ‘  Spectate OFF")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SPRING-PHYSICS FREECAM  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SPRING-PHYSICS FREECAM  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Spring simulation (exponential decay), RunService
 --           BindToRenderStep, ContextActionService priority
 --           binding, camera scripting best practices.
 
--- Spring class — same algorithm as IY
+-- Spring class â€” same algorithm as IY
 local FCSpring = {} do
     FCSpring.__index = FCSpring
     function FCSpring.new(freq, pos)
@@ -2764,16 +2768,16 @@ local function _stopFC()
 end
 
 Cmd("freecam", {"fc","freecamera"}, function(args)
-    if args[1] == "off" or args[1] == "stop" then _stopFC(); Notify("🎥  Freecam OFF"); return end
+    if args[1] == "off" or args[1] == "stop" then _stopFC(); Notify("ðŸŽ¥  Freecam OFF"); return end
     _startFC()
-    Notify("🎥  Freecam ON  (WASD+QE=move  Shift=slow  ↑↓=speed)")
+    Notify("ðŸŽ¥  Freecam ON  (WASD+QE=move  Shift=slow  â†‘â†“=speed)")
 end)
 
 Cmd("freecampos", {"fcpos","fcp"}, function(args)
     local x,y,z = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
     if not (x and y and z) then Notify("Usage: freecampos <X> <Y> <Z>","warn"); return end
     _startFC(CFrame.new(x,y,z))
-    Notify(string.format("🎥  Freecam at %.0f,%.0f,%.0f",x,y,z))
+    Notify(string.format("ðŸŽ¥  Freecam at %.0f,%.0f,%.0f",x,y,z))
 end)
 
 Cmd("fcgoto", {"freecamgoto","fctp"}, function(args)
@@ -2781,7 +2785,7 @@ Cmd("fcgoto", {"freecamgoto","fctp"}, function(args)
     if not target or not target.Character then Notify("Target not found","error"); return end
     local hrp = target.Character:FindFirstChild("HumanoidRootPart")
     if hrp then _startFC(hrp.CFrame) end
-    Notify("🎥  Freecam → "..target.Name)
+    Notify("ðŸŽ¥  Freecam â†’ "..target.Name)
 end)
 
 Cmd("freecamwp", {"fcwp"}, function(args)
@@ -2789,30 +2793,30 @@ Cmd("freecamwp", {"fcwp"}, function(args)
     local _, v  = _findWP(name)
     if not v then Notify("Waypoint not found","error"); return end
     _startFC(CFrame.new(v.x,v.y,v.z))
-    Notify("🎥  Freecam → WP '"..name.."'")
+    Notify("ðŸŽ¥  Freecam â†’ WP '"..name.."'")
 end)
 
 Cmd("unfreecam", {"nofreecam","unfc","nofc"}, function()
     _stopFC()
-    Notify("🎥  Freecam OFF")
+    Notify("ðŸŽ¥  Freecam OFF")
 end)
 
 Cmd("fcspeed", {"freecamspeed"}, function(args)
     local s = tonumber(args[1]) or 1
     FC_KSPD = Vector3.new(s,s,s)
-    Notify("🎥  Freecam speed → "..s)
+    Notify("ðŸŽ¥  Freecam speed â†’ "..s)
 end)
 
 Cmd("fcfov", {"freecamfov"}, function(args)
     local f = tonumber(args[1]) or 70
     _fcFov = math.clamp(f,1,120)
     if _fcRunning then workspace.CurrentCamera.FieldOfView = _fcFov end
-    Notify("🎥  Freecam FOV → ".._fcFov)
+    Notify("ðŸŽ¥  Freecam FOV â†’ ".._fcFov)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CHAMS  (BoxHandleAdornment ESP)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CHAMS  (BoxHandleAdornment ESP)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: BoxHandleAdornment, Folder hierarchy, CharacterAdded
 --           reconnect pattern, BrickColor.
 
@@ -2849,7 +2853,7 @@ Cmd("chams", {}, function()
     _chamsEnabled = true
     for _, p in ipairs(Players:GetPlayers()) do _applyChams(p) end
     Conns.ChamsJoin = Players.PlayerAdded:Connect(_applyChams)
-    Notify("📦  Chams ON  (BoxHandleAdornment per-part)")
+    Notify("ðŸ“¦  Chams ON  (BoxHandleAdornment per-part)")
 end)
 
 Cmd("nochams", {"unchams"}, function()
@@ -2860,12 +2864,12 @@ Cmd("nochams", {"unchams"}, function()
     for _, v in ipairs(ScreenGui:GetChildren()) do
         if v.Name:sub(-5) == "_CHMS" then v:Destroy() end
     end
-    Notify("📦  Chams OFF")
+    Notify("ðŸ“¦  Chams OFF")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PART ESP  (workspace part highlight)        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PART ESP  (workspace part highlight)        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: DescendantAdded event, table.find, conditional
 --           BoxHandleAdornment attachment by part name.
 
@@ -2897,7 +2901,7 @@ Cmd("partesp", {"pesp"}, function(args)
             if v:IsA("BasePart") then task.defer(function() _addPartEspBox(v) end) end
         end)
     end
-    Notify("📦  PartESP → '"..name.."'")
+    Notify("ðŸ“¦  PartESP â†’ '"..name.."'")
 end)
 
 Cmd("nopartesp", {"unpartesp"}, function(args)
@@ -2910,20 +2914,20 @@ Cmd("nopartesp", {"unpartesp"}, function(args)
                 v:Destroy()
             end
         end
-        Notify("📦  PartESP removed → '"..name.."'")
+        Notify("ðŸ“¦  PartESP removed â†’ '"..name.."'")
     else
         _partEspList = {}
         if _partEspConn then _partEspConn:Disconnect(); _partEspConn = nil end
         for _, v in ipairs(workspace:GetDescendants()) do
             if v.Name == "S_PESP" then pcall(function() v:Destroy() end) end
         end
-        Notify("📦  PartESP OFF (all)")
+        Notify("ðŸ“¦  PartESP OFF (all)")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GUI VISIBILITY TOOLS                        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GUI VISIBILITY TOOLS                        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: PlayerGui traversal, Visible toggling, collecting
 --           changed objects for reliable undo.
 
@@ -2943,19 +2947,19 @@ Cmd("hideguis", {"hidegui","hgui"}, function()
             end
         end
     end
-    Notify("🪟  Hidden "..count.." GUI elements")
+    Notify("ðŸªŸ  Hidden "..count.." GUI elements")
 end)
 
 Cmd("showguis", {"unhideguis","restoreguis","sgui"}, function()
     local n = #_hiddenGUIs
     for _, v in ipairs(_hiddenGUIs) do pcall(function() v.Visible = true end) end
     _hiddenGUIs = {}
-    Notify("🪟  Restored "..n.." GUI elements")
+    Notify("ðŸªŸ  Restored "..n.." GUI elements")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: COREGUI TOGGLES  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: COREGUI TOGGLES  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: StarterGui:SetCoreGuiEnabled, CoreGuiType enum,
 --           StarterGui:SetCore for reset-button callback.
 
@@ -2971,7 +2975,7 @@ local _cguiMap = {
 local function _cgEnable(key, on)
     if key == "reset" then
         pcall(function() StarterGui:SetCore("ResetButtonCallback", on) end)
-        Notify((on and "✅" or "🚫").."  Reset button "..(on and "enabled" or "disabled")); return
+        Notify((on and "âœ…" or "ðŸš«").."  Reset button "..(on and "enabled" or "disabled")); return
     end
     local cgt = _cguiMap[key]
     if not cgt then
@@ -2979,15 +2983,15 @@ local function _cgEnable(key, on)
         Notify("Options: "..hint,"warn"); return
     end
     pcall(function() StarterGui:SetCoreGuiEnabled(cgt, on) end)
-    Notify((on and "✅" or "🚫").."  "..(on and "Enabled" or "Disabled")..": "..key)
+    Notify((on and "âœ…" or "ðŸš«").."  "..(on and "Enabled" or "Disabled")..": "..key)
 end
 
 Cmd("enable", {}, function(args) _cgEnable((args[1] or ""):lower(), true)  end)
 Cmd("disable", {}, function(args) _cgEnable((args[1] or ""):lower(), false) end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ANTI-LAG / BOOST FPS  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ANTI-LAG / BOOST FPS  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: settings().Rendering, Lighting GlobalShadows,
 --           PostEffect disable, CastShadow, Decal clear.
 
@@ -3029,17 +3033,17 @@ Cmd("antilag", {"boostfps","lowgraphics","fps+"}, function()
         end)
     end)
 
-    Notify("⚡  AntiLag applied — minimal graphics mode")
+    Notify("âš¡  AntiLag applied â€” minimal graphics mode")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SERVER HOP  (IY-ported)                     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SERVER HOP  (IY-ported)                     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: HttpGet + JSONDecode, filtering server list,
 --           TeleportToPlaceInstance, error handling.
 
 Cmd("serverhop", {"shop","hopserver"}, function()
-    Notify("🔀  Querying server list...", "info")
+    Notify("ðŸ”€  Querying server list...", "info")
     task.spawn(function()
         local ok, body = pcall(function()
             local raw = game:HttpGet(
@@ -3060,14 +3064,14 @@ Cmd("serverhop", {"shop","hopserver"}, function()
         end
         if #servers == 0 then Notify("No open servers found","warn"); return end
         local pick = servers[math.random(1, #servers)]
-        Notify("🔀  Hopping to server "..pick:sub(1,8).."...")
+        Notify("ðŸ”€  Hopping to server "..pick:sub(1,8).."...")
         TeleportService:TeleportToPlaceInstance(game.PlaceId, pick, LP)
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: EXTRA CAMERA UTILITIES  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: EXTRA CAMERA UTILITIES  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 -- lookat <player>
 Cmd("lookat", {}, function(args)
@@ -3075,10 +3079,10 @@ Cmd("lookat", {}, function(args)
     if not target or not target.Character then Notify("Target not found","error"); return end
     local head = target.Character:FindFirstChild("Head"); if not head then return end
     workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, head.Position)
-    Notify("👁  Facing "..target.Name)
+    Notify("ðŸ‘  Facing "..target.Name)
 end)
 
--- fixcam — full camera state restore
+-- fixcam â€” full camera state restore
 Cmd("fixcam", {"restorecam","resetcam"}, function()
     _stopFC()
     if _viewConn        then pcall(function() _viewConn:Disconnect()        end); _viewConn        = nil end
@@ -3094,10 +3098,10 @@ Cmd("fixcam", {"restorecam","resetcam"}, function()
     LP.CameraMinZoomDistance = 0.5
     LP.CameraMaxZoomDistance = 400
     pcall(function() LP.CameraMode = Enum.CameraMode.Classic end)
-    Notify("📷  Camera fully restored")
+    Notify("ðŸ“·  Camera fully restored")
 end)
 
--- camdistance — set exact zoom distance
+-- camdistance â€” set exact zoom distance
 Cmd("camdistance", {"camzoom","setcamdist"}, function(args)
     local d = tonumber(args[1])
     if not d then Notify("Usage: camdistance <studs>","warn"); return end
@@ -3108,31 +3112,31 @@ Cmd("camdistance", {"camzoom","setcamdist"}, function(args)
     task.wait()
     LP.CameraMaxZoomDistance = math.max(prevMax, d)
     LP.CameraMinZoomDistance = 0.5
-    Notify("📷  Camera distance → "..d.." studs")
+    Notify("ðŸ“·  Camera distance â†’ "..d.." studs")
 end)
 
--- shiftlock — force-enable shift lock
+-- shiftlock â€” force-enable shift lock
 Cmd("shiftlock", {"enablesl","sl"}, function()
     pcall(function() LP.DevEnableMouseLock = true end)
     LP:GetPropertyChangedSignal("DevEnableMouseLock"):Connect(function()
         pcall(function() LP.DevEnableMouseLock = true end)
     end)
-    Notify("🔒  Shift lock forced ON")
+    Notify("ðŸ”’  Shift lock forced ON")
 end)
 
--- inspect <player> — open Roblox inspect menu
+-- inspect <player> â€” open Roblox inspect menu
 Cmd("inspect", {"examine"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target then Notify("Target not found","error"); return end
     pcall(function()
         game:GetService("GuiService"):InspectPlayerFromUserId(target.UserId)
     end)
-    Notify("🔍  Inspecting "..target.Name)
+    Notify("ðŸ”  Inspecting "..target.Name)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: WORKSPACE ADMIN TOOLS  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: WORKSPACE ADMIN TOOLS  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: GetDescendants, ClassName vs Name distinction,
 --           Locked property, BodyForce cleanup patterns.
 
@@ -3141,7 +3145,7 @@ Cmd("lockws", {"lockworkspace"}, function()
     for _, v in ipairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") then pcall(function() v.Locked = true end); n=n+1 end
     end
-    Notify("🔒  Locked "..n.." workspace parts")
+    Notify("ðŸ”’  Locked "..n.." workspace parts")
 end)
 
 Cmd("unlockws", {"unlockworkspace"}, function()
@@ -3149,7 +3153,7 @@ Cmd("unlockws", {"unlockworkspace"}, function()
     for _, v in ipairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") then pcall(function() v.Locked = false end); n=n+1 end
     end
-    Notify("🔓  Unlocked "..n.." workspace parts")
+    Notify("ðŸ”“  Unlocked "..n.." workspace parts")
 end)
 
 -- deleteclass <ClassName>
@@ -3159,10 +3163,10 @@ Cmd("deleteclass", {"dc","removeclass"}, function(args)
     for _, v in ipairs(workspace:GetDescendants()) do
         if v.ClassName:lower() == cls:lower() then pcall(function() v:Destroy() end); n=n+1 end
     end
-    Notify("🗑  Deleted "..n.." '"..cls.."' instances")
+    Notify("ðŸ—‘  Deleted "..n.." '"..cls.."' instances")
 end)
 
--- chardelete <name> — delete named instances from character
+-- chardelete <name> â€” delete named instances from character
 Cmd("chardelete", {"cd","charremove"}, function(args)
     local name = args[1]; if not name then Notify("Usage: chardelete <name>","warn"); return end
     local char = GetChar(); if not char then return end
@@ -3170,7 +3174,7 @@ Cmd("chardelete", {"cd","charremove"}, function(args)
     for _, v in ipairs(char:GetDescendants()) do
         if v.Name:lower() == name:lower() then pcall(function() v:Destroy() end); n=n+1 end
     end
-    Notify("🗑  CharDelete '"..name.."' × "..n)
+    Notify("ðŸ—‘  CharDelete '"..name.."' Ã— "..n)
 end)
 
 -- chardeleteclass <ClassName>
@@ -3181,10 +3185,10 @@ Cmd("chardeleteclass", {"cdc","charremoveclass"}, function(args)
     for _, v in ipairs(char:GetDescendants()) do
         if v.ClassName:lower() == cls:lower() then pcall(function() v:Destroy() end); n=n+1 end
     end
-    Notify("🗑  CharDeleteClass '"..cls.."' × "..n)
+    Notify("ðŸ—‘  CharDeleteClass '"..cls.."' Ã— "..n)
 end)
 
--- deletevelocity — strip all physics forces from character
+-- deletevelocity â€” strip all physics forces from character
 Cmd("deletevelocity", {"dv","removeforces","rmforces"}, function()
     local char = GetChar(); if not char then return end
     local n, classes = 0, {
@@ -3196,7 +3200,7 @@ Cmd("deletevelocity", {"dv","removeforces","rmforces"}, function()
             if v:IsA(cls) then pcall(function() v:Destroy() end); n=n+1; break end
         end
     end
-    Notify("💨  Removed "..n.." physics force instances")
+    Notify("ðŸ’¨  Removed "..n.." physics force instances")
 end)
 
 -- togglenoclip
@@ -3204,35 +3208,35 @@ Cmd("togglenoclip", {"tnc","togglenc"}, function()
     if State.Noclipping then Commands["clip"]({}) else Commands["noclip"]({}) end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SYSTEM / NETWORK UTILITIES  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SYSTEM / NETWORK UTILITIES  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 -- cancelteleport
 Cmd("cancelteleport", {"canceltp"}, function()
     pcall(function() TeleportService:TeleportCancel() end)
-    Notify("❌  Teleport cancelled")
+    Notify("âŒ  Teleport cancelled")
 end)
 
 -- screenshot
 Cmd("screenshot", {"scrnshot","screenie"}, function()
     pcall(function() game:GetService("CoreGui"):TakeScreenshot() end)
-    Notify("📸  Screenshot taken")
+    Notify("ðŸ“¸  Screenshot taken")
 end)
 
 -- notify <message>
 Cmd("notify", {"notif","announce"}, function(args)
     local msg = table.concat(args," ")
     if msg == "" then Notify("Usage: notify <message>","warn"); return end
-    Notify("📢  "..msg, "info")
+    Notify("ðŸ“¢  "..msg, "info")
 end)
 
--- jobid — show and copy job ID
+-- jobid â€” show and copy job ID
 Cmd("jobid", {"copyjobid","getjobid"}, function()
     local link = "roblox://placeId="..game.PlaceId.."&gameInstanceId="..game.JobId
     pcall(function() setclipboard(link) end)
     print("[S-Admin] JobID: "..game.JobId)
-    Notify("🆔  "..game.JobId:sub(1,20).."…", "info")
+    Notify("ðŸ†”  "..game.JobId:sub(1,20).."â€¦", "info")
 end)
 
 -- fpscap <n> / unfpscap
@@ -3248,15 +3252,15 @@ Cmd("fpscap", {"setfpscap","maxfps"}, function(args)
             task.wait()
         end
     end)
-    Notify("⚡  FPS capped at "..cap)
+    Notify("âš¡  FPS capped at "..cap)
 end)
 
 Cmd("unfpscap", {"removefpscap","nofpscap"}, function()
     if _fpsCapTask then task.cancel(_fpsCapTask); _fpsCapTask = nil end
-    Notify("⚡  FPS cap removed")
+    Notify("âš¡  FPS cap removed")
 end)
 
--- autorejoin — reconnect automatically on GuiService error
+-- autorejoin â€” reconnect automatically on GuiService error
 Cmd("autorejoin", {"autorj"}, function()
     local GS = game:GetService("GuiService")
     GS.ErrorMessageChanged:Connect(function()
@@ -3267,24 +3271,24 @@ Cmd("autorejoin", {"autorj"}, function()
             end)
         end
     end)
-    Notify("🔄  AutoRejoin ON")
+    Notify("ðŸ”„  AutoRejoin ON")
 end)
 
--- mastervolume — set game volume
+-- mastervolume â€” set game volume
 Cmd("mastervolume", {"gamevolume","mvol"}, function(args)
     local vol = tonumber(args[1])
     if not vol then Notify("Usage: mastervolume <0-10>","warn"); return end
     pcall(function()
         UserSettings():GetService("UserGameSettings").MasterVolume = math.clamp(vol,0,10) / 10
     end)
-    Notify("🔊  Master volume → "..vol)
+    Notify("ðŸ”Š  Master volume â†’ "..vol)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED CHARACTER TOOLS                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED CHARACTER TOOLS                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ragdoll — enable ragdoll physics (Ball-and-Socket workaround)
+-- ragdoll â€” enable ragdoll physics (Ball-and-Socket workaround)
 Cmd("ragdoll", {}, function()
     local char = GetChar(); if not char then return end
     local hum  = GetHuman(); if not hum then return end
@@ -3301,7 +3305,7 @@ Cmd("ragdoll", {}, function()
             v.Enabled = false
         end
     end
-    Notify("🪆  Ragdoll ON")
+    Notify("ðŸª†  Ragdoll ON")
 end)
 
 Cmd("unragdoll", {"noragdoll"}, function()
@@ -3315,10 +3319,10 @@ Cmd("unragdoll", {"noragdoll"}, function()
             v.Enabled = true
         end
     end
-    Notify("🪆  Ragdoll OFF")
+    Notify("ðŸª†  Ragdoll OFF")
 end)
 
--- walktowp <name> — use humanoid:MoveTo to walk to a waypoint
+-- walktowp <name> â€” use humanoid:MoveTo to walk to a waypoint
 Cmd("walktowp", {"walkwp","wtwp"}, function(args)
     local name = table.concat(args," ")
     local _, v  = _findWP(name)
@@ -3326,18 +3330,18 @@ Cmd("walktowp", {"walkwp","wtwp"}, function(args)
     local hum = GetHuman(); if not hum then return end
     if hum.SeatPart then hum.Sit = false; task.wait(0.1) end
     hum:MoveTo(Vector3.new(v.x, v.y, v.z))
-    Notify("🚶  Walking to '"..name.."'")
+    Notify("ðŸš¶  Walking to '"..name.."'")
 end)
 
--- stopmove — cancel humanoid movement
+-- stopmove â€” cancel humanoid movement
 Cmd("stopmove", {"stopwalk","stopmovement"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local hum = GetHuman(); if not hum then return end
     hum:MoveTo(hrp.Position)
-    Notify("🛑  Movement stopped")
+    Notify("ðŸ›‘  Movement stopped")
 end)
 
--- seatpart — sit in the nearest seat/vehicle seat
+-- seatpart â€” sit in the nearest seat/vehicle seat
 Cmd("seatpart", {"trysit","findseat"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local best, bestDist = nil, math.huge
@@ -3349,17 +3353,17 @@ Cmd("seatpart", {"trysit","findseat"}, function()
     end
     if best then
         best:Sit(GetHuman())
-        Notify("💺  Sat in: "..best.Name.." ("..math.floor(bestDist).." studs away)")
+        Notify("ðŸ’º  Sat in: "..best.Name.." ("..math.floor(bestDist).." studs away)")
     else
         Notify("No seats found nearby","warn")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PROXIMITY & INTERACTION                     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PROXIMITY & INTERACTION                     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- triggerproximity — fire nearest ProximityPrompt
+-- triggerproximity â€” fire nearest ProximityPrompt
 Cmd("triggerproximity", {"trigger","prox"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local best, bestDist = nil, math.huge
@@ -3379,15 +3383,15 @@ Cmd("triggerproximity", {"trigger","prox"}, function()
             local PPService = game:GetService("ProximityPromptService")
             PPService:PromptTriggered(best, LP)
         end)
-        Notify("🔘  Triggered: "..best.Parent.Name)
+        Notify("ðŸ”˜  Triggered: "..best.Parent.Name)
     else
         Notify("No ProximityPrompt in range","warn")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PART CREATION TOOLS                         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PART CREATION TOOLS                         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Instance.new with properties, anchoring,
 --           workspace parenting, BrickColor, Material.
 
@@ -3404,10 +3408,10 @@ Cmd("createpart", {"part","cp"}, function(args)
     p.Anchored  = true
     p.BrickColor = BrickColor.new(Color3.fromRGB(r,g,b))
     p.Material  = Enum.Material.SmoothPlastic
-    Notify(string.format("🧱  Part created  size=%d  rgb(%d,%d,%d)", size, r, g, b))
+    Notify(string.format("ðŸ§±  Part created  size=%d  rgb(%d,%d,%d)", size, r, g, b))
 end)
 
--- createplatform — create a flat platform at your position
+-- createplatform â€” create a flat platform at your position
 Cmd("createplatform", {"platform2","plat"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local w   = tonumber(args[1]) or 20
@@ -3419,12 +3423,12 @@ Cmd("createplatform", {"platform2","plat"}, function(args)
     p.Anchored = true
     p.BrickColor = BrickColor.new("Medium stone grey")
     p.Material = Enum.Material.SmoothPlastic
-    Notify(string.format("🧱  Platform created  %dx%d", w, d))
+    Notify(string.format("ðŸ§±  Platform created  %dx%d", w, d))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: KEY BIND / MACRO SYSTEM  (IY-ported)        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: KEY BIND / MACRO SYSTEM  (IY-ported)        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: UserInputService.InputBegan key detection,
 --           storing and firing arbitrary command strings,
 --           runtime configurable hotkeys.
@@ -3452,7 +3456,7 @@ Cmd("bind", {"bindkey","hotkey"}, function(args)
     if not ok then Notify("Invalid key: "..key,"error"); return end
     _binds[key] = cmd
     _ensureBindListener()
-    Notify("🔑  Bind ["..key.."] → '"..cmd.."'")
+    Notify("ðŸ”‘  Bind ["..key.."] â†’ '"..cmd.."'")
 end)
 
 -- unbind <key>
@@ -3460,27 +3464,27 @@ Cmd("unbind", {"unbindkey","removebind"}, function(args)
     local key = (args[1] or ""):upper()
     if not _binds[key] then Notify("No bind on key "..key,"warn"); return end
     _binds[key] = nil
-    Notify("🔑  Unbound ["..key.."]")
+    Notify("ðŸ”‘  Unbound ["..key.."]")
 end)
 
 -- listbinds
 Cmd("listbinds", {"binds","showbinds"}, function()
     if next(_binds) == nil then Notify("No binds set","warn"); return end
     local lines = {}
-    for k, v in pairs(_binds) do table.insert(lines, "["..k.."] → "..v) end
+    for k, v in pairs(_binds) do table.insert(lines, "["..k.."] â†’ "..v) end
     print("[S-Admin] Binds:\n  "..table.concat(lines,"\n  "))
-    Notify("🔑  "..#lines.." bind(s) — see console", "info")
+    Notify("ðŸ”‘  "..#lines.." bind(s) â€” see console", "info")
 end)
 
 -- clearbinds
 Cmd("clearbinds", {"clearallbinds","resetbinds"}, function()
     _binds = {}
-    Notify("🔑  All binds cleared")
+    Notify("ðŸ”‘  All binds cleared")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: KILL AURA  (IY-ported)                      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: KILL AURA  (IY-ported)                      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Continuously flings nearby players using the same velocity
 --  spike technique as the fling command.  Range and speed are
 --  configurable.  Teaches: distance checks, ipairs filtering,
@@ -3494,7 +3498,7 @@ Cmd("killaura", {"ka","aura"}, function(args)
     _kaRange = tonumber(args[1]) or 15
     _kaSpeed = tonumber(args[2]) or 9999
     if _kaRunning then
-        Notify(string.format("☠  KillAura range→%d speed→%d (updated)", _kaRange, _kaSpeed),"info"); return
+        Notify(string.format("â˜   KillAura rangeâ†’%d speedâ†’%d (updated)", _kaRange, _kaSpeed),"info"); return
     end
     _kaRunning = true
     task.spawn(function()
@@ -3521,18 +3525,18 @@ Cmd("killaura", {"ka","aura"}, function(args)
             task.wait(0.1)
         end
     end)
-    Notify(string.format("☠  KillAura ON  range %d  speed %d", _kaRange, _kaSpeed))
+    Notify(string.format("â˜   KillAura ON  range %d  speed %d", _kaRange, _kaSpeed))
 end)
 
 Cmd("unkillaura", {"noka","noaura","stopka"}, function()
     _kaRunning = false
-    Notify("☠  KillAura OFF")
+    Notify("â˜   KillAura OFF")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FREEZE / UNFREEZE TARGETS  (IY-ported)      ║
--- ╚══════════════════════════════════════════════════════════╝
---  Client-side anchoring of target HRP — effective for NPCs
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FREEZE / UNFREEZE TARGETS  (IY-ported)      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--  Client-side anchoring of target HRP â€” effective for NPCs
 --  and teaches Anchored property manipulation.
 
 Cmd("freezetarget", {"ft","freezeplayer"}, function(args)
@@ -3542,7 +3546,7 @@ Cmd("freezetarget", {"ft","freezeplayer"}, function(args)
         local hrp = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
         if hrp then hrp.Anchored = true; n = n + 1 end
     end
-    Notify("🧊  Frozen "..n.." player(s)")
+    Notify("ðŸ§Š  Frozen "..n.." player(s)")
 end)
 
 Cmd("unfreezettarget", {"uft","unfreezeplayer"}, function(args)
@@ -3552,12 +3556,12 @@ Cmd("unfreezettarget", {"uft","unfreezeplayer"}, function(args)
         local hrp = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
         if hrp then hrp.Anchored = false; n = n + 1 end
     end
-    Notify("🧊  Unfrozen "..n.." player(s)")
+    Notify("ðŸ§Š  Unfrozen "..n.." player(s)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TEAM COMMANDS  (IY-ported)                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TEAM COMMANDS  (IY-ported)                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Teams service, Team objects, BrickColor
 --           assignment, player team property.
 
@@ -3573,7 +3577,7 @@ Cmd("jointeam", {"team","changeteam"}, function(args)
     if not found then Notify("Team not found: "..query,"error"); return end
     LP.Team      = found
     LP.TeamColor = found.TeamColor
-    Notify("👥  Joined team: "..found.Name)
+    Notify("ðŸ‘¥  Joined team: "..found.Name)
 end)
 
 Cmd("listteams", {"teams","getteams"}, function()
@@ -3584,7 +3588,7 @@ Cmd("listteams", {"teams","getteams"}, function()
         table.insert(names, v.Name.."("..tostring(v.TeamColor)..")")
     end
     print("[S-Admin] Teams: "..table.concat(names,", "))
-    Notify("👥  "..#names.." team(s) — see console", "info")
+    Notify("ðŸ‘¥  "..#names.." team(s) â€” see console", "info")
 end)
 
 Cmd("teamcolor", {"setteamcolor","mytc"}, function(args)
@@ -3592,12 +3596,12 @@ Cmd("teamcolor", {"setteamcolor","mytc"}, function(args)
     local g = tonumber(args[2]) or 255
     local b = tonumber(args[3]) or 255
     LP.TeamColor = BrickColor.new(Color3.fromRGB(r,g,b))
-    Notify(string.format("👥  TeamColor → (%d,%d,%d)", r, g, b))
+    Notify(string.format("ðŸ‘¥  TeamColor â†’ (%d,%d,%d)", r, g, b))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TOOL MANAGEMENT  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TOOL MANAGEMENT  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Backpack children, Tool:Activate, EquipTool,
 --           tool parenting / cloning patterns.
 
@@ -3621,7 +3625,7 @@ Cmd("listtools", {"tools","mytools"}, function()
     local names = {}
     for _, v in ipairs(t) do table.insert(names, v.Name) end
     print("[S-Admin] Tools: "..table.concat(names,", "))
-    Notify("🔧  "..#names.." tool(s) — see console","info")
+    Notify("ðŸ”§  "..#names.." tool(s) â€” see console","info")
 end)
 
 -- equiptool <name>
@@ -3632,17 +3636,17 @@ Cmd("equiptool", {"equip","wield"}, function(args)
     for _, t in ipairs(GetAllTools()) do
         if t.Name:lower():find(query,1,true) then
             hum:EquipTool(t)
-            Notify("🔧  Equipped: "..t.Name); return
+            Notify("ðŸ”§  Equipped: "..t.Name); return
         end
     end
     Notify("Tool not found: "..query,"error")
 end)
 
--- droptool  — unequip current held tool
+-- droptool  â€” unequip current held tool
 Cmd("droptool", {"unequip","drop"}, function()
     local hum = GetHuman(); if not hum then return end
     hum:UnequipTools()
-    Notify("🔧  Tool unequipped")
+    Notify("ðŸ”§  Tool unequipped")
 end)
 
 -- removetool <name>
@@ -3653,31 +3657,31 @@ Cmd("removetool", {"deletetool","rmtool"}, function(args)
     for _, t in ipairs(GetAllTools()) do
         if t.Name:lower():find(query,1,true) then t:Destroy(); n=n+1 end
     end
-    Notify(n>0 and "🔧  Removed "..n.." tool(s)" or "Tool not found","error")
+    Notify(n>0 and "ðŸ”§  Removed "..n.." tool(s)" or "Tool not found","error")
 end)
 
--- cleartools  — remove all tools from backpack
+-- cleartools  â€” remove all tools from backpack
 Cmd("cleartools", {"removealltools","deletetools"}, function()
     local n = 0
     for _, t in ipairs(GetAllTools()) do t:Destroy(); n=n+1 end
-    Notify("🔧  Cleared "..n.." tool(s)")
+    Notify("ðŸ”§  Cleared "..n.." tool(s)")
 end)
 
--- activatetool  — simulate Tool:Activate on equipped tool
+-- activatetool  â€” simulate Tool:Activate on equipped tool
 Cmd("activatetool", {"usetool","clicktool"}, function()
     local chr = GetChar(); if not chr then return end
     for _, t in ipairs(chr:GetChildren()) do
         if t:IsA("Tool") then
             pcall(function() t:Activate() end)
-            Notify("🔧  Activated: "..t.Name); return
+            Notify("ðŸ”§  Activated: "..t.Name); return
         end
     end
     Notify("No tool equipped","warn")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: REMOTE / CHAT LOGGER  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: REMOTE / CHAT LOGGER  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Instance DescendantAdded, RemoteEvent.OnClientEvent,
 --           RemoteFunction.OnClientInvoke hooks, chat event.
 
@@ -3704,14 +3708,14 @@ Cmd("remotelog", {"rlog","logremotes"}, function()
             table.insert(_remoteLogConns, c)
         end
     end
-    Notify("📡  Remote log ON — output in console","info")
+    Notify("ðŸ“¡  Remote log ON â€” output in console","info")
 end)
 
 Cmd("unremotelog", {"norlog","stopremotelog"}, function()
     if _remoteLogConn then _remoteLogConn:Disconnect(); _remoteLogConn = nil end
     for _, c in ipairs(_remoteLogConns) do pcall(function() c:Disconnect() end) end
     _remoteLogConns = {}
-    Notify("📡  Remote log OFF")
+    Notify("ðŸ“¡  Remote log OFF")
 end)
 
 -- Chat log: print every chat message to console
@@ -3742,39 +3746,39 @@ Cmd("chatlog", {"logchat","spychat"}, function()
             end
         end
     end)
-    Notify(success and "💬  Chat log ON — console" or "💬  Chat log (limited in this game)","info")
+    Notify(success and "ðŸ’¬  Chat log ON â€” console" or "ðŸ’¬  Chat log (limited in this game)","info")
 end)
 
 Cmd("unchatlog", {"stopchatlog","nochatlog"}, function()
     if _chatLogConn then pcall(function() _chatLogConn:Disconnect() end); _chatLogConn = nil end
-    Notify("💬  Chat log OFF")
+    Notify("ðŸ’¬  Chat log OFF")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED ANIMATION  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED ANIMATION  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- animspeed <multiplier>  — change AnimationTrack speed
+-- animspeed <multiplier>  â€” change AnimationTrack speed
 Cmd("animspeed", {"as","animrate"}, function(args)
     local spd = tonumber(args[1]) or 1
     local hum = GetHuman(); if not hum then return end
     for _, t in ipairs(hum:GetPlayingAnimationTracks()) do
         t:AdjustSpeed(spd)
     end
-    Notify("🎭  Animation speed → "..spd.."x")
+    Notify("ðŸŽ­  Animation speed â†’ "..spd.."x")
 end)
 
--- animweight <weight>  — change AnimationTrack weight on all playing
+-- animweight <weight>  â€” change AnimationTrack weight on all playing
 Cmd("animweight", {"aw","animblend"}, function(args)
     local w   = tonumber(args[1]) or 1
     local hum = GetHuman(); if not hum then return end
     for _, t in ipairs(hum:GetPlayingAnimationTracks()) do
         t:AdjustWeight(w)
     end
-    Notify("🎭  Anim weight → "..w)
+    Notify("ðŸŽ­  Anim weight â†’ "..w)
 end)
 
--- loopemote <name>  — loop a named emote until stopanim
+-- loopemote <name>  â€” loop a named emote until stopanim
 Cmd("loopemote", {"le","repeatemote"}, function(args)
     local name = (args[1] or ""):lower()
     local id   = ({wave=507770239,dance=507771019,laugh=507770818,point=507770453,
@@ -3788,10 +3792,10 @@ Cmd("loopemote", {"le","repeatemote"}, function(args)
             if not track.Looped then task.wait(0.1) else break end
         end
     end)
-    Notify("🎭  LoopEmote: "..name)
+    Notify("ðŸŽ­  LoopEmote: "..name)
 end)
 
--- freezepose  — freeze all Motor6D joints in place
+-- freezepose  â€” freeze all Motor6D joints in place
 Cmd("freezepose", {"pose","lockpose"}, function()
     local char = GetChar(); if not char then return end
     for _, v in ipairs(char:GetDescendants()) do
@@ -3799,7 +3803,7 @@ Cmd("freezepose", {"pose","lockpose"}, function()
             v.MaxVelocity = 0
         end
     end
-    Notify("🎭  Pose frozen  (unpose to restore)")
+    Notify("ðŸŽ­  Pose frozen  (unpose to restore)")
 end)
 
 Cmd("unpose", {"unfreezepose","unlockpose"}, function()
@@ -3809,12 +3813,12 @@ Cmd("unpose", {"unfreezepose","unlockpose"}, function()
             v.MaxVelocity = 0.1
         end
     end
-    Notify("🎭  Pose unfrozen")
+    Notify("ðŸŽ­  Pose unfrozen")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: LEADERSTAT VIEWER  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: LEADERSTAT VIEWER  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: leaderstats Instance, value objects (IntValue,
 --           StringValue, etc.) and iterating player data.
 
@@ -3829,10 +3833,10 @@ Cmd("stats", {"leaderstats","leaderstat","ls"}, function(args)
         table.insert(lines, v.Name..": "..val)
     end
     print("[S-Admin] "..target.Name.." stats:\n  "..table.concat(lines,"\n  "))
-    Notify("📊  "..target.Name.." → "..table.concat(lines,"  |  "), "info")
+    Notify("ðŸ“Š  "..target.Name.." â†’ "..table.concat(lines,"  |  "), "info")
 end)
 
--- setstat <player> <stat> <value>  — change a leaderstat value (client)
+-- setstat <player> <stat> <value>  â€” change a leaderstat value (client)
 Cmd("setstat", {"writestat","statset"}, function(args)
     local target = GetPlayers(args[1])[1]
     local stat   = args[2]
@@ -3851,12 +3855,12 @@ Cmd("setstat", {"writestat","statset"}, function(args)
             sv.Value = val
         end
     end)
-    Notify("📊  "..target.Name.."."..stat.." → "..val)
+    Notify("ðŸ“Š  "..target.Name.."."..stat.." â†’ "..val)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PATHFINDING  (IY-ported)                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PATHFINDING  (IY-ported)                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: PathfindingService, Path:ComputeAsync,
 --           waypoint iteration, MoveTo chaining.
 
@@ -3913,7 +3917,7 @@ Cmd("pathto", {"pt","walkpath","navigateto"}, function(args)
     end
     if _pathActive then _pathActive = false; task.wait(0.1) end
     task.spawn(function() _walkPath(goal) end)
-    Notify("🗺  Pathfinding...")
+    Notify("ðŸ—º  Pathfinding...")
 end)
 
 Cmd("stoppath", {"cancelpath","nopathto"}, function()
@@ -3921,7 +3925,7 @@ Cmd("stoppath", {"cancelpath","nopathto"}, function()
     local hum = GetHuman()
     local hrp = GetHRP()
     if hum and hrp then hum:MoveTo(hrp.Position) end
-    Notify("🗺  Pathfinding cancelled")
+    Notify("ðŸ—º  Pathfinding cancelled")
 end)
 
 -- pathtowp <name>
@@ -3931,14 +3935,14 @@ Cmd("pathtowp", {"ptwp","navigatewp"}, function(args)
     if not v then Notify("Waypoint not found","error"); return end
     if _pathActive then _pathActive = false; task.wait(0.1) end
     task.spawn(function() _walkPath(Vector3.new(v.x,v.y,v.z)) end)
-    Notify("🗺  Pathfinding to '"..name.."'")
+    Notify("ðŸ—º  Pathfinding to '"..name.."'")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED PHYSICS / FORCE TOOLS  (IY-ported) ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED PHYSICS / FORCE TOOLS  (IY-ported) â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- forcepush <player>  — send a BodyVelocity burst at target
+-- forcepush <player>  â€” send a BodyVelocity burst at target
 Cmd("forcepush", {"push","blast"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or not target.Character then Notify("Target not found","error"); return end
@@ -3951,10 +3955,10 @@ Cmd("forcepush", {"push","blast"}, function(args)
     bv.Velocity  = dir * power + Vector3.new(0, power*0.5, 0)
     bv.MaxForce  = Vector3.new(1e5,1e5,1e5)
     game:GetService("Debris"):AddItem(bv, 0.15)
-    Notify("💨  Force push → "..target.Name.." (power "..power..")")
+    Notify("ðŸ’¨  Force push â†’ "..target.Name.." (power "..power..")")
 end)
 
--- pull <player>  — BodyVelocity pull target toward you
+-- pull <player>  â€” BodyVelocity pull target toward you
 Cmd("pull", {"attract"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or not target.Character then Notify("Target not found","error"); return end
@@ -3967,32 +3971,32 @@ Cmd("pull", {"attract"}, function(args)
     bv.Velocity  = dir * power
     bv.MaxForce  = Vector3.new(1e5,1e5,1e5)
     game:GetService("Debris"):AddItem(bv, 0.2)
-    Notify("🧲  Pulled "..target.Name.." toward you")
+    Notify("ðŸ§²  Pulled "..target.Name.." toward you")
 end)
 
--- velocity <X> <Y> <Z>  — set own velocity directly
+-- velocity <X> <Y> <Z>  â€” set own velocity directly
 Cmd("velocity", {"setvelocity","vel"}, function(args)
     local x = tonumber(args[1]) or 0
     local y = tonumber(args[2]) or 0
     local z = tonumber(args[3]) or 0
     local hrp = GetHRP(); if not hrp then return end
     hrp.AssemblyLinearVelocity = Vector3.new(x,y,z)
-    Notify(string.format("💨  Velocity → %.0f,%.0f,%.0f",x,y,z))
+    Notify(string.format("ðŸ’¨  Velocity â†’ %.0f,%.0f,%.0f",x,y,z))
 end)
 
--- launch  — upward velocity burst
+-- launch  â€” upward velocity burst
 Cmd("launch", {"yeet","boost"}, function(args)
     local power = tonumber(args[1]) or 200
     local hrp   = GetHRP(); if not hrp then return end
     hrp.AssemblyLinearVelocity = Vector3.new(0, power, 0)
-    Notify("🚀  Launched! (power "..power..")")
+    Notify("ðŸš€  Launched! (power "..power..")")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: LIGHTING POST-EFFECTS  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: LIGHTING POST-EFFECTS  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: BlurEffect, BloomEffect, SunRaysEffect,
---           ColorCorrectionEffect, DepthOfFieldEffect —
+--           ColorCorrectionEffect, DepthOfFieldEffect â€”
 --           all children of Lighting.
 
 local function _getOrCreateFX(className)
@@ -4006,10 +4010,10 @@ Cmd("blur", {}, function(args)
     if size == 0 then
         local fx = Lighting:FindFirstChildOfClass("BlurEffect")
         if fx then fx:Destroy() end
-        Notify("🌫  Blur OFF"); return
+        Notify("ðŸŒ«  Blur OFF"); return
     end
     _getOrCreateFX("BlurEffect").Size = math.clamp(size, 0, 56)
-    Notify("🌫  Blur → "..size)
+    Notify("ðŸŒ«  Blur â†’ "..size)
 end)
 
 Cmd("bloom", {}, function(args)
@@ -4019,13 +4023,13 @@ Cmd("bloom", {}, function(args)
     if intensity == 0 then
         local fx = Lighting:FindFirstChildOfClass("BloomEffect")
         if fx then fx:Destroy() end
-        Notify("✨  Bloom OFF"); return
+        Notify("âœ¨  Bloom OFF"); return
     end
     local fx = _getOrCreateFX("BloomEffect")
     fx.Intensity  = math.clamp(intensity, 0, 10)
     fx.Threshold  = math.clamp(threshold, 0, 1)
     fx.Size       = math.clamp(size, 0, 56)
-    Notify(string.format("✨  Bloom  intensity=%.1f  threshold=%.2f", intensity, threshold))
+    Notify(string.format("âœ¨  Bloom  intensity=%.1f  threshold=%.2f", intensity, threshold))
 end)
 
 Cmd("sunrays", {"rays"}, function(args)
@@ -4034,12 +4038,12 @@ Cmd("sunrays", {"rays"}, function(args)
     if intensity == 0 then
         local fx = Lighting:FindFirstChildOfClass("SunRaysEffect")
         if fx then fx:Destroy() end
-        Notify("☀  Sun Rays OFF"); return
+        Notify("â˜€  Sun Rays OFF"); return
     end
     local fx = _getOrCreateFX("SunRaysEffect")
     fx.Intensity = math.clamp(intensity, 0, 1)
     fx.Spread    = math.clamp(spread,    0, 1)
-    Notify(string.format("☀  SunRays  intensity=%.2f  spread=%.2f", intensity, spread))
+    Notify(string.format("â˜€  SunRays  intensity=%.2f  spread=%.2f", intensity, spread))
 end)
 
 Cmd("dof", {"depthoffield"}, function(args)
@@ -4051,13 +4055,13 @@ Cmd("dof", {"depthoffield"}, function(args)
     if focal == 0 then
         local fx = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
         if fx then fx:Destroy() end
-        Notify("📷  DOF OFF"); return
+        Notify("ðŸ“·  DOF OFF"); return
     end
     local fx = _getOrCreateFX("DepthOfFieldEffect")
     fx.FocalDistance = focal
     fx.NearIntensity  = nearIn
     fx.FarIntensity   = nearOut
-    Notify(string.format("📷  DOF focal=%.0f", focal))
+    Notify(string.format("ðŸ“·  DOF focal=%.0f", focal))
 end)
 
 Cmd("colorgrade", {"cc","colorshift","colorcorrect"}, function(args)
@@ -4070,7 +4074,7 @@ Cmd("colorgrade", {"cc","colorshift","colorcorrect"}, function(args)
     if not args[1] then
         local fx = Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
         if fx then fx:Destroy() end
-        Notify("🎨  Color Correction OFF"); return
+        Notify("ðŸŽ¨  Color Correction OFF"); return
     end
     local fx = _getOrCreateFX("ColorCorrectionEffect")
     fx.Brightness  = math.clamp(bright, -1, 1)
@@ -4080,7 +4084,7 @@ Cmd("colorgrade", {"cc","colorshift","colorcorrect"}, function(args)
         math.clamp(128+r,0,255),
         math.clamp(128+g,0,255),
         math.clamp(128+b,0,255))
-    Notify(string.format("🎨  ColorGrade  B=%.2f C=%.2f S=%.2f", bright, cont, sat))
+    Notify(string.format("ðŸŽ¨  ColorGrade  B=%.2f C=%.2f S=%.2f", bright, cont, sat))
 end)
 
 Cmd("nopostfx", {"clearpostfx","removefx"}, function()
@@ -4088,18 +4092,18 @@ Cmd("nopostfx", {"clearpostfx","removefx"}, function()
     for _, v in ipairs(Lighting:GetChildren()) do
         if v:IsA("PostEffect") then v:Destroy(); n=n+1 end
     end
-    Notify("🎨  Removed "..n.." post-effects")
+    Notify("ðŸŽ¨  Removed "..n.." post-effects")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: BILLBOARD SIGNS  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: BILLBOARD SIGNS  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: BillboardGui anchored to workspace parts,
 --           creating 3D text signs, managing a sign table.
 
 local _signs = {}   -- {part, billboardgui}
 
--- sign <text>  — create a floating text sign at your position
+-- sign <text>  â€” create a floating text sign at your position
 Cmd("sign", {"createsign","makesign"}, function(args)
     local text = table.concat(args," ")
     if text == "" then Notify("Usage: sign <text>","warn"); return end
@@ -4129,35 +4133,35 @@ Cmd("sign", {"createsign","makesign"}, function(args)
     Corner(lbl, 6)
 
     table.insert(_signs, {part=part, gui=bb})
-    Notify("💬  Sign created: '"..text.."'")
+    Notify("ðŸ’¬  Sign created: '"..text.."'")
 end)
 
--- nosign  — remove most recent sign
+-- nosign  â€” remove most recent sign
 Cmd("nosign", {"removesign","delsign"}, function()
     if #_signs == 0 then Notify("No signs to remove","warn"); return end
     local s = table.remove(_signs)
     pcall(function() s.part:Destroy() end)
-    Notify("💬  Sign removed")
+    Notify("ðŸ’¬  Sign removed")
 end)
 
--- clearsigns  — remove all signs
+-- clearsigns  â€” remove all signs
 Cmd("clearsigns", {"removesigns","deletesigns"}, function()
     local n = #_signs
     for _, s in ipairs(_signs) do pcall(function() s.part:Destroy() end) end
     _signs = {}
-    Notify("💬  "..n.." sign(s) cleared")
+    Notify("ðŸ’¬  "..n.." sign(s) cleared")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: NPC / HUMANOID CONTROL  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: NPC / HUMANOID CONTROL  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: controlling NPC Humanoids via client CameraSubject
 --           swap and MoveTo, NetworkOwnership concepts.
 
 local _controlledHum = nil
 local _controlConn   = nil
 
--- control <npc name>  — hijack nearest NPC matching name
+-- control <npc name>  â€” hijack nearest NPC matching name
 Cmd("control", {"takeover","possess"}, function(args)
     local query = (args[1] or ""):lower()
     if query == "" then Notify("Usage: control <npc name>","warn"); return end
@@ -4183,7 +4187,7 @@ Cmd("control", {"takeover","possess"}, function(args)
         local md = best.MoveDirection
         if md.Magnitude > 0 then _controlledHum:MoveTo(best.Parent.PrimaryPart.Position + md) end
     end)
-    Notify("🕹  Controlling: "..(best.Parent and best.Parent.Name or "NPC"))
+    Notify("ðŸ•¹  Controlling: "..(best.Parent and best.Parent.Name or "NPC"))
 end)
 
 Cmd("uncontrol", {"release","unpossess"}, function()
@@ -4194,35 +4198,35 @@ Cmd("uncontrol", {"release","unpossess"}, function()
         workspace.CurrentCamera.CameraSubject = char:FindFirstChildOfClass("Humanoid")
     end
     workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-    Notify("🕹  Control released")
+    Notify("ðŸ•¹  Control released")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SEAT / VEHICLE TOOLS  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SEAT / VEHICLE TOOLS  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- unseat  — force unseat yourself
+-- unseat  â€” force unseat yourself
 Cmd("unseat", {"ejectseat","leaveseat"}, function()
     local hum = GetHuman(); if not hum then return end
     if hum.SeatPart then
         hum.Sit = false
-        Notify("💺  Unseated")
+        Notify("ðŸ’º  Unseated")
     else
         Notify("Not seated","warn")
     end
 end)
 
--- ejectall  — unseat all players (client-side Humanoid.Sit)
+-- ejectall  â€” unseat all players (client-side Humanoid.Sit)
 Cmd("ejectall", {"kickseats","unseatsall"}, function()
     local n = 0
     for _, p in ipairs(Players:GetPlayers()) do
         local hum = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
         if hum and hum.SeatPart then hum.Sit = false; n=n+1 end
     end
-    Notify("💺  Ejected "..n.." player(s)")
+    Notify("ðŸ’º  Ejected "..n.." player(s)")
 end)
 
--- vehicleflip  — flip nearest VehicleSeat's CFrame upright
+-- vehicleflip  â€” flip nearest VehicleSeat's CFrame upright
 Cmd("vehicleflip", {"flipcar","flipvehicle"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local best, bestDist = nil, math.huge
@@ -4234,37 +4238,37 @@ Cmd("vehicleflip", {"flipcar","flipvehicle"}, function()
     end
     if not best then Notify("No vehicle nearby","warn"); return end
     best.CFrame = CFrame.new(best.Position) * CFrame.Angles(0,0,0)
-    Notify("🚗  Vehicle flipped upright  ("..math.floor(bestDist).." studs)")
+    Notify("ðŸš—  Vehicle flipped upright  ("..math.floor(bestDist).." studs)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CFRAME MANIPULATION  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CFRAME MANIPULATION  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: CFrame arithmetic, Angles, rotation offsets,
 --           look direction construction.
 
--- rotateto <X> <Y> <Z>  — set HRP rotation (Euler degrees)
+-- rotateto <X> <Y> <Z>  â€” set HRP rotation (Euler degrees)
 Cmd("rotateto", {"rotate","setrotation"}, function(args)
     local x = math.rad(tonumber(args[1]) or 0)
     local y = math.rad(tonumber(args[2]) or 0)
     local z = math.rad(tonumber(args[3]) or 0)
     local hrp = GetHRP(); if not hrp then return end
     hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(x,y,z)
-    Notify(string.format("🔄  Rotated to (%.0f°, %.0f°, %.0f°)",
+    Notify(string.format("ðŸ”„  Rotated to (%.0fÂ°, %.0fÂ°, %.0fÂ°)",
         math.deg(x), math.deg(y), math.deg(z)))
 end)
 
--- offset <X> <Y> <Z>  — shift HRP position by offset
+-- offset <X> <Y> <Z>  â€” shift HRP position by offset
 Cmd("offset", {"shift","move"}, function(args)
     local x = tonumber(args[1]) or 0
     local y = tonumber(args[2]) or 0
     local z = tonumber(args[3]) or 0
     local hrp = GetHRP(); if not hrp then return end
     hrp.CFrame = hrp.CFrame * CFrame.new(x,y,z)
-    Notify(string.format("📐  Offset → (%.1f, %.1f, %.1f)",x,y,z))
+    Notify(string.format("ðŸ“  Offset â†’ (%.1f, %.1f, %.1f)",x,y,z))
 end)
 
--- faceplayer <name>  — rotate HRP to face a player
+-- faceplayer <name>  â€” rotate HRP to face a player
 Cmd("faceplayer", {"face2","lookplayer"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or not target.Character then Notify("Target not found","error"); return end
@@ -4272,16 +4276,16 @@ Cmd("faceplayer", {"face2","lookplayer"}, function(args)
     local tHRP = target.Character:FindFirstChild("HumanoidRootPart"); if not tHRP then return end
     local dir  = (tHRP.Position - hrp.Position) * Vector3.new(1,0,1)
     hrp.CFrame = CFrame.new(hrp.Position, hrp.Position + dir)
-    Notify("↗  Facing "..target.Name)
+    Notify("â†—  Facing "..target.Name)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: INSTANCE SEARCH / INSPECTOR  (IY-ported)   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: INSTANCE SEARCH / INSPECTOR  (IY-ported)   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: recursive GetDescendants, full path string via
 --           :GetFullName(), filtering by name and class.
 
--- findinstance <name>  — search all descendants
+-- findinstance <name>  â€” search all descendants
 Cmd("findinstance", {"find","fi"}, function(args)
     local query = table.concat(args," "):lower()
     if query == "" then Notify("Usage: findinstance <name>","warn"); return end
@@ -4294,10 +4298,10 @@ Cmd("findinstance", {"find","fi"}, function(args)
     end
     if #results == 0 then Notify("Not found: "..query,"warn"); return end
     print("[S-Admin] find '"..query.."':\n  "..table.concat(results,"\n  "))
-    Notify("🔍  Found "..#results.."  — see console","info")
+    Notify("ðŸ”  Found "..#results.."  â€” see console","info")
 end)
 
--- findclass <ClassName>  — list all instances of a class
+-- findclass <ClassName>  â€” list all instances of a class
 Cmd("findclass", {"fc2","listclass"}, function(args)
     local cls = args[1]; if not cls then Notify("Usage: findclass <ClassName>","warn"); return end
     local results, cap = {}, 20
@@ -4309,10 +4313,10 @@ Cmd("findclass", {"fc2","listclass"}, function(args)
     end
     if #results == 0 then Notify("No instances of class: "..cls,"warn"); return end
     print("[S-Admin] class '"..cls.."':\n  "..table.concat(results,"\n  "))
-    Notify("🔍  "..#results.." instance(s) — see console","info")
+    Notify("ðŸ”  "..#results.." instance(s) â€” see console","info")
 end)
 
--- getprops <path>  — print all properties of an instance
+-- getprops <path>  â€” print all properties of an instance
 Cmd("getprops", {"properties","props"}, function(args)
     local path = table.concat(args," ")
     if path == "" then Notify("Usage: getprops <instance path>","warn"); return end
@@ -4326,16 +4330,16 @@ Cmd("getprops", {"properties","props"}, function(args)
     for _, prop in ipairs({"Name","ClassName","Parent","Visible","Transparency","Position","Size","Color","BrickColor","Material","Anchored","CanCollide"}) do
         pcall(function() print("  "..prop.." = "..tostring(obj[prop])) end)
     end
-    Notify("🔍  Props printed — see console","info")
+    Notify("ðŸ”  Props printed â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SCRIPT EXECUTION TOOLS  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SCRIPT EXECUTION TOOLS  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: loadstring, pcall-wrapped execution, HttpGet
 --           for remote script loading.
 
--- exec <lua code>  — execute a Lua string directly
+-- exec <lua code>  â€” execute a Lua string directly
 Cmd("exec", {"execute","run"}, function(args)
     local code = table.concat(args," ")
     if code == "" then Notify("Usage: exec <lua code>","warn"); return end
@@ -4343,13 +4347,13 @@ Cmd("exec", {"execute","run"}, function(args)
     if not fn then Notify("Syntax error: "..tostring(err),"error"); return end
     local ok, res = pcall(fn)
     if ok then
-        Notify("✅  exec OK"..(res ~= nil and (" → "..tostring(res)) or ""))
+        Notify("âœ…  exec OK"..(res ~= nil and (" â†’ "..tostring(res)) or ""))
     else
-        Notify("❌  exec error: "..tostring(res),"error")
+        Notify("âŒ  exec error: "..tostring(res),"error")
     end
 end)
 
--- loadurl <url>  — load and execute a remote script
+-- loadurl <url>  â€” load and execute a remote script
 Cmd("loadurl", {"loadscript","runurl"}, function(args)
     local url = args[1]; if not url then Notify("Usage: loadurl <url>","warn"); return end
     local ok, err = pcall(function()
@@ -4358,43 +4362,43 @@ Cmd("loadurl", {"loadscript","runurl"}, function(args)
         if not fn then error(compErr) end
         fn()
     end)
-    Notify(ok and "✅  Script loaded from URL" or "❌  Load failed: "..tostring(err), ok and "success" or "error")
+    Notify(ok and "âœ…  Script loaded from URL" or "âŒ  Load failed: "..tostring(err), ok and "success" or "error")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MISC UTILITIES  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MISC UTILITIES  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- countdown <n>  — visible countdown with notify
+-- countdown <n>  â€” visible countdown with notify
 Cmd("countdown", {"timer2","count"}, function(args)
     local n = tonumber(args[1]) or 10
     n = math.clamp(math.floor(n), 1, 60)
-    Notify("⏱  Countdown: "..n, "info")
+    Notify("â±  Countdown: "..n, "info")
     task.spawn(function()
         for i = n, 1, -1 do
             task.wait(1)
-            Notify("⏱  "..i, "info")
+            Notify("â±  "..i, "info")
         end
-        Notify("⏱  Go!", "success")
+        Notify("â±  Go!", "success")
     end)
 end)
 
--- stopwatch  — start/stop a stopwatch
+-- stopwatch  â€” start/stop a stopwatch
 local _swStart = nil
 Cmd("stopwatch", {"sw","chrono"}, function()
     if not _swStart then
         _swStart = tick()
-        Notify("⏱  Stopwatch started")
+        Notify("â±  Stopwatch started")
     else
         local elapsed = tick() - _swStart
         _swStart = nil
         local m = math.floor(elapsed/60)
         local s = elapsed % 60
-        Notify(string.format("⏱  %.0f:%05.2f", m, s), "info")
+        Notify(string.format("â±  %.0f:%05.2f", m, s), "info")
     end
 end)
 
--- randomtp  — teleport to random position in map bounds
+-- randomtp  â€” teleport to random position in map bounds
 Cmd("randomtp", {"randpos","randjump"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local ext = workspace:GetExtentsSize()
@@ -4402,22 +4406,22 @@ Cmd("randomtp", {"randpos","randjump"}, function()
     local z   = math.random(-ext.Z/2, ext.Z/2)
     local y   = hrp.Position.Y
     hrp.CFrame = CFrame.new(x, y, z)
-    Notify(string.format("🎲  Random TP → %.0f, %.0f, %.0f", x, y, z))
+    Notify(string.format("ðŸŽ²  Random TP â†’ %.0f, %.0f, %.0f", x, y, z))
 end)
 
--- age  — print account age of a player
+-- age  â€” print account age of a player
 Cmd("age", {"accountage"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
-    Notify(string.format("👤  %s — account age: %d days", target.Name, target.AccountAge), "info")
+    Notify(string.format("ðŸ‘¤  %s â€” account age: %d days", target.Name, target.AccountAge), "info")
 end)
 
--- displayname  — get display name vs username
+-- displayname  â€” get display name vs username
 Cmd("displayname", {"dn","getname"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
-    Notify("👤  "..target.Name.." → display: "..target.DisplayName, "info")
+    Notify("ðŸ‘¤  "..target.Name.." â†’ display: "..target.DisplayName, "info")
 end)
 
--- platform  — detect platform type of self
+-- platform  â€” detect platform type of self
 Cmd("platforminfo", {"myplatform","device"}, function()
     local info = {
         Touch   = UserInputService.TouchEnabled,
@@ -4429,10 +4433,10 @@ Cmd("platforminfo", {"myplatform","device"}, function()
     local parts = {}
     for k,v in pairs(info) do table.insert(parts, k.."="..tostring(v)) end
     print("[S-Admin] Platform: "..table.concat(parts,"  "))
-    Notify("🖥  Platform — see console","info")
+    Notify("ðŸ–¥  Platform â€” see console","info")
 end)
 
--- memstats  — print memory usage to console
+-- memstats  â€” print memory usage to console
 Cmd("memstats", {"memory","mem"}, function()
     local stats = game:GetService("Stats")
     local mem   = stats:FindFirstChild("DataReceiveKbps")
@@ -4442,10 +4446,10 @@ Cmd("memstats", {"memory","mem"}, function()
         print("  DataSendKbps:    "..tostring(stats.DataSendKbps.Value))
         print("  Heartbeat/s:     "..tostring(stats.HeartbeatTimeMs.Value).."ms")
     end)
-    Notify("📊  Memory stats — see console","info")
+    Notify("ðŸ“Š  Memory stats â€” see console","info")
 end)
 
--- printidentity  — executor identity level
+-- printidentity  â€” executor identity level
 Cmd("printidentity", {"identity","level"}, function()
     local id = 0
     pcall(function() id = identifyexecutor and 8 or id end)
@@ -4453,22 +4457,22 @@ Cmd("printidentity", {"identity","level"}, function()
         local s = ""; game:GetService("ScriptContext"):AddCoreScriptLocal("",game)
         id = 2
     end)
-    Notify("🔐  Thread identity: "..id, "info")
+    Notify("ðŸ”  Thread identity: "..id, "info")
 end)
 
--- getexecutor  — get executor name if available
+-- getexecutor  â€” get executor name if available
 Cmd("getexecutor", {"executor","whatexec"}, function()
     local name = "Unknown"
     pcall(function() name = identifyexecutor() end)
     pcall(function() if not name or name == "Unknown" then name = getexecutorname() end end)
-    Notify("⚙  Executor: "..name, "info")
+    Notify("âš™  Executor: "..name, "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: LOOP UTILITIES  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: LOOP UTILITIES  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- loopsound <soundID>  — loop a sound every N seconds
+-- loopsound <soundID>  â€” loop a sound every N seconds
 local _loopSoundTask = nil
 Cmd("loopsound", {"lsound","soundloop"}, function(args)
     local id  = tonumber(args[1]); if not id then Notify("Usage: loopsound <id>","warn"); return end
@@ -4488,16 +4492,16 @@ Cmd("loopsound", {"lsound","soundloop"}, function(args)
             task.wait(int)
         end
     end)
-    Notify("🎵  Loop sound "..id)
+    Notify("ðŸŽµ  Loop sound "..id)
 end)
 
 Cmd("unloopsound", {"stoploopsound"}, function()
     if _loopSoundTask then task.cancel(_loopSoundTask); _loopSoundTask = nil end
     if _adminSound then pcall(function() _adminSound:Stop(); _adminSound:Destroy() end); _adminSound = nil end
-    Notify("🎵  Loop sound stopped")
+    Notify("ðŸŽµ  Loop sound stopped")
 end)
 
--- loopexec <interval> <cmd>  — repeatedly execute a command every N seconds
+-- loopexec <interval> <cmd>  â€” repeatedly execute a command every N seconds
 local _loopExecTask = nil
 Cmd("loopexec", {"lx","repeatcmd"}, function(args)
     local interval = tonumber(args[1])
@@ -4511,19 +4515,19 @@ Cmd("loopexec", {"lx","repeatcmd"}, function(args)
             task.wait(interval)
         end
     end)
-    Notify(string.format("🔁  LoopExec every %.1fs: '%s'", interval, cmd))
+    Notify(string.format("ðŸ”  LoopExec every %.1fs: '%s'", interval, cmd))
 end)
 
 Cmd("stoploopexec", {"stooplx","cancelloop"}, function()
     if _loopExecTask then task.cancel(_loopExecTask); _loopExecTask = nil end
-    Notify("🔁  LoopExec stopped")
+    Notify("ðŸ”  LoopExec stopped")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ACCESSORIES / AVATAR EXTRAS  (IY-ported)    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ACCESSORIES / AVATAR EXTRAS  (IY-ported)    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- addaccessory <assetID>  — insert accessory by ID
+-- addaccessory <assetID>  â€” insert accessory by ID
 Cmd("addaccessory", {"accessory","addhat","addacc"}, function(args)
     local id = tonumber(args[1]); if not id then Notify("Usage: addaccessory <assetID>","warn"); return end
     local ok, err = pcall(function()
@@ -4535,10 +4539,10 @@ Cmd("addaccessory", {"accessory","addhat","addacc"}, function(args)
             end
         end
     end)
-    Notify(ok and "🎩  Accessory added: "..id or "🎩  Failed: "..tostring(err), ok and "success" or "error")
+    Notify(ok and "ðŸŽ©  Accessory added: "..id or "ðŸŽ©  Failed: "..tostring(err), ok and "success" or "error")
 end)
 
--- removeaccessory <name>  — remove specific accessory by name
+-- removeaccessory <name>  â€” remove specific accessory by name
 Cmd("removeaccessory", {"delaccessory","rmacc"}, function(args)
     local query = table.concat(args," "):lower()
     local char  = GetChar(); if not char then return end
@@ -4548,7 +4552,7 @@ Cmd("removeaccessory", {"delaccessory","rmacc"}, function(args)
             v:Destroy(); n=n+1
         end
     end
-    Notify("🎩  Removed "..n.." accessory(ies)")
+    Notify("ðŸŽ©  Removed "..n.." accessory(ies)")
 end)
 
 -- listaccessories
@@ -4560,16 +4564,16 @@ Cmd("listaccessories", {"accessories","listacc"}, function()
     end
     if #accs == 0 then Notify("No accessories","warn"); return end
     print("[S-Admin] Accessories: "..table.concat(accs,", "))
-    Notify("🎩  "..#accs.." accessory(ies) — console","info")
+    Notify("ðŸŽ©  "..#accs.." accessory(ies) â€” console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ROPE / CONSTRAINT TOOLS  (IY-ported)        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ROPE / CONSTRAINT TOOLS  (IY-ported)        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: RopeConstraint, Attachment, constraint length,
 --           Visible property for debug rendering.
 
--- ropeto <player>  — rope your HRP to another player's HRP
+-- ropeto <player>  â€” rope your HRP to another player's HRP
 Cmd("ropeto", {"rope","connectrope"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or not target.Character then Notify("Target not found","error"); return end
@@ -4589,10 +4593,10 @@ Cmd("ropeto", {"rope","connectrope"}, function(args)
     rope.Visible      = true
     rope.Color        = BrickColor.new("Bright red")
     rope.Thickness    = 0.05
-    Notify("🪢  Roped to "..target.Name.."  (len="..rope.Length..")")
+    Notify("ðŸª¢  Roped to "..target.Name.."  (len="..rope.Length..")")
 end)
 
--- unrope  — remove rope constraint from self
+-- unrope  â€” remove rope constraint from self
 Cmd("unrope", {"detachrope","ropeless"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local r = hrp:FindFirstChild("S_Rope")
@@ -4600,10 +4604,10 @@ Cmd("unrope", {"detachrope","ropeless"}, function()
     for _, a in ipairs(hrp:GetChildren()) do
         if a.Name == "S_RopeA" then a:Destroy() end
     end
-    Notify("🪢  Rope removed")
+    Notify("ðŸª¢  Rope removed")
 end)
 
--- springto <player>  — SpringConstraint between self and target
+-- springto <player>  â€” SpringConstraint between self and target
 Cmd("springto", {"spring","springconnect"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or not target.Character then Notify("Target not found","error"); return end
@@ -4621,7 +4625,7 @@ Cmd("springto", {"spring","springconnect"}, function(args)
     sp.Damping      = 500
     sp.Visible      = true
     sp.Coils        = 8
-    Notify("🌀  Spring to "..target.Name.."  (len="..sp.FreeLength..")")
+    Notify("ðŸŒ€  Spring to "..target.Name.."  (len="..sp.FreeLength..")")
 end)
 
 Cmd("unspring", {"detachspring"}, function()
@@ -4629,14 +4633,14 @@ Cmd("unspring", {"detachspring"}, function()
     for _, v in ipairs(hrp:GetChildren()) do
         if v.Name == "S_Spring" or v.Name == "S_SpringA" then v:Destroy() end
     end
-    Notify("🌀  Spring removed")
+    Notify("ðŸŒ€  Spring removed")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED DISPLAY  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED DISPLAY  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- overlay <text>  — large always-on-top text overlay
+-- overlay <text>  â€” large always-on-top text overlay
 local _overlayGui = nil
 Cmd("overlay", {"setoverlay","showtext"}, function(args)
     local text = table.concat(args," ")
@@ -4655,18 +4659,18 @@ Cmd("overlay", {"setoverlay","showtext"}, function(args)
     lbl.Font           = Enum.Font.GothamBold
     lbl.TextScaled     = true
     lbl.ZIndex         = 100
-    Notify("📺  Overlay set")
+    Notify("ðŸ“º  Overlay set")
 end)
 
 Cmd("nooverlay", {"removeoverlay","clearoverlay"}, function()
     if _overlayGui then _overlayGui:Destroy(); _overlayGui = nil end
-    Notify("📺  Overlay removed")
+    Notify("ðŸ“º  Overlay removed")
 end)
 
--- crosshair  — toggle a custom crosshair
+-- crosshair  â€” toggle a custom crosshair
 local _crosshairGui = nil
 Cmd("crosshair", {"xhair","ch"}, function(args)
-    if _crosshairGui then _crosshairGui:Destroy(); _crosshairGui = nil; Notify("🎯  Crosshair OFF"); return end
+    if _crosshairGui then _crosshairGui:Destroy(); _crosshairGui = nil; Notify("ðŸŽ¯  Crosshair OFF"); return end
     local r = tonumber(args[1]) or 255
     local g = tonumber(args[2]) or 255
     local b = tonumber(args[3]) or 255
@@ -4687,17 +4691,17 @@ Cmd("crosshair", {"xhair","ch"}, function(args)
     local size = tonumber(args[4]) or 12
     makeLine(size*2, 1, 0, 0)   -- horizontal
     makeLine(1, size*2, 0, 0)   -- vertical
-    Notify(string.format("🎯  Crosshair ON  (%d,%d,%d)", r, g, b))
+    Notify(string.format("ðŸŽ¯  Crosshair ON  (%d,%d,%d)", r, g, b))
 end)
 
--- infobar  — permanent HUD bar showing HP/speed/pos
+-- infobar  â€” permanent HUD bar showing HP/speed/pos
 local _infoBarGui  = nil
 local _infoBarConn = nil
 Cmd("infobar", {"hud","showhud"}, function()
     if _infoBarGui then
         _infoBarGui:Destroy(); _infoBarGui = nil
         if _infoBarConn then _infoBarConn:Disconnect(); _infoBarConn = nil end
-        Notify("📊  InfoBar OFF"); return
+        Notify("ðŸ“Š  InfoBar OFF"); return
     end
     _infoBarGui = Instance.new("ScreenGui", ScreenGui)
     _infoBarGui.Name = "S_InfoBar"
@@ -4727,45 +4731,45 @@ Cmd("infobar", {"hud","showhud"}, function()
         if not hrp or not hum then return end
         local p = hrp.Position
         lbl.Text = string.format(
-            "❤ %.0f/%.0f   🏃 %.0f   📍 %.0f,%.0f,%.0f   ⚡ %.0fms",
+            "â¤ %.0f/%.0f   ðŸƒ %.0f   ðŸ“ %.0f,%.0f,%.0f   âš¡ %.0fms",
             hum.Health, hum.MaxHealth,
             hum.WalkSpeed,
             p.X, p.Y, p.Z,
             LP:GetNetworkPing()*1000)
     end)
-    Notify("📊  InfoBar ON")
+    Notify("ðŸ“Š  InfoBar ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CAMERA EFFECTS  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CAMERA EFFECTS  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- camerabob  — adds a sine-wave bob to camera (simulate head bob)
+-- camerabob  â€” adds a sine-wave bob to camera (simulate head bob)
 local _camBobConn = nil
 Cmd("camerabob", {"camroll","headbob"}, function(args)
     local intensity = tonumber(args[1]) or 0.2
     local freq      = tonumber(args[2]) or 2
-    if _camBobConn then _camBobConn:Disconnect(); _camBobConn = nil; Notify("📷  CameraBob OFF"); return end
+    if _camBobConn then _camBobConn:Disconnect(); _camBobConn = nil; Notify("ðŸ“·  CameraBob OFF"); return end
     local cam = workspace.CurrentCamera
     _camBobConn = RunService.RenderStepped:Connect(function()
         local t = tick()
         cam.CFrame = cam.CFrame
             * CFrame.Angles(math.sin(t*freq)*intensity*0.01, 0, math.sin(t*freq*0.5)*intensity*0.005)
     end)
-    Notify(string.format("📷  CameraBob ON  intensity=%.2f  freq=%.1f", intensity, freq))
+    Notify(string.format("ðŸ“·  CameraBob ON  intensity=%.2f  freq=%.1f", intensity, freq))
 end)
 
--- cameraroll <angle>  — tilt camera by angle (degrees)
+-- cameraroll <angle>  â€” tilt camera by angle (degrees)
 Cmd("cameraroll", {"roll","tiltcam"}, function(args)
     local deg = tonumber(args[1]) or 0
     local cam = workspace.CurrentCamera
     cam.CFrame = cam.CFrame * CFrame.Angles(0, 0, math.rad(deg))
-    Notify(string.format("📷  Camera rolled %.0f°", deg))
+    Notify(string.format("ðŸ“·  Camera rolled %.0fÂ°", deg))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: BLINK / DASH  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: BLINK / DASH  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: short CFrame forward-offset teleport, camera
 --           LookVector projection, cooldown management.
 
@@ -4780,7 +4784,7 @@ Cmd("blink", {"dash","bd"}, function(args)
     hrp.CFrame = hrp.CFrame + dir
     _blinkCooldown = true
     task.delay(0.5, function() _blinkCooldown = false end)
-    Notify(string.format("💨  Blink %.0f studs forward", dist))
+    Notify(string.format("ðŸ’¨  Blink %.0f studs forward", dist))
 end)
 
 -- blink backwards
@@ -4789,7 +4793,7 @@ Cmd("blinkback", {"dashback","bd2"}, function(args)
     local hrp  = GetHRP(); if not hrp then return end
     local cam  = workspace.CurrentCamera
     hrp.CFrame = hrp.CFrame - cam.CFrame.LookVector * dist
-    Notify(string.format("💨  Blink %.0f studs back", dist))
+    Notify(string.format("ðŸ’¨  Blink %.0f studs back", dist))
 end)
 
 -- blinkup <dist>
@@ -4797,12 +4801,12 @@ Cmd("blinkup", {"blinku","dashup"}, function(args)
     local dist = tonumber(args[1]) or 20
     local hrp  = GetHRP(); if not hrp then return end
     hrp.CFrame = hrp.CFrame + Vector3.new(0, dist, 0)
-    Notify(string.format("💨  Blink %.0f studs up", dist))
+    Notify(string.format("ðŸ’¨  Blink %.0f studs up", dist))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GLIDE  (IY-ported)                          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GLIDE  (IY-ported)                          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: low-gravity + horizontal BodyVelocity to simulate
 --           a gliding state, toggling with state guards.
 
@@ -4817,7 +4821,7 @@ Cmd("glide", {"gl2","hover"}, function(args)
             local bv = hrp:FindFirstChild("S_GlideBV")
             if bv then bv:Destroy() end
         end
-        Notify("🪂  Glide OFF"); return
+        Notify("ðŸª‚  Glide OFF"); return
     end
 
     local hrp = GetHRP(); if not hrp then return end
@@ -4843,12 +4847,12 @@ Cmd("glide", {"gl2","hover"}, function(args)
         end
     end)
 
-    Notify(string.format("🪂  Glide ON  speed=%d  (run again to stop)", spd))
+    Notify(string.format("ðŸª‚  Glide ON  speed=%d  (run again to stop)", spd))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: RUN TOGGLE  (IY-ported)                     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: RUN TOGGLE  (IY-ported)                     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: WalkSpeed toggling, shift-lock interaction,
 --           clean state tracking for speed overrides.
 
@@ -4863,13 +4867,13 @@ Cmd("run", {"sprint","togglerun"}, function(args)
     local hum  = GetHuman(); if not hum then return end
     hum.WalkSpeed = _running and _runSpeed or _walkSpeed
     Notify(_running
-        and string.format("🏃  Run ON  (speed %d)", _runSpeed)
-        or  string.format("🚶  Run OFF  (speed %d)", _walkSpeed))
+        and string.format("ðŸƒ  Run ON  (speed %d)", _runSpeed)
+        or  string.format("ðŸš¶  Run OFF  (speed %d)", _walkSpeed))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CLICK TELEPORT  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CLICK TELEPORT  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: UserInputService MouseButton1Click, Ray casting
 --           from camera, finding 3D hit position.
 
@@ -4878,9 +4882,9 @@ local _clickTpConn = nil
 Cmd("clicktp", {"ctp","mousetp"}, function()
     if _clickTpConn then
         _clickTpConn:Disconnect(); _clickTpConn = nil
-        Notify("🖱  ClickTP OFF"); return
+        Notify("ðŸ–±  ClickTP OFF"); return
     end
-    Notify("🖱  ClickTP ON — left-click to teleport")
+    Notify("ðŸ–±  ClickTP ON â€” left-click to teleport")
     _clickTpConn = UserInputService.InputBegan:Connect(function(i, gp)
         if gp or i.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         local cam    = workspace.CurrentCamera
@@ -4891,37 +4895,37 @@ Cmd("clicktp", {"ctp","mousetp"}, function()
             local hrp = GetHRP()
             if hrp then
                 hrp.CFrame = CFrame.new(result.Position + result.Normal * 3)
-                Notify(string.format("🖱  ClickTP → %.0f,%.0f,%.0f",
+                Notify(string.format("ðŸ–±  ClickTP â†’ %.0f,%.0f,%.0f",
                     result.Position.X, result.Position.Y, result.Position.Z))
             end
         end
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MOUSE TOOLS  (IY-ported)                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MOUSE TOOLS  (IY-ported)                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: UserInputService mouse sensitivity, cursor lock,
 --           cursor icon customisation.
 
 Cmd("lockmouse", {"mousejail","lockcursor"}, function()
     UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
-    Notify("🖱  Mouse locked to center")
+    Notify("ðŸ–±  Mouse locked to center")
 end)
 
 Cmd("unlockmouse", {"freemouse","unlockcursor"}, function()
     UserInputService.MouseBehavior = Enum.MouseBehavior.Default
-    Notify("🖱  Mouse unlocked")
+    Notify("ðŸ–±  Mouse unlocked")
 end)
 
 Cmd("hidemouse", {"nocursor","hidecursor"}, function()
     UserInputService.MouseIconEnabled = false
-    Notify("🖱  Cursor hidden")
+    Notify("ðŸ–±  Cursor hidden")
 end)
 
 Cmd("showmouse", {"showcursor","cursor"}, function()
     UserInputService.MouseIconEnabled = true
-    Notify("🖱  Cursor visible")
+    Notify("ðŸ–±  Cursor visible")
 end)
 
 Cmd("mousesensitivity", {"sens","sensitivity"}, function(args)
@@ -4930,12 +4934,12 @@ Cmd("mousesensitivity", {"sens","sensitivity"}, function(args)
     pcall(function()
         UserSettings():GetService("UserGameSettings").MouseSensitivity = s
     end)
-    Notify("🖱  Sensitivity → "..s)
+    Notify("ðŸ–±  Sensitivity â†’ "..s)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: WEATHER / PARTICLE EFFECTS  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: WEATHER / PARTICLE EFFECTS  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ParticleEmitter in workspace Terrain, Wind
 --           simulation, Atmosphere density changes for weather.
 
@@ -4997,13 +5001,13 @@ Cmd("rain", {}, function(args)
     }, _origGravity, Vector3.new(2, 0, 2))
     local atm = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
     atm.Density = 0.45; atm.Offset = 0
-    Notify("🌧  Rain ON  (density "..density..")")
+    Notify("ðŸŒ§  Rain ON  (density "..density..")")
 end)
 
 Cmd("norain", {"clearrain"}, function()
     _clearWeather()
     workspace.Gravity = _origGravity
-    Notify("🌧  Rain OFF")
+    Notify("ðŸŒ§  Rain OFF")
 end)
 
 Cmd("snow", {}, function(args)
@@ -5024,13 +5028,13 @@ Cmd("snow", {}, function(args)
         RotSpeed       = NumberRange.new(-20, 20),
         Rotation       = NumberRange.new(0, 360),
     }, _origGravity * 0.3)
-    Notify("❄  Snow ON  (density "..density..")")
+    Notify("â„  Snow ON  (density "..density..")")
 end)
 
 Cmd("nosnow", {"clearsnow"}, function()
     _clearWeather()
     workspace.Gravity = _origGravity
-    Notify("❄  Snow OFF")
+    Notify("â„  Snow OFF")
 end)
 
 Cmd("sandstorm", {"sand","dust"}, function(args)
@@ -5051,23 +5055,23 @@ Cmd("sandstorm", {"sand","dust"}, function(args)
     })
     local atm = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
     atm.Density = 0.85; atm.Color = Color3.fromRGB(210,180,140)
-    Notify("🌪  Sandstorm ON  (intensity "..intensity..")")
+    Notify("ðŸŒª  Sandstorm ON  (intensity "..intensity..")")
 end)
 
 Cmd("nosandstorm", {"clearsand"}, function()
     _clearWeather()
-    Notify("🌪  Sandstorm OFF")
+    Notify("ðŸŒª  Sandstorm OFF")
 end)
 
 Cmd("clearweather", {"noweather"}, function()
     _clearWeather()
     workspace.Gravity = _origGravity
-    Notify("☀  Weather cleared")
+    Notify("â˜€  Weather cleared")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TERRAIN TOOLS  (IY-ported)                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TERRAIN TOOLS  (IY-ported)                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: workspace.Terrain API, FillBlock, ReplaceMaterial,
 --           CellSize, terrain material enums.
 
@@ -5083,12 +5087,12 @@ Cmd("fillterrain", {"fill","terrainfill"}, function(args)
         CFrame.new(hrp.Position),
         Vector3.new(size, size, size),
         matEnum)
-    Notify(string.format("🗻  Terrain filled  %s  size=%d", matEnum.Name, size))
+    Notify(string.format("ðŸ—»  Terrain filled  %s  size=%d", matEnum.Name, size))
 end)
 
 Cmd("clearterrain", {"deleteterrain"}, function()
     workspace.Terrain:Clear()
-    Notify("🗻  Terrain cleared")
+    Notify("ðŸ—»  Terrain cleared")
 end)
 
 Cmd("replaceterrain", {"rterrain"}, function(args)
@@ -5104,12 +5108,12 @@ Cmd("replaceterrain", {"rterrain"}, function(args)
             workspace.Terrain:GetMinimumPosition(),
             workspace.Terrain:GetMaximumPosition()
         )), 4, fromM, toM)
-    Notify(string.format("🗻  Replaced %s → %s", fromM.Name, toM.Name))
+    Notify(string.format("ðŸ—»  Replaced %s â†’ %s", fromM.Name, toM.Name))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: COMMAND HISTORY  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: COMMAND HISTORY  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ring-buffer history, up/down arrow recall,
 --           UserInputService key interception for UI.
 
@@ -5118,19 +5122,16 @@ local _historyIdx  = 0
 local _maxHistory  = 50
 
 -- Patch ExecCommand to record history
-local _origExecCommand = ExecCommand
-ExecCommand = function(raw)
-    if raw and raw:match("%S") then
-        -- Remove duplicate last entry
-        if _cmdHistory[#_cmdHistory] ~= raw then
-            table.insert(_cmdHistory, raw)
-            if #_cmdHistory > _maxHistory then
-                table.remove(_cmdHistory, 1)
-            end
+-- (Recording is injected directly into ExecCommand in the controller section)
+local function _recordToHistory(raw)
+    if not raw or not raw:match("%S") then return end
+    if _cmdHistory[#_cmdHistory] ~= raw then
+        table.insert(_cmdHistory, raw)
+        if #_cmdHistory > _maxHistory then
+            table.remove(_cmdHistory, 1)
         end
-        _historyIdx = #_cmdHistory + 1
     end
-    _origExecCommand(raw)
+    _historyIdx = #_cmdHistory + 1
 end
 
 -- Up/Down arrow in bar to cycle history
@@ -5150,7 +5151,7 @@ UserInputService.InputBegan:Connect(function(i, gp)
     end
 end)
 
--- history  — print recent commands
+-- history  â€” print recent commands
 Cmd("history", {"hist","cmdhist"}, function(args)
     local n = tonumber(args[1]) or 10
     if #_cmdHistory == 0 then Notify("No command history","warn"); return end
@@ -5158,19 +5159,19 @@ Cmd("history", {"hist","cmdhist"}, function(args)
     local start = math.max(1, #_cmdHistory - n + 1)
     for i = start, #_cmdHistory do table.insert(show, i..". ".._cmdHistory[i]) end
     print("[S-Admin] History:\n  "..table.concat(show,"\n  "))
-    Notify("📜  Last "..#show.." cmds — see console","info")
+    Notify("ðŸ“œ  Last "..#show.." cmds â€” see console","info")
 end)
 
 -- clearhistory
 Cmd("clearhistory", {"clrhist"}, function()
     _cmdHistory = {}
     _historyIdx = 0
-    Notify("📜  History cleared")
+    Notify("ðŸ“œ  History cleared")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: R6 ANIMATION IDs  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: R6 ANIMATION IDs  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: R6 vs R15 humanoid rig detection, asset IDs for
 --           both rigs, fallback ID handling.
 
@@ -5199,7 +5200,7 @@ local function _isR6()
     return torso ~= nil
 end
 
--- emote6 <name>  — force R6 emote regardless of rig
+-- emote6 <name>  â€” force R6 emote regardless of rig
 Cmd("emote6", {"r6emote","emoteR6"}, function(args)
     local name = (args[1] or "wave"):lower()
     local id   = _r6Emotes[name]
@@ -5209,10 +5210,10 @@ Cmd("emote6", {"r6emote","emoteR6"}, function(args)
         ,", "),"warn"); return
     end
     PlayAnim(id, false)
-    Notify("🎭  R6 Emote: "..name)
+    Notify("ðŸŽ­  R6 Emote: "..name)
 end)
 
--- emote15 <name>  — force R15 emote
+-- emote15 <name>  â€” force R15 emote
 Cmd("emote15", {"r15emote","emoteR15"}, function(args)
     local name = (args[1] or "wave"):lower()
     local id   = _r15Emotes[name]
@@ -5222,15 +5223,15 @@ Cmd("emote15", {"r15emote","emoteR15"}, function(args)
         ,", "),"warn"); return
     end
     PlayAnim(id, false)
-    Notify("🎭  R15 Emote: "..name)
+    Notify("ðŸŽ­  R15 Emote: "..name)
 end)
 
--- autoemote  — cycle through all emotes
+-- autoemote  â€” cycle through all emotes
 local _autoEmoteTask = nil
 Cmd("autoemote", {"aeemote","emoteloop"}, function(args)
     if _autoEmoteTask then
         task.cancel(_autoEmoteTask); _autoEmoteTask = nil
-        Notify("🎭  AutoEmote OFF"); return
+        Notify("ðŸŽ­  AutoEmote OFF"); return
     end
     local interval = tonumber(args[1]) or 3
     local tbl = _isR6() and _r6Emotes or _r15Emotes
@@ -5244,12 +5245,12 @@ Cmd("autoemote", {"aeemote","emoteloop"}, function(args)
             task.wait(interval)
         end
     end)
-    Notify(string.format("🎭  AutoEmote ON  (every %.1fs)", interval))
+    Notify(string.format("ðŸŽ­  AutoEmote ON  (every %.1fs)", interval))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: DRAWING / 2D CANVAS  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: DRAWING / 2D CANVAS  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Drawing library (executor feature), fallback to
 --           ScreenGui Frame drawing when no Drawing API.
 
@@ -5286,7 +5287,7 @@ Cmd("draw", {"startdraw","paint"}, function(args)
     if _drawActive then
         if _drawConn then _drawConn:Disconnect(); _drawConn = nil end
         _drawActive = false
-        Notify("🖊  Draw OFF — "..#_drawings.." point(s) placed")
+        Notify("ðŸ–Š  Draw OFF â€” "..#_drawings.." point(s) placed")
         return
     end
     _drawActive = true
@@ -5301,7 +5302,7 @@ Cmd("draw", {"startdraw","paint"}, function(args)
             _drawPoint(i.Position.X, i.Position.Y, col)
         end
     end)
-    Notify(string.format("🖊  Draw ON  (%d,%d,%d)  — hold LMB to paint, run again to stop",r,g,b))
+    Notify(string.format("ðŸ–Š  Draw ON  (%d,%d,%d)  â€” hold LMB to paint, run again to stop",r,g,b))
 end)
 
 Cmd("cleardrawing", {"clearcanvas","cleardraw"}, function()
@@ -5312,12 +5313,12 @@ Cmd("cleardrawing", {"clearcanvas","cleardraw"}, function()
         end)
     end
     _drawings = {}
-    Notify("🖊  Canvas cleared")
+    Notify("ðŸ–Š  Canvas cleared")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CLIPBOARD TOOLS  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CLIPBOARD TOOLS  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: setclipboard (executor API), building formatted
 --           strings for copying positions, IDs, etc.
 
@@ -5327,7 +5328,7 @@ Cmd("copypos", {"clippos","posclip"}, function()
     local str = string.format("Vector3.new(%.2f, %.2f, %.2f)", p.X, p.Y, p.Z)
     pcall(function() setclipboard(str) end)
     print("[S-Admin] Copied: "..str)
-    Notify("📋  Position copied to clipboard","info")
+    Notify("ðŸ“‹  Position copied to clipboard","info")
 end)
 
 Cmd("copycframe", {"clipcframe","cframeclip"}, function()
@@ -5340,19 +5341,19 @@ Cmd("copycframe", {"clipcframe","cframeclip"}, function()
         p.X,p.Y,p.Z, lx,ly,lz)
     pcall(function() setclipboard(str) end)
     print("[S-Admin] Copied: "..str)
-    Notify("📋  CFrame copied to clipboard","info")
+    Notify("ðŸ“‹  CFrame copied to clipboard","info")
 end)
 
 Cmd("copyid", {"clipid"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
     local str = tostring(target.UserId)
     pcall(function() setclipboard(str) end)
-    Notify("📋  Copied UserID: "..str,"info")
+    Notify("ðŸ“‹  Copied UserID: "..str,"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GLOBAL / SYSTEM MESSAGES  (IY-ported)       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GLOBAL / SYSTEM MESSAGES  (IY-ported)       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: StarterGui:SetCore("SendNotification"),
 --           custom notification building, timed GUI display.
 
@@ -5368,7 +5369,7 @@ Cmd("globalmsg", {"gmsg","broadcast"}, function(args)
         })
     end)
     -- Also use our own notify
-    Notify("📢  "..msg, "info")
+    Notify("ðŸ“¢  "..msg, "info")
 end)
 
 -- sysnotify <title> <message>
@@ -5384,12 +5385,12 @@ Cmd("sysnotify", {"systemnotif","snotif"}, function(args)
             Icon     = "",
         })
     end)
-    Notify("📢  ["..title.."] "..msg, "info")
+    Notify("ðŸ“¢  ["..title.."] "..msg, "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: KEYBIND DISPLAY  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: KEYBIND DISPLAY  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: on-screen HUD listing active binds, connection
 --           to the bind table, live update.
 
@@ -5400,7 +5401,7 @@ Cmd("showbindgui", {"bindgui","binddisplay"}, function()
     if _bindDisplayGui then
         _bindDisplayGui:Destroy(); _bindDisplayGui = nil
         if _bindDisplayConn then _bindDisplayConn:Disconnect(); _bindDisplayConn = nil end
-        Notify("🔑  Bind display OFF"); return
+        Notify("ðŸ”‘  Bind display OFF"); return
     end
     _bindDisplayGui = Instance.new("ScreenGui", ScreenGui)
     _bindDisplayGui.Name        = "S_BindDisplay"
@@ -5418,7 +5419,7 @@ Cmd("showbindgui", {"bindgui","binddisplay"}, function()
     local title = Instance.new("TextLabel", frame)
     title.Size             = UDim2.new(1,0,0,22)
     title.BackgroundTransparency = 1
-    title.Text             = "⌨  Binds"
+    title.Text             = "âŒ¨  Binds"
     title.TextColor3       = Color3.fromRGB(150,200,255)
     title.Font             = Enum.Font.GothamBold
     title.TextSize         = 12
@@ -5462,12 +5463,12 @@ Cmd("showbindgui", {"bindgui","binddisplay"}, function()
         task.wait(1)
         pcall(refresh)
     end)
-    Notify("🔑  Bind display ON")
+    Notify("ðŸ”‘  Bind display ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GRAVITY WELL  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GRAVITY WELL  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: BodyPosition force on all players, distance
 --           falloff, continuous physics application.
 
@@ -5476,7 +5477,7 @@ local _gravWellConn = nil
 Cmd("gravitywell", {"gwell","attract2"}, function(args)
     if _gravWellConn then
         _gravWellConn:Disconnect(); _gravWellConn = nil
-        Notify("🌀  Gravity well OFF"); return
+        Notify("ðŸŒ€  Gravity well OFF"); return
     end
     local strength = tonumber(args[1]) or 200
     local range    = tonumber(args[2]) or 60
@@ -5497,12 +5498,12 @@ Cmd("gravitywell", {"gwell","attract2"}, function(args)
             end
         end
     end)
-    Notify(string.format("🌀  Gravity well ON  strength=%d  range=%d", strength, range))
+    Notify(string.format("ðŸŒ€  Gravity well ON  strength=%d  range=%d", strength, range))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MINIMAP / COMPASS  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MINIMAP / COMPASS  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ScreenGui dot mapping, world-to-screen coord
 --           approximation, live-update via Heartbeat.
 
@@ -5514,7 +5515,7 @@ Cmd("minimap", {"map","compass"}, function(args)
     if _minimapGui then
         _minimapGui:Destroy(); _minimapGui = nil
         if _minimapConn then _minimapConn:Disconnect(); _minimapConn = nil end
-        Notify("🗺  Minimap OFF"); return
+        Notify("ðŸ—º  Minimap OFF"); return
     end
     _minimapScale = tonumber(args[1]) or 5
 
@@ -5579,12 +5580,12 @@ Cmd("minimap", {"map","compass"}, function(args)
         end
     end)
 
-    Notify("🗺  Minimap ON  (scale="..(_minimapScale).." studs/px)")
+    Notify("ðŸ—º  Minimap ON  (scale="..(_minimapScale).." studs/px)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: NETWORK STATS DISPLAY  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: NETWORK STATS DISPLAY  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 local _netStatGui  = nil
 local _netStatConn = nil
@@ -5593,7 +5594,7 @@ Cmd("netstat", {"networkstat","netstats"}, function()
     if _netStatGui then
         _netStatGui:Destroy(); _netStatGui = nil
         if _netStatConn then _netStatConn:Disconnect(); _netStatConn = nil end
-        Notify("📶  NetStat OFF"); return
+        Notify("ðŸ“¶  NetStat OFF"); return
     end
 
     _netStatGui = Instance.new("ScreenGui", ScreenGui)
@@ -5630,16 +5631,16 @@ Cmd("netstat", {"networkstat","netstats"}, function()
             send = math.floor(stats.DataSendKbps.Value)
         end)
         lbl.Text = string.format(
-            "📶 Network Stats\n  Ping: %dms\n  Recv: %d kb/s\n  Send: %d kb/s",
+            "ðŸ“¶ Network Stats\n  Ping: %dms\n  Recv: %d kb/s\n  Send: %d kb/s",
             ping, recv, send)
     end)
 
-    Notify("📶  NetStat ON")
+    Notify("ðŸ“¶  NetStat ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PLAYER BADGES / GROUPS  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PLAYER BADGES / GROUPS  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: BadgeService:UserHasBadgeAsync, GroupService,
 --           async queries, pcall for HTTP.
 
@@ -5652,7 +5653,7 @@ Cmd("hasbadge", {"badge","checkbadge"}, function(args)
             return game:GetService("BadgeService"):UserHasBadgeAsync(target.UserId, badgeId)
         end)
         if ok then
-            Notify(string.format("🏅  %s %s badge %d",
+            Notify(string.format("ðŸ…  %s %s badge %d",
                 target.Name, has and "HAS" or "does NOT have", badgeId),
                 has and "success" or "warn")
         else
@@ -5670,7 +5671,7 @@ Cmd("ingroup", {"checkgroup","groupcheck"}, function(args)
             return target:GetRankInGroup(groupId)
         end)
         if ok then
-            Notify(string.format("👥  %s rank %d in group %d", target.Name, rank, groupId),
+            Notify(string.format("ðŸ‘¥  %s rank %d in group %d", target.Name, rank, groupId),
                 rank > 0 and "success" or "warn")
         else
             Notify("Group check failed","error")
@@ -5678,9 +5679,9 @@ Cmd("ingroup", {"checkgroup","groupcheck"}, function(args)
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FPS COUNTER STYLES  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FPS COUNTER STYLES  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 local _fpsCounterGui  = nil
 local _fpsCounterConn = nil
@@ -5689,7 +5690,7 @@ Cmd("fpscounter", {"fpshud","showfps"}, function(args)
     if _fpsCounterGui then
         _fpsCounterGui:Destroy(); _fpsCounterGui = nil
         if _fpsCounterConn then _fpsCounterConn:Disconnect(); _fpsCounterConn = nil end
-        Notify("⚡  FPS Counter OFF"); return
+        Notify("âš¡  FPS Counter OFF"); return
     end
 
     local style = (args[1] or "corner"):lower()  -- "corner" or "bar"
@@ -5729,17 +5730,17 @@ Cmd("fpscounter", {"fpshud","showfps"}, function(args)
                or   avg > 30 and Color3.fromRGB(220,200,50)
                or                Color3.fromRGB(220,80,80)
         lbl.TextColor3 = col
-        lbl.Text = string.format("⚡ %d fps", math.floor(avg))
+        lbl.Text = string.format("âš¡ %d fps", math.floor(avg))
     end)
 
-    Notify("⚡  FPS Counter ON  (style="..style..")")
+    Notify("âš¡  FPS Counter ON  (style="..style..")")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED TROLL  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED TROLL  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- seizure  — rapidly change environment colors
+-- seizure  â€” rapidly change environment colors
 local _seizureTask = nil
 Cmd("seizure", {}, function()
     if _seizureTask then task.cancel(_seizureTask); _seizureTask = nil; Notify("Seizure OFF"); return end
@@ -5750,15 +5751,15 @@ Cmd("seizure", {}, function()
             task.wait(0.05)
         end
     end)
-    Notify("⚡  Seizure mode ON  (run again to stop)")
+    Notify("âš¡  Seizure mode ON  (run again to stop)")
 end)
 
--- disco  — disco lighting cycle
+-- disco  â€” disco lighting cycle
 local _discoTask = nil
 Cmd("disco", {"discomode"}, function(args)
     if _discoTask then task.cancel(_discoTask); _discoTask = nil
         Lighting.Ambient = OrigLight and OrigLight.Ambient or Color3.new(0.5,0.5,0.5)
-        Notify("🪩  Disco OFF"); return
+        Notify("ðŸª©  Disco OFF"); return
     end
     local speed = tonumber(args[1]) or 1
     local hue   = 0
@@ -5772,19 +5773,19 @@ Cmd("disco", {"discomode"}, function(args)
             task.wait(0.033)
         end
     end)
-    Notify("🪩  Disco ON  (speed "..speed..")")
+    Notify("ðŸª©  Disco ON  (speed "..speed..")")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED MOVEMENT  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED MOVEMENT  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- jetpack  — constant upward thrust toggle
+-- jetpack  â€” constant upward thrust toggle
 local _jetpackConn = nil
 Cmd("jetpack", {"jet"}, function(args)
     if _jetpackConn then
         _jetpackConn:Disconnect(); _jetpackConn = nil
-        Notify("🚀  Jetpack OFF"); return
+        Notify("ðŸš€  Jetpack OFF"); return
     end
     local thrust = tonumber(args[1]) or 80
     _jetpackConn = RunService.Heartbeat:Connect(function()
@@ -5794,15 +5795,15 @@ Cmd("jetpack", {"jet"}, function(args)
             hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity + Vector3.new(0, thrust * 0.1, 0)
         end
     end)
-    Notify("🚀  Jetpack ON  (Space/Jump=thrust  power="..thrust..")")
+    Notify("ðŸš€  Jetpack ON  (Space/Jump=thrust  power="..thrust..")")
 end)
 
--- moonwalk  — reverse walking direction
+-- moonwalk  â€” reverse walking direction
 local _moonwalkConn = nil
 Cmd("moonwalk", {"mw"}, function()
     if _moonwalkConn then
         _moonwalkConn:Disconnect(); _moonwalkConn = nil
-        Notify("🕴  Moonwalk OFF"); return
+        Notify("ðŸ•´  Moonwalk OFF"); return
     end
     _moonwalkConn = RunService.Heartbeat:Connect(function()
         local hrp = GetHRP(); if not hrp then return end
@@ -5811,12 +5812,12 @@ Cmd("moonwalk", {"mw"}, function()
             hrp.AssemblyLinearVelocity = -hum.MoveDirection * hum.WalkSpeed
         end
     end)
-    Notify("🕴  Moonwalk ON  (move forward to moonwalk backward)")
+    Notify("ðŸ•´  Moonwalk ON  (move forward to moonwalk backward)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SPEED & JUMP PRESETS  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SPEED & JUMP PRESETS  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: named constant presets as a usability pattern,
 --           single command switching between config states.
 
@@ -5851,7 +5852,7 @@ Cmd("speedpreset", {"sp2","preset"}, function(args)
     end
     local hum = GetHuman(); if not hum then return end
     hum.WalkSpeed = val
-    Notify(string.format("🏃  Speed preset '%s' → %d", key, val))
+    Notify(string.format("ðŸƒ  Speed preset '%s' â†’ %d", key, val))
 end)
 
 Cmd("jumppreset", {"jp2","jpreset"}, function(args)
@@ -5866,12 +5867,12 @@ Cmd("jumppreset", {"jp2","jpreset"}, function(args)
     local hum = GetHuman(); if not hum then return end
     hum.UseJumpPower = true
     hum.JumpPower    = val
-    Notify(string.format("🦘  Jump preset '%s' → %d", key, val))
+    Notify(string.format("ðŸ¦˜  Jump preset '%s' â†’ %d", key, val))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CAMERA ORBIT / ATTACH  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CAMERA ORBIT / ATTACH  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Scripted camera rotation around a point using
 --           tick()-based angle, CFrame.fromOrientation,
 --           camera attached to workspace instance.
@@ -5883,7 +5884,7 @@ Cmd("orbit", {"orbitcam","circling"}, function(args)
     if _orbitConn then
         _orbitConn:Disconnect(); _orbitConn = nil
         workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-        Notify("🔄  Orbit OFF"); return
+        Notify("ðŸ”„  Orbit OFF"); return
     end
     local target = GetPlayers(args[1])[1] or LP
     local radius = tonumber(args[2]) or 15
@@ -5903,10 +5904,10 @@ Cmd("orbit", {"orbitcam","circling"}, function(args)
         cam.CFrame = CFrame.new(pos, tHRP.Position)
         cam.Focus  = CFrame.new(tHRP.Position)
     end)
-    Notify(string.format("🔄  Orbiting %s  r=%d  speed=%.1f", target.Name, radius, speed))
+    Notify(string.format("ðŸ”„  Orbiting %s  r=%d  speed=%.1f", target.Name, radius, speed))
 end)
 
--- attachcam <partpath>  — lock camera to follow a specific workspace part
+-- attachcam <partpath>  â€” lock camera to follow a specific workspace part
 local _attachCamConn = nil
 Cmd("attachcam", {"camlockpart","followpart"}, function(args)
     local query = table.concat(args," ")
@@ -5926,21 +5927,21 @@ Cmd("attachcam", {"camlockpart","followpart"}, function(args)
         cam.CFrame = target.CFrame * CFrame.new(0,5,-12) * CFrame.Angles(math.rad(-10),math.pi,0)
         cam.Focus  = CFrame.new(target.Position)
     end)
-    Notify("📷  Camera locked to: "..target.Name)
+    Notify("ðŸ“·  Camera locked to: "..target.Name)
 end)
 
 Cmd("unattachcam", {"detachcam","freepartcam"}, function()
     if _attachCamConn then _attachCamConn:Disconnect(); _attachCamConn = nil end
     workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-    Notify("📷  Camera detached")
+    Notify("ðŸ“·  Camera detached")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SOUND EFFECTS ON CHARACTER  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SOUND EFFECTS ON CHARACTER  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Sound child of HRP, EqualizerSoundEffect,
 --           ReverbSoundEffect, DistortionSoundEffect,
---           PitchShiftSoundEffect — all SoundEffect types.
+--           PitchShiftSoundEffect â€” all SoundEffect types.
 
 local function _getOrMakeCharSound()
     local hrp = GetHRP(); if not hrp then return nil end
@@ -5957,59 +5958,59 @@ end
 Cmd("reverb", {}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local old = hrp:FindFirstChild("S_Reverb")
-    if old then old:Destroy(); Notify("🎵  Reverb OFF"); return end
+    if old then old:Destroy(); Notify("ðŸŽµ  Reverb OFF"); return end
     local fx = Instance.new("ReverbSoundEffect", hrp)
     fx.Name     = "S_Reverb"
     fx.DecayTime = tonumber(args[1]) or 2.5
     fx.Density   = tonumber(args[2]) or 1
     fx.Diffusion = 1
-    Notify(string.format("🎵  Reverb ON  decay=%.1f", fx.DecayTime))
+    Notify(string.format("ðŸŽµ  Reverb ON  decay=%.1f", fx.DecayTime))
 end)
 
 Cmd("echo", {}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local old = hrp:FindFirstChild("S_Echo")
-    if old then old:Destroy(); Notify("🎵  Echo OFF"); return end
+    if old then old:Destroy(); Notify("ðŸŽµ  Echo OFF"); return end
     local fx = Instance.new("ChorusSoundEffect", hrp)
     fx.Name  = "S_Echo"
     fx.Depth = tonumber(args[1]) or 1
     fx.Rate  = tonumber(args[2]) or 0.5
-    Notify("🎵  Echo ON")
+    Notify("ðŸŽµ  Echo ON")
 end)
 
 Cmd("pitch", {}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local p = tonumber(args[1])
-    if not p then Notify("Usage: pitch <0.1–4.0>","warn"); return end
+    if not p then Notify("Usage: pitch <0.1â€“4.0>","warn"); return end
     local old = hrp:FindFirstChild("S_Pitch")
     if old then old:Destroy() end
-    if math.abs(p-1) < 0.01 then Notify("🎵  Pitch reset"); return end
+    if math.abs(p-1) < 0.01 then Notify("ðŸŽµ  Pitch reset"); return end
     local fx = Instance.new("PitchShiftSoundEffect", hrp)
     fx.Name  = "S_Pitch"
     fx.Octave = math.clamp(p, 0.05, 4.0)
-    Notify(string.format("🎵  Pitch → %.2f", p))
+    Notify(string.format("ðŸŽµ  Pitch â†’ %.2f", p))
 end)
 
 Cmd("distortion", {"distort"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local old = hrp:FindFirstChild("S_Distortion")
-    if old then old:Destroy(); Notify("🎵  Distortion OFF"); return end
+    if old then old:Destroy(); Notify("ðŸŽµ  Distortion OFF"); return end
     local fx = Instance.new("DistortionSoundEffect", hrp)
     fx.Name  = "S_Distortion"
     fx.Level = math.clamp(tonumber(args[1]) or 0.5, 0, 1)
-    Notify(string.format("🎵  Distortion ON  level=%.2f", fx.Level))
+    Notify(string.format("ðŸŽµ  Distortion ON  level=%.2f", fx.Level))
 end)
 
 Cmd("equalizer", {"eq"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local old = hrp:FindFirstChild("S_EQ")
-    if old then old:Destroy(); Notify("🎵  Equalizer OFF"); return end
+    if old then old:Destroy(); Notify("ðŸŽµ  Equalizer OFF"); return end
     local fx = Instance.new("EqualizerSoundEffect", hrp)
     fx.Name       = "S_EQ"
     fx.LowGain    = tonumber(args[1]) or 0
     fx.MidGain    = tonumber(args[2]) or 0
     fx.HighGain   = tonumber(args[3]) or 0
-    Notify(string.format("🎵  EQ  Low=%d  Mid=%d  High=%d", fx.LowGain, fx.MidGain, fx.HighGain))
+    Notify(string.format("ðŸŽµ  EQ  Low=%d  Mid=%d  High=%d", fx.LowGain, fx.MidGain, fx.HighGain))
 end)
 
 Cmd("clearfx", {"nosoundfx","removefx2"}, function()
@@ -6020,10 +6021,10 @@ Cmd("clearfx", {"nosoundfx","removefx2"}, function()
         local obj = hrp:FindFirstChild(name)
         if obj then obj:Destroy(); n = n + 1 end
     end
-    Notify("🎵  Cleared "..n.." sound effect(s)")
+    Notify("ðŸŽµ  Cleared "..n.." sound effect(s)")
 end)
 
--- walksound <soundID>  — replace the footstep sound
+-- walksound <soundID>  â€” replace the footstep sound
 Cmd("walksound", {"footstep","stepsound"}, function(args)
     local id = tonumber(args[1])
     if not id then Notify("Usage: walksound <soundID>","warn"); return end
@@ -6033,12 +6034,12 @@ Cmd("walksound", {"footstep","stepsound"}, function(args)
             v.SoundId = "rbxassetid://"..id
         end
     end
-    Notify("👟  Walk sound → "..id)
+    Notify("ðŸ‘Ÿ  Walk sound â†’ "..id)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CHAT FORMATTER  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CHAT FORMATTER  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: string prefix patterns, wrapping FireServer,
 --           persistent state for chat formatting.
 
@@ -6048,12 +6049,12 @@ local _chatColor    = nil  -- BrickColor for legacy chat
 
 Cmd("chatprefix", {"prefix","addprefix"}, function(args)
     _chatPrefix = table.concat(args," ")
-    Notify("💬  Chat prefix set: '"..(_chatPrefix == "" and "(cleared)" or _chatPrefix).."'")
+    Notify("ðŸ’¬  Chat prefix set: '"..(_chatPrefix == "" and "(cleared)" or _chatPrefix).."'")
 end)
 
 Cmd("chatsuffix", {"suffix","addsuffix"}, function(args)
     _chatSuffix = table.concat(args," ")
-    Notify("💬  Chat suffix set: '"..(_chatSuffix == "" and "(cleared)" or _chatSuffix).."'")
+    Notify("ðŸ’¬  Chat suffix set: '"..(_chatSuffix == "" and "(cleared)" or _chatSuffix).."'")
 end)
 
 -- Override chat command to use prefix/suffix
@@ -6067,7 +6068,7 @@ Commands["chat"] = function(args)
                 .DefaultChatSystemChatEvents
                 .SayMessageRequest:FireServer(formatted, "All")
         end)
-        if ok then Notify("💬  Sent: "..formatted) return end
+        if ok then Notify("ðŸ’¬  Sent: "..formatted) return end
     end
     _baseChatFn(args)
 end
@@ -6075,10 +6076,10 @@ end
 Cmd("clearchatformat", {"noprefix","clearformat"}, function()
     _chatPrefix = ""
     _chatSuffix = ""
-    Notify("💬  Chat format cleared")
+    Notify("ðŸ’¬  Chat format cleared")
 end)
 
--- chatrepeat <n> <message>  — send a message N times
+-- chatrepeat <n> <message>  â€” send a message N times
 Cmd("chatrepeat", {"chatn","spamchat"}, function(args)
     local n   = math.min(tonumber(args[1]) or 1, 10)  -- cap 10
     local msg = table.concat(args," ",2)
@@ -6093,12 +6094,12 @@ Cmd("chatrepeat", {"chatn","spamchat"}, function(args)
             task.wait(0.5)
         end
     end)
-    Notify("💬  Sent x"..n..": '"..msg.."'")
+    Notify("ðŸ’¬  Sent x"..n..": '"..msg.."'")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SPECTATE CYCLE  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SPECTATE CYCLE  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: index-based cycling through a filtered list,
 --           reusing the view command, smooth cycling UX.
 
@@ -6136,9 +6137,9 @@ Cmd("specrandom", {"viewrandom","randspec"}, function()
     Commands["view"]({target.Name})
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: JOIN PLAYER  (IY-ported)                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: JOIN PLAYER  (IY-ported)                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: TeleportService:TeleportToPlaceInstance with
 --           a target player's JobId, HttpGet for finding
 --           which server a player is on.
@@ -6146,7 +6147,7 @@ end)
 Cmd("joinplayer", {"join","jp3"}, function(args)
     local query = table.concat(args," "):lower()
     if query == "" then Notify("Usage: joinplayer <username>","warn"); return end
-    Notify("🔍  Finding server for '"..query.."'...", "info")
+    Notify("ðŸ”  Finding server for '"..query.."'...", "info")
     task.spawn(function()
         -- Resolve UserId from name
         local userId
@@ -6169,13 +6170,13 @@ Cmd("joinplayer", {"join","jp3"}, function(args)
             return game:GetService("HttpService"):JSONDecode(raw)
         end)
         -- Simpler: just try TeleportToPlaceInstance with their game
-        Notify("ℹ  joinplayer requires the target to be in the same Place. Use serverhop to search.", "warn")
+        Notify("â„¹  joinplayer requires the target to be in the same Place. Use serverhop to search.", "warn")
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PART CLONING  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PART CLONING  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Instance:Clone(), CFrame offset, how Roblox
 --           handles part ownership after clone.
 
@@ -6198,10 +6199,10 @@ Cmd("clonepart", {"clone","cp2"}, function(args)
     cloned.Anchored = true
     cloned.CFrame   = best.CFrame * CFrame.new(best.Size.X + 1, 0, 0)
     cloned.Parent   = workspace
-    Notify("📋  Cloned: "..best.Name.."  ("..math.floor(bestDist).." studs away)")
+    Notify("ðŸ“‹  Cloned: "..best.Name.."  ("..math.floor(bestDist).." studs away)")
 end)
 
--- clonechar <player>  — clone a player's character appearance onto yours
+-- clonechar <player>  â€” clone a player's character appearance onto yours
 Cmd("clonechar", {"copychar","mimic"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or target == LP then Notify("Invalid target","error"); return end
@@ -6212,16 +6213,16 @@ Cmd("clonechar", {"copychar","mimic"}, function(args)
         end)
         if ok and desc then
             hum:ApplyDescription(desc)
-            Notify("🪞  Cloned appearance of "..target.Name)
+            Notify("ðŸªž  Cloned appearance of "..target.Name)
         else
             Notify("Could not clone appearance","error")
         end
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TIME-LAPSE / DAY-NIGHT CYCLE  (IY-ported)   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TIME-LAPSE / DAY-NIGHT CYCLE  (IY-ported)   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ClockTime incrementing in a task loop,
 --           speed multiplier for visual effect.
 
@@ -6230,7 +6231,7 @@ local _timelapsTask = nil
 Cmd("timelapse", {"dncycle","daynightcycle"}, function(args)
     if _timelapsTask then
         task.cancel(_timelapsTask); _timelapsTask = nil
-        Notify("🌅  Time-lapse OFF"); return
+        Notify("ðŸŒ…  Time-lapse OFF"); return
     end
     local speed = tonumber(args[1]) or 10   -- how many real seconds per full day
     local stepsPerSec = 24 / speed
@@ -6240,12 +6241,12 @@ Cmd("timelapse", {"dncycle","daynightcycle"}, function(args)
             task.wait(1/60)
         end
     end)
-    Notify(string.format("🌅  Time-lapse ON  (%.0f second day cycle)", speed))
+    Notify(string.format("ðŸŒ…  Time-lapse ON  (%.0f second day cycle)", speed))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PROXIMITY ALERT  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PROXIMITY ALERT  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: distance polling with cooldown, combining
 --           notification and sound to alert the user.
 
@@ -6256,7 +6257,7 @@ Cmd("proximityalert", {"proxalert","nearbywarn"}, function(args)
     if _proximityConn then
         _proximityConn:Disconnect(); _proximityConn = nil
         _proximityCooldowns = {}
-        Notify("⚠  Proximity alert OFF"); return
+        Notify("âš   Proximity alert OFF"); return
     end
     local dist = tonumber(args[1]) or 30
     _proximityConn = RunService.Heartbeat:Connect(function()
@@ -6271,7 +6272,7 @@ Cmd("proximityalert", {"proxalert","nearbywarn"}, function(args)
                         local last = _proximityCooldowns[p.Name] or 0
                         if now - last > 5 then
                             _proximityCooldowns[p.Name] = now
-                            Notify(string.format("⚠  %s is %.0f studs away!", p.Name, d), "warn")
+                            Notify(string.format("âš   %s is %.0f studs away!", p.Name, d), "warn")
                         end
                     else
                         _proximityCooldowns[p.Name] = nil
@@ -6280,12 +6281,12 @@ Cmd("proximityalert", {"proxalert","nearbywarn"}, function(args)
             end
         end
     end)
-    Notify(string.format("⚠  Proximity alert ON  (%.0f studs)", dist))
+    Notify(string.format("âš   Proximity alert ON  (%.0f studs)", dist))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CINEMATIC MODE  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CINEMATIC MODE  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: letterbox black bars, hiding HUD elements,
 --           cinematic framing techniques in Roblox.
 
@@ -6296,7 +6297,7 @@ Cmd("cinematic", {"cinema","letterbox"}, function(args)
         _cinematicGui:Destroy(); _cinematicGui = nil
         -- Restore CoreGUI
         pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true) end)
-        Notify("🎬  Cinematic OFF"); return
+        Notify("ðŸŽ¬  Cinematic OFF"); return
     end
     local barH = tonumber(args[1]) or 0.08
 
@@ -6331,12 +6332,12 @@ Cmd("cinematic", {"cinema","letterbox"}, function(args)
 
     -- Hide HUD
     pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false) end)
-    Notify("🎬  Cinematic ON  (run again to exit)")
+    Notify("ðŸŽ¬  Cinematic ON  (run again to exit)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SPEED / VELOCITY DISPLAY  (IY-ported)       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SPEED / VELOCITY DISPLAY  (IY-ported)       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: AssemblyLinearVelocity magnitude for real speed,
 --           difference from WalkSpeed setting.
 
@@ -6347,7 +6348,7 @@ Cmd("speeddisplay", {"speedometer","speedhud"}, function()
     if _speedDisplayGui then
         _speedDisplayGui:Destroy(); _speedDisplayGui = nil
         if _speedDisplayConn then _speedDisplayConn:Disconnect(); _speedDisplayConn = nil end
-        Notify("📊  Speed display OFF"); return
+        Notify("ðŸ“Š  Speed display OFF"); return
     end
 
     _speedDisplayGui = Instance.new("ScreenGui", ScreenGui)
@@ -6379,15 +6380,15 @@ Cmd("speeddisplay", {"speedometer","speedhud"}, function()
                  or spd > 25 and Color3.fromRGB(100,220,255)
                  or Color3.fromRGB(200,200,200)
         lbl.TextColor3 = col
-        lbl.Text = string.format("⚡ %.1f st/s", spd)
+        lbl.Text = string.format("âš¡ %.1f st/s", spd)
     end)
 
-    Notify("📊  Speed display ON")
+    Notify("ðŸ“Š  Speed display ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: RAINBOW BODY  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: RAINBOW BODY  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: HSV color cycling, BodyColors properties,
 --           smooth hue animation with task loop.
 
@@ -6396,7 +6397,7 @@ local _rainbowTask = nil
 Cmd("rainbow", {"rainbowbody","rbody"}, function(args)
     if _rainbowTask then
         task.cancel(_rainbowTask); _rainbowTask = nil
-        Notify("🌈  Rainbow OFF"); return
+        Notify("ðŸŒˆ  Rainbow OFF"); return
     end
     local speed = tonumber(args[1]) or 1
     local hue   = 0
@@ -6417,12 +6418,12 @@ Cmd("rainbow", {"rainbowbody","rbody"}, function(args)
             task.wait(0.05)
         end
     end)
-    Notify("🌈  Rainbow body ON  (speed "..speed..")")
+    Notify("ðŸŒˆ  Rainbow body ON  (speed "..speed..")")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ESP NAMETAGS (all players)  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ESP NAMETAGS (all players)  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: BillboardGui parented to character, AlwaysOnTop,
 --           updating text per player, CharacterAdded reconnect.
 
@@ -6470,17 +6471,17 @@ Cmd("nametagesp", {"nameesp","playertags"}, function()
                 end
             end
         end
-        Notify("🏷  Name ESP OFF"); return
+        Notify("ðŸ·  Name ESP OFF"); return
     end
     _nametagESPOn = true
     for _, p in ipairs(Players:GetPlayers()) do _attachNametagESP(p) end
     Conns.NameESPJoin = Players.PlayerAdded:Connect(_attachNametagESP)
-    Notify("🏷  Name ESP ON  (unique color per player)")
+    Notify("ðŸ·  Name ESP ON  (unique color per player)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CUSTOM PLAYER LIST GUI  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CUSTOM PLAYER LIST GUI  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: dynamic ScreenGui list, sorting by ping/name/team,
 --           live-updated via Heartbeat, scrolling layout.
 
@@ -6491,7 +6492,7 @@ Cmd("playerlist", {"plist","customlist"}, function(args)
     if _playerListGui then
         _playerListGui:Destroy(); _playerListGui = nil
         if _playerListConn then _playerListConn:Disconnect(); _playerListConn = nil end
-        Notify("👥  Player list OFF"); return
+        Notify("ðŸ‘¥  Player list OFF"); return
     end
     local sortBy = (args[1] or "name"):lower()   -- "name" | "ping" | "team"
 
@@ -6513,7 +6514,7 @@ Cmd("playerlist", {"plist","customlist"}, function(args)
     header.Size             = UDim2.new(1,0,0,28)
     header.BackgroundColor3 = Color3.fromRGB(20,20,20)
     header.BackgroundTransparency = 0
-    header.Text             = "👥  Players  (sort: "..sortBy..")"
+    header.Text             = "ðŸ‘¥  Players  (sort: "..sortBy..")"
     header.TextColor3       = Color3.fromRGB(200,200,200)
     header.Font             = Enum.Font.GothamBold
     header.TextSize         = 12
@@ -6563,7 +6564,7 @@ Cmd("playerlist", {"plist","customlist"}, function(args)
             nameLbl.Size         = UDim2.new(0.65,0,1,0)
             nameLbl.Position     = UDim2.new(0,6,0,0)
             nameLbl.BackgroundTransparency = 1
-            nameLbl.Text         = (p == LP and "▶ " or "  ")..p.Name
+            nameLbl.Text         = (p == LP and "â–¶ " or "  ")..p.Name
             nameLbl.TextColor3   = Color3.fromRGB(210,210,210)
             nameLbl.Font         = Enum.Font.GothamMedium
             nameLbl.TextSize     = 11
@@ -6595,12 +6596,12 @@ Cmd("playerlist", {"plist","customlist"}, function(args)
         if elapsed >= 2 then elapsed = 0; pcall(refresh) end
     end)
 
-    Notify("👥  Player list ON  (sort:"..sortBy..")")
+    Notify("ðŸ‘¥  Player list ON  (sort:"..sortBy..")")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: WORKSPACE SCANNER  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: WORKSPACE SCANNER  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: iterating descendants, grouping by ClassName,
 --           sorting and printing a summary report.
 
@@ -6619,10 +6620,10 @@ Cmd("scanworkspace", {"wscan","wsinventory"}, function(args)
     for i=1,math.min(limit,#list) do
         print(string.format("  %-30s %d", list[i].cls, list[i].n))
     end
-    Notify(string.format("🔍  %d classes  |  %d instances — console", #list, total), "info")
+    Notify(string.format("ðŸ”  %d classes  |  %d instances â€” console", #list, total), "info")
 end)
 
--- countparts  — count BaseParts by material or name
+-- countparts  â€” count BaseParts by material or name
 Cmd("countparts", {"countobjects","pc"}, function(args)
     local filter = args[1] and args[1]:lower() or ""
     local n = 0
@@ -6634,13 +6635,13 @@ Cmd("countparts", {"countobjects","pc"}, function(args)
             end
         end
     end
-    Notify(string.format("🔢  %d BasePart(s)%s", n,
+    Notify(string.format("ðŸ”¢  %d BasePart(s)%s", n,
         filter=="" and "" or " matching '"..filter.."'"), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MATERIAL CHANGER  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MATERIAL CHANGER  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Enum.Material enumeration, batch property change,
 --           material name lookups.
 
@@ -6665,10 +6666,10 @@ Cmd("setmaterial", {"material","mat"}, function(args)
             pcall(function() v.Material = matEnum end); n = n + 1
         end
     end
-    Notify(string.format("🧱  Material → %s  (%d parts, scope=%s)", matEnum.Name, n, scope))
+    Notify(string.format("ðŸ§±  Material â†’ %s  (%d parts, scope=%s)", matEnum.Name, n, scope))
 end)
 
--- charmaterial  — change all character parts to a material
+-- charmaterial  â€” change all character parts to a material
 Cmd("charmaterial", {"charmat","mymat"}, function(args)
     local matName = args[1]; if not matName then Notify("Usage: charmaterial <Material>","warn"); return end
     local matEnum = nil
@@ -6681,55 +6682,55 @@ Cmd("charmaterial", {"charmat","mymat"}, function(args)
     for _, v in ipairs(char:GetDescendants()) do
         if v:IsA("BasePart") then pcall(function() v.Material = matEnum end); n=n+1 end
     end
-    Notify("🧱  Char material → "..matEnum.Name.."  ("..n.." parts)")
+    Notify("ðŸ§±  Char material â†’ "..matEnum.Name.."  ("..n.." parts)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: LIGHT COLOR / INTENSITY TOOLS  (IY-ported)  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: LIGHT COLOR / INTENSITY TOOLS  (IY-ported)  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- lightcolor <R G B>  — change character PointLight color
+-- lightcolor <R G B>  â€” change character PointLight color
 Cmd("lightcolor", {"lcolor","setlightcolor"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local pl  = hrp:FindFirstChildOfClass("PointLight")
-    if not pl then Notify("No light — run 'light' first","warn"); return end
+    if not pl then Notify("No light â€” run 'light' first","warn"); return end
     local r = tonumber(args[1]) or 255
     local g = tonumber(args[2]) or 240
     local b = tonumber(args[3]) or 200
     pl.Color = Color3.fromRGB(r,g,b)
-    Notify(string.format("💡  Light color → (%d,%d,%d)",r,g,b))
+    Notify(string.format("ðŸ’¡  Light color â†’ (%d,%d,%d)",r,g,b))
 end)
 
--- lightrange <n>  — change character PointLight range
+-- lightrange <n>  â€” change character PointLight range
 Cmd("lightrange", {"lrange","setlightrange"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local pl  = hrp:FindFirstChildOfClass("PointLight")
-    if not pl then Notify("No light — run 'light' first","warn"); return end
+    if not pl then Notify("No light â€” run 'light' first","warn"); return end
     pl.Range = tonumber(args[1]) or 20
-    Notify("💡  Light range → "..pl.Range)
+    Notify("ðŸ’¡  Light range â†’ "..pl.Range)
 end)
 
 -- lightbrightness <n>
 Cmd("lightbrightness", {"lbrightness","setlightbright"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local pl  = hrp:FindFirstChildOfClass("PointLight")
-    if not pl then Notify("No light — run 'light' first","warn"); return end
+    if not pl then Notify("No light â€” run 'light' first","warn"); return end
     pl.Brightness = tonumber(args[1]) or 5
-    Notify("💡  Light brightness → "..pl.Brightness)
+    Notify("ðŸ’¡  Light brightness â†’ "..pl.Brightness)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TRAIL VARIANTS  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TRAIL VARIANTS  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- rainbowtrail  — trail that cycles hue continuously
+-- rainbowtrail  â€” trail that cycles hue continuously
 local _rainbowTrailTask = nil
 
 Cmd("rainbowtrail", {"rtrail","rbtrail"}, function(args)
     if _rainbowTrailTask then
         task.cancel(_rainbowTrailTask); _rainbowTrailTask = nil
         Commands["notrail"]({})
-        Notify("✨  Rainbow trail OFF"); return
+        Notify("âœ¨  Rainbow trail OFF"); return
     end
     -- Create base trail
     Commands["trail"]({})
@@ -6746,20 +6747,20 @@ Cmd("rainbowtrail", {"rtrail","rbtrail"}, function(args)
             task.wait(0.05)
         end
     end)
-    Notify("✨  Rainbow trail ON")
+    Notify("âœ¨  Rainbow trail ON")
 end)
 
--- thicktrail <width>  — change trail width
+-- thicktrail <width>  â€” change trail width
 Cmd("thicktrail", {"trailwidth","trailsize"}, function(args)
     local w   = tonumber(args[1]) or 2
     local hrp = GetHRP(); if not hrp then return end
     local tr  = hrp:FindFirstChild("S_Trail")
-    if not tr then Notify("No trail — run 'trail' first","warn"); return end
+    if not tr then Notify("No trail â€” run 'trail' first","warn"); return end
     tr.WidthScale = NumberSequence.new({
         NumberSequenceKeypoint.new(0, w),
         NumberSequenceKeypoint.new(1, 0),
     })
-    Notify("✨  Trail width → "..w)
+    Notify("âœ¨  Trail width â†’ "..w)
 end)
 
 -- traillifetime <seconds>
@@ -6767,16 +6768,16 @@ Cmd("traillifetime", {"traillife","traillength"}, function(args)
     local t   = tonumber(args[1]) or 1
     local hrp = GetHRP(); if not hrp then return end
     local tr  = hrp:FindFirstChild("S_Trail")
-    if not tr then Notify("No trail — run 'trail' first","warn"); return end
+    if not tr then Notify("No trail â€” run 'trail' first","warn"); return end
     tr.Lifetime = math.clamp(t, 0, 20)
-    Notify("✨  Trail lifetime → "..t.."s")
+    Notify("âœ¨  Trail lifetime â†’ "..t.."s")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED WORKSPACE  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED WORKSPACE  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- freezeall  — anchor every BasePart in workspace
+-- freezeall  â€” anchor every BasePart in workspace
 Cmd("freezeall", {"anchorall","freezews"}, function()
     local n = 0
     for _, v in ipairs(workspace:GetDescendants()) do
@@ -6784,7 +6785,7 @@ Cmd("freezeall", {"anchorall","freezews"}, function()
             pcall(function() v.Anchored = true end); n=n+1
         end
     end
-    Notify("🧊  Anchored "..n.." workspace parts")
+    Notify("ðŸ§Š  Anchored "..n.." workspace parts")
 end)
 
 Cmd("unfreezeall", {"unanchorall","unfreezews"}, function()
@@ -6794,10 +6795,10 @@ Cmd("unfreezeall", {"unanchorall","unfreezews"}, function()
             pcall(function() v.Anchored = false end); n=n+1
         end
     end
-    Notify("🧊  Unanchored "..n.." workspace parts")
+    Notify("ðŸ§Š  Unanchored "..n.." workspace parts")
 end)
 
--- noparts  — make every non-character part transparent
+-- noparts  â€” make every non-character part transparent
 Cmd("noparts", {"hidews","transparent"}, function(args)
     local alpha = tonumber(args[1]) or 1
     local char  = GetChar()
@@ -6807,34 +6808,34 @@ Cmd("noparts", {"hidews","transparent"}, function(args)
             pcall(function() v.Transparency = alpha end); n=n+1
         end
     end
-    Notify(string.format("🔍  Set %d parts to transparency %.1f", n, alpha))
+    Notify(string.format("ðŸ”  Set %d parts to transparency %.1f", n, alpha))
 end)
 
--- restoreparts  — reset all workspace part transparency to 0
+-- restoreparts  â€” reset all workspace part transparency to 0
 Cmd("restoreparts", {"showws","solidparts"}, function()
     local n = 0
     for _, v in ipairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") then pcall(function() v.Transparency=0 end); n=n+1 end
     end
-    Notify("🔍  Restored "..n.." parts to solid")
+    Notify("ðŸ”  Restored "..n.." parts to solid")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SCREENSHOT TIMER  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SCREENSHOT TIMER  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("screenshotafter", {"scafter","timedshot"}, function(args)
     local delay_s = tonumber(args[1]) or 3
-    Notify(string.format("📸  Screenshot in %.0fs...", delay_s), "info")
+    Notify(string.format("ðŸ“¸  Screenshot in %.0fs...", delay_s), "info")
     task.delay(delay_s, function()
         pcall(function() game:GetService("CoreGui"):TakeScreenshot() end)
-        Notify("📸  Screenshot taken!")
+        Notify("ðŸ“¸  Screenshot taken!")
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: REAL-WORLD TIME DISPLAY  (IY-ported)        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: REAL-WORLD TIME DISPLAY  (IY-ported)        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: os.date (executor feature), os.time, formatting
 --           time strings, fallback for no os.date access.
 
@@ -6843,20 +6844,20 @@ Cmd("realtime", {"irl","currenttime","clock"}, function()
         return os.date("%Y-%m-%d  %H:%M:%S")
     end)
     if ok then
-        Notify("🕐  "..str, "info")
+        Notify("ðŸ•  "..str, "info")
     else
         -- Fallback: use os.time() + format manually
         local t   = os.time()
         local sec = t % 60
         local min = math.floor(t/60) % 60
         local hr  = math.floor(t/3600) % 24
-        Notify(string.format("🕐  %02d:%02d:%02d (UTC)", hr, min, sec), "info")
+        Notify(string.format("ðŸ•  %02d:%02d:%02d (UTC)", hr, min, sec), "info")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CURSOR / INTERACTION TRAIL  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CURSOR / INTERACTION TRAIL  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: InputChanged tracking, spawning ScreenGui frames
 --           at mouse position, task-based fade-out.
 
@@ -6867,7 +6868,7 @@ Cmd("cursortrail", {"mousetrail","ctrail"}, function(args)
     if _cursorTrailOn then
         _cursorTrailOn = false
         if _cursorTrailConn then _cursorTrailConn:Disconnect(); _cursorTrailConn = nil end
-        Notify("🖱  Cursor trail OFF"); return
+        Notify("ðŸ–±  Cursor trail OFF"); return
     end
     _cursorTrailOn = true
     local r = tonumber(args[1]) or 200
@@ -6898,48 +6899,48 @@ Cmd("cursortrail", {"mousetrail","ctrail"}, function(args)
         end)
     end)
 
-    Notify(string.format("🖱  Cursor trail ON  (%d,%d,%d)",r,g,b))
+    Notify(string.format("ðŸ–±  Cursor trail ON  (%d,%d,%d)",r,g,b))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GAME MISC  (IY-ported)                      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GAME MISC  (IY-ported)                      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- placeinfo  — detailed info about the current place
+-- placeinfo  â€” detailed info about the current place
 Cmd("placeinfo", {"gameinfo2","gi"}, function()
     local lines = {
         "Game:      "..game.Name,
         "GameId:    "..game.GameId,
         "PlaceId:   "..game.PlaceId,
         "Version:   "..game.PlaceVersion,
-        "JobId:     "..game.JobId:sub(1,18).."…",
+        "JobId:     "..game.JobId:sub(1,18).."â€¦",
         "Players:   "..(#Players:GetPlayers()).."/"..Players.MaxPlayers,
         "Uptime:    "..string.format("%.0fs", workspace.DistributedGameTime),
         "Creator:   "..tostring(game.CreatorId).." ("..game.CreatorType.Name..")",
     }
     print("[S-Admin] Place Info:\n  "..table.concat(lines,"\n  "))
-    Notify("ℹ  Place info — see console","info")
+    Notify("â„¹  Place info â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GRAVITY DISPLAY  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GRAVITY DISPLAY  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("gravityinfo", {"gravinfo","showgravity"}, function()
-    Notify(string.format("🌍  Gravity: %.2f studs/s²  (default %.2f)",
+    Notify(string.format("ðŸŒ  Gravity: %.2f studs/sÂ²  (default %.2f)",
         workspace.Gravity, _origGravity), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ANTI-AFK VARIANTS  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ANTI-AFK VARIANTS  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- wiggle  — tiny random position jitter to defeat idle detection
+-- wiggle  â€” tiny random position jitter to defeat idle detection
 local _wiggleTask = nil
 Cmd("wiggle", {"antiidle","jitter"}, function()
     if _wiggleTask then
         task.cancel(_wiggleTask); _wiggleTask = nil
-        Notify("👣  Wiggle OFF"); return
+        Notify("ðŸ‘£  Wiggle OFF"); return
     end
     _wiggleTask = task.spawn(function()
         while true do
@@ -6951,12 +6952,12 @@ Cmd("wiggle", {"antiidle","jitter"}, function()
             task.wait(25 + math.random()*10)
         end
     end)
-    Notify("👣  Wiggle ON  (micro-jitter every ~30s)")
+    Notify("ðŸ‘£  Wiggle ON  (micro-jitter every ~30s)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: RENDER / QUALITY SETTINGS  (IY-ported)      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: RENDER / QUALITY SETTINGS  (IY-ported)      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: settings().Rendering properties, LOD levels,
 --           MaxDistance, QualityLevel enum usage.
 
@@ -6966,7 +6967,7 @@ Cmd("renderdistance", {"renderrange","maxdist"}, function(args)
         workspace.StreamingMinRadius  = math.min(dist, 128)
         workspace.StreamingTargetRadius = dist
     end)
-    Notify("🖥  Render distance → "..dist.." studs")
+    Notify("ðŸ–¥  Render distance â†’ "..dist.." studs")
 end)
 
 Cmd("lodlevel", {"lod","detaillevel"}, function(args)
@@ -6978,13 +6979,13 @@ Cmd("lodlevel", {"lod","detaillevel"}, function(args)
     pcall(function()
         settings().Rendering.QualityLevel = level
     end)
-    Notify("🖥  Quality level → "..level)
+    Notify("ðŸ–¥  Quality level â†’ "..level)
 end)
 
 Cmd("shadows", {"toggleshadows","rendershadows"}, function(args)
     local on = (args[1] or ""):lower() ~= "off"
     Lighting.GlobalShadows = on
-    Notify("🌑  Shadows "..(on and "ON" or "OFF"))
+    Notify("ðŸŒ‘  Shadows "..(on and "ON" or "OFF"))
 end)
 
 Cmd("particlelod", {"particledetail","plod"}, function(args)
@@ -7003,12 +7004,12 @@ Cmd("particlelod", {"particledetail","plod"}, function(args)
             end)
         end
     end
-    Notify("✨  Particle LOD → "..level)
+    Notify("âœ¨  Particle LOD â†’ "..level)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SCRIPT / MODULE TOOLS  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SCRIPT / MODULE TOOLS  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: finding LocalScripts, ModuleScripts, Script
 --           instances across the game tree, source inspection.
 
@@ -7031,7 +7032,7 @@ Cmd("listscripts", {"scripts","lscripts"}, function(args)
     for i=1,math.min(30,#found) do
         print(string.format("  [%s] %s", found[i].cls:sub(1,2), found[i].path))
     end
-    Notify(string.format("📜  %d script(s) — see console", #found), "info")
+    Notify(string.format("ðŸ“œ  %d script(s) â€” see console", #found), "info")
 end)
 
 Cmd("scriptcount", {"countscripts","sc2"}, function()
@@ -7042,7 +7043,7 @@ Cmd("scriptcount", {"countscripts","sc2"}, function()
     local msg = string.format("LocalScript=%d  Module=%d  Script=%d",
         counts.LocalScript, counts.ModuleScript, counts.Script)
     print("[S-Admin] "..msg)
-    Notify("📜  "..msg, "info")
+    Notify("ðŸ“œ  "..msg, "info")
 end)
 
 Cmd("listmodules", {"modules","lmodules"}, function()
@@ -7052,12 +7053,12 @@ Cmd("listmodules", {"modules","lmodules"}, function()
     end
     table.sort(found)
     print("[S-Admin] ModuleScripts ("..#found.."):\n  "..table.concat(found,"\n  "))
-    Notify("📦  "..#found.." module(s) — console", "info")
+    Notify("ðŸ“¦  "..#found.." module(s) â€” console", "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ISOMETRIC CAMERA  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ISOMETRIC CAMERA  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: fixed-angle Scriptable camera, orthographic
 --           illusion via high FOV + distance, lock-step follow.
 
@@ -7068,7 +7069,7 @@ Cmd("isocam", {"isometric","iso"}, function(args)
         _isoConn:Disconnect(); _isoConn = nil
         workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
         workspace.CurrentCamera.FieldOfView = 70
-        Notify("📷  Isometric cam OFF"); return
+        Notify("ðŸ“·  Isometric cam OFF"); return
     end
     local dist  = tonumber(args[1]) or 40
     local angle = tonumber(args[2]) or 45
@@ -7087,12 +7088,12 @@ Cmd("isocam", {"isometric","iso"}, function(args)
         cam.CFrame = CFrame.new(camPos, pos)
         cam.Focus  = CFrame.new(pos)
     end)
-    Notify(string.format("📷  Isometric cam ON  dist=%d  angle=%d°", dist, angle))
+    Notify(string.format("ðŸ“·  Isometric cam ON  dist=%d  angle=%dÂ°", dist, angle))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FIRST-PERSON LOCK  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FIRST-PERSON LOCK  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: CameraMaxZoomDistance = 0 pattern, preventing
 --           the player from zooming out, property guard.
 
@@ -7103,7 +7104,7 @@ Cmd("lockfirstperson", {"lfp","forcefp"}, function()
         _fp1Conn:Disconnect(); _fp1Conn = nil
         LP.CameraMinZoomDistance = 0.5
         LP.CameraMaxZoomDistance = 400
-        Notify("📷  First-person lock OFF"); return
+        Notify("ðŸ“·  First-person lock OFF"); return
     end
     LP.CameraMinZoomDistance = 0
     LP.CameraMaxZoomDistance = 0
@@ -7113,12 +7114,12 @@ Cmd("lockfirstperson", {"lfp","forcefp"}, function()
             LP.CameraMaxZoomDistance = 0
         end
     end)
-    Notify("📷  First-person lock ON  (run again to exit)")
+    Notify("ðŸ“·  First-person lock ON  (run again to exit)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GUI TRANSPARENCY CONTROL  (IY-ported)       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GUI TRANSPARENCY CONTROL  (IY-ported)       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: recursive descendant transparency adjustment,
 --           BackgroundTransparency vs ImageTransparency.
 
@@ -7136,19 +7137,19 @@ Cmd("guitransparency", {"guitrans","guialpha"}, function(args)
             n = n + 1
         end
     end
-    Notify(string.format("🪟  GUI transparency %.2f  (%d elements)", alpha, n))
+    Notify(string.format("ðŸªŸ  GUI transparency %.2f  (%d elements)", alpha, n))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ASSET PRELOADER  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ASSET PRELOADER  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ContentProvider:PreloadAsync, batch loading,
 --           checking load state.
 
 Cmd("preload", {"preloads","loadasset"}, function(args)
     local id = tonumber(args[1])
     if not id then Notify("Usage: preload <assetID>","warn"); return end
-    Notify("⏳  Preloading "..id.."...", "info")
+    Notify("â³  Preloading "..id.."...", "info")
     task.spawn(function()
         local inst = Instance.new("Part")
         local ok = pcall(function()
@@ -7157,13 +7158,13 @@ Cmd("preload", {"preloads","loadasset"}, function(args)
             game:GetService("ContentProvider"):PreloadAsync({inst})
         end)
         inst:Destroy()
-        Notify(ok and ("✅  Asset "..id.." preloaded") or "❌  Preload failed", ok and "success" or "error")
+        Notify(ok and ("âœ…  Asset "..id.." preloaded") or "âŒ  Preload failed", ok and "success" or "error")
     end)
 end)
 
 Cmd("preloadchar", {"preloadavatar"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
-    Notify("⏳  Preloading "..target.Name.."'s avatar...", "info")
+    Notify("â³  Preloading "..target.Name.."'s avatar...", "info")
     task.spawn(function()
         local ok = pcall(function()
             local desc = Players:GetHumanoidDescriptionFromUserId(target.UserId)
@@ -7171,13 +7172,13 @@ Cmd("preloadchar", {"preloadavatar"}, function(args)
             game:GetService("ContentProvider"):PreloadAsync({temp})
             temp:Destroy()
         end)
-        Notify(ok and "✅  Avatar preloaded" or "❌  Preload failed", ok and "success" or "error")
+        Notify(ok and "âœ…  Avatar preloaded" or "âŒ  Preload failed", ok and "success" or "error")
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: EVENT MONITOR  (IY-ported)                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: EVENT MONITOR  (IY-ported)                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: monitoring Roblox engine signals, timing events,
 --           game-lifecycle signal connections.
 
@@ -7189,7 +7190,7 @@ Cmd("eventmonitor", {"evtmon","monitorevents"}, function()
         _eventMonActive = false
         for _, c in ipairs(_eventMonConns) do pcall(function() c:Disconnect() end) end
         _eventMonConns = {}
-        Notify("📡  Event monitor OFF"); return
+        Notify("ðŸ“¡  Event monitor OFF"); return
     end
     _eventMonActive = true
 
@@ -7218,12 +7219,12 @@ Cmd("eventmonitor", {"evtmon","monitorevents"}, function()
         log("DEATH", "Character removing")
     end))
 
-    Notify("📡  Event monitor ON — output in console","info")
+    Notify("ðŸ“¡  Event monitor ON â€” output in console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: RIG DETECTOR  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: RIG DETECTOR  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: detecting R6 vs R15 via Motor6D names,
 --           HumanoidRigType property, part name checks.
 
@@ -7246,12 +7247,12 @@ Cmd("rigtype", {"rig","myrig"}, function(args)
     local hasTorso      = char:FindFirstChild("Torso") ~= nil
     local confirm = hasUpperTorso and "R15" or hasTorso and "R6" or "Unknown"
 
-    Notify(string.format("🤖  %s rig: %s  (parts confirm: %s)", target.Name, rigType, confirm), "info")
+    Notify(string.format("ðŸ¤–  %s rig: %s  (parts confirm: %s)", target.Name, rigType, confirm), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: HITBOX VIEWER  (IY-ported)                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: HITBOX VIEWER  (IY-ported)                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: SelectionBox per BasePart, color-coding by size,
 --           toggling visibility, cleanup via tag or folder.
 
@@ -7263,7 +7264,7 @@ Cmd("hitboxesp", {"hitbox","hbesp"}, function(args)
         _hitboxFolder:Destroy(); _hitboxFolder = nil
         for _, c in ipairs(_hitboxConns) do pcall(function() c:Disconnect() end) end
         _hitboxConns = {}
-        Notify("📦  Hitbox ESP OFF"); return
+        Notify("ðŸ“¦  Hitbox ESP OFF"); return
     end
     local target = GetPlayers(args[1])[1]
     if not target then Notify("Usage: hitboxesp <player>","warn"); return end
@@ -7289,12 +7290,12 @@ Cmd("hitboxesp", {"hitbox","hbesp"}, function(args)
     if target.Character then buildHitboxes(target.Character) end
     local c = target.CharacterAdded:Connect(function(ch) task.wait(0.5); buildHitboxes(ch) end)
     table.insert(_hitboxConns, c)
-    Notify("📦  Hitbox ESP → "..target.Name)
+    Notify("ðŸ“¦  Hitbox ESP â†’ "..target.Name)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ANIMATION INSPECTOR  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ANIMATION INSPECTOR  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: GetPlayingAnimationTracks(), AnimationTrack
 --           properties, reading live animation state.
 
@@ -7310,21 +7311,21 @@ Cmd("animinfo", {"animations","currentanim"}, function(args)
             t.Name, t.Speed, t.WeightCurrent, t.TimePosition))
     end
     print("[S-Admin] "..target.Name.." animations:\n"..table.concat(lines,"\n"))
-    Notify(string.format("🎭  %d track(s) for %s — console", #tracks, target.Name), "info")
+    Notify(string.format("ðŸŽ­  %d track(s) for %s â€” console", #tracks, target.Name), "info")
 end)
 
--- pauseanim  — pause all playing animation tracks
+-- pauseanim  â€” pause all playing animation tracks
 Cmd("pauseanim", {"holdanim","stopframe"}, function()
     local hum = GetHuman(); if not hum then return end
     for _, t in ipairs(hum:GetPlayingAnimationTracks()) do
         t:AdjustSpeed(0)
     end
-    Notify("🎭  All animations paused  (animspeed 1 to resume)")
+    Notify("ðŸŽ­  All animations paused  (animspeed 1 to resume)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PHYSICS ANALYSIS  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PHYSICS ANALYSIS  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: AssemblyLinearVelocity, AssemblyAngularVelocity,
 --           GetMass(), reading physics state for debugging.
 
@@ -7350,30 +7351,30 @@ Cmd("physicsinfo", {"physinfo","charphysics"}, function()
         string.format("Gravity:           %.2f", workspace.Gravity),
     }
     print("[S-Admin] Physics info:\n  "..table.concat(info,"\n  "))
-    Notify(string.format("⚙  Speed=%.1f  Mass=%.2f — console", lv.Magnitude, mass), "info")
+    Notify(string.format("âš™  Speed=%.1f  Mass=%.2f â€” console", lv.Magnitude, mass), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: NOTIFICATION QUEUE MANAGER  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: NOTIFICATION QUEUE MANAGER  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: controlling the notification system, queue
 --           inspection, priority, and clear.
 
 Cmd("clearnotifs", {"clearnotifications","cnq"}, function()
     notifQ = {}
-    Notify("🔔  Notification queue cleared")
+    Notify("ðŸ””  Notification queue cleared")
 end)
 
 Cmd("notiftest", {"testnotif","pingtest"}, function()
-    Notify("✅  Success notification test","success")
-    task.delay(0.3, function() Notify("⚠  Warning notification test","warn") end)
-    task.delay(0.6, function() Notify("❌  Error notification test","error") end)
-    task.delay(0.9, function() Notify("ℹ  Info notification test","info") end)
+    Notify("âœ…  Success notification test","success")
+    task.delay(0.3, function() Notify("âš   Warning notification test","warn") end)
+    task.delay(0.6, function() Notify("âŒ  Error notification test","error") end)
+    task.delay(0.9, function() Notify("â„¹  Info notification test","info") end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ALIAS DISPLAY  (IY-ported)                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ALIAS DISPLAY  (IY-ported)                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: iterating the Aliases table, grouping aliases by
 --           target command, formatted output.
 
@@ -7391,31 +7392,31 @@ Cmd("listaliases", {"aliases","showaliases"}, function(args)
     local lines = {}
     for target, alts in pairs(grouped) do
         table.sort(alts)
-        table.insert(lines, target.." → ["..table.concat(alts,", ").."]")
+        table.insert(lines, target.." â†’ ["..table.concat(alts,", ").."]")
     end
     table.sort(lines)
     print("[S-Admin] Aliases:\n  "..table.concat(lines,"\n  "))
-    Notify("🔗  "..#lines.." command(s) with aliases — console","info")
+    Notify("ðŸ”—  "..#lines.." command(s) with aliases â€” console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: DEBOUNCE / COOLDOWN TOOLS  (IY-ported)      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: DEBOUNCE / COOLDOWN TOOLS  (IY-ported)      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: task.delay-based cooldowns, tracking in a table,
 --           a general-purpose cooldown utility pattern.
 
 local _userCooldowns = {}
 
--- setcooldown <name> <seconds>  — start a named timer
+-- setcooldown <name> <seconds>  â€” start a named timer
 Cmd("setcooldown", {"cd2","startcooldown"}, function(args)
     local name  = args[1]; if not name then Notify("Usage: setcooldown <name> <seconds>","warn"); return end
     local secs  = tonumber(args[2]) or 5
     _userCooldowns[name] = tick() + secs
-    Notify(string.format("⏱  Cooldown '%s' → %.1f seconds", name, secs))
+    Notify(string.format("â±  Cooldown '%s' â†’ %.1f seconds", name, secs))
     task.delay(secs, function()
         if _userCooldowns[name] and tick() >= _userCooldowns[name] then
             _userCooldowns[name] = nil
-            Notify("✅  Cooldown '"..name.."' finished!")
+            Notify("âœ…  Cooldown '"..name.."' finished!")
         end
     end)
 end)
@@ -7428,19 +7429,19 @@ Cmd("checkcooldown", {"checkcd","cdcheck"}, function(args)
         local lines = {}
         for n, t in pairs(_userCooldowns) do
             local left = math.max(0, t - tick())
-            table.insert(lines, n.." → "..string.format("%.1fs left", left))
+            table.insert(lines, n.." â†’ "..string.format("%.1fs left", left))
         end
-        Notify("⏱  "..table.concat(lines,"  |  "),"info"); return
+        Notify("â±  "..table.concat(lines,"  |  "),"info"); return
     end
     local t = _userCooldowns[name]
     if not t then Notify("No cooldown named '"..name.."'","warn"); return end
     local left = math.max(0, t - tick())
-    Notify(string.format("⏱  '%s' → %.1f seconds left", name, left), "info")
+    Notify(string.format("â±  '%s' â†’ %.1f seconds left", name, left), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CHARACTER SIZE VARIANTS  (IY-ported)        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CHARACTER SIZE VARIANTS  (IY-ported)        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: HumanoidDescription scaling API in preset
 --           combinations, how scales interact.
 
@@ -7473,16 +7474,16 @@ Cmd("sizepreset", {"ss","shapepreset"}, function(args)
     desc.LowerTorsoScale = p.depth
     desc.UpperTorsoScale = p.width
     hum:ApplyDescription(desc)
-    Notify("📐  Size preset '"..key.."' applied")
+    Notify("ðŸ“  Size preset '"..key.."' applied")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: COLOR PICKER UTILITY  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: COLOR PICKER UTILITY  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Color3 construction methods, hex parsing,
 --           HSV vs RGB vs hex color formats.
 
--- color <hex>  — parse a hex color and show it in a preview
+-- color <hex>  â€” parse a hex color and show it in a preview
 Cmd("color", {"colorpick","hex"}, function(args)
     local hex = (args[1] or ""):gsub("#","")
     if #hex ~= 6 then Notify("Usage: color <RRGGBB hex>  e.g. color FF4500","warn"); return end
@@ -7508,31 +7509,31 @@ Cmd("color", {"colorpick","hex"}, function(args)
     task.delay(3, function() swatch:Destroy() end)
     -- Also print RGB and HSV
     local h,s,v = Color3.fromRGB(r,g,b):ToHSV()
-    print(string.format("[S-Color] #%s  RGB(%d,%d,%d)  HSV(%.0f°,%.0f%%,%.0f%%)",
+    print(string.format("[S-Color] #%s  RGB(%d,%d,%d)  HSV(%.0fÂ°,%.0f%%,%.0f%%)",
         hex:upper(), r, g, b, h*360, s*100, v*100))
-    Notify(string.format("🎨  #%s → RGB(%d,%d,%d)", hex:upper(), r, g, b), "info")
+    Notify(string.format("ðŸŽ¨  #%s â†’ RGB(%d,%d,%d)", hex:upper(), r, g, b), "info")
 end)
 
--- rgb2hex  — convert RGB to hex
+-- rgb2hex  â€” convert RGB to hex
 Cmd("rgb2hex", {"tohex","rgbhex"}, function(args)
     local r = tonumber(args[1]) or 0
     local g = tonumber(args[2]) or 0
     local b = tonumber(args[3]) or 0
     local hex = string.format("%02X%02X%02X", r, g, b)
     pcall(function() setclipboard("#"..hex) end)
-    Notify("🎨  #"..hex.." (copied)","info")
+    Notify("ðŸŽ¨  #"..hex.." (copied)","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PLACE TELEPORT  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PLACE TELEPORT  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: TeleportService:Teleport (cross-place teleport),
 --           PlaceId vs GameId distinction.
 
 Cmd("tpplace", {"gotoplace","placetp"}, function(args)
     local placeId = tonumber(args[1])
     if not placeId then Notify("Usage: tpplace <placeID>","warn"); return end
-    Notify("🌐  Teleporting to place "..placeId.."...")
+    Notify("ðŸŒ  Teleporting to place "..placeId.."...")
     task.delay(0.5, function()
         pcall(function()
             TeleportService:Teleport(placeId, LP)
@@ -7540,11 +7541,11 @@ Cmd("tpplace", {"gotoplace","placetp"}, function(args)
     end)
 end)
 
--- tpgame <gameId>  — teleport to a game's start place
+-- tpgame <gameId>  â€” teleport to a game's start place
 Cmd("tpgame", {"gotogame","gametp"}, function(args)
     local gameId = tonumber(args[1])
     if not gameId then Notify("Usage: tpgame <gameID>","warn"); return end
-    Notify("🌐  Looking up game "..gameId.."...", "info")
+    Notify("ðŸŒ  Looking up game "..gameId.."...", "info")
     task.spawn(function()
         local ok, body = pcall(function()
             local raw = game:HttpGet("https://games.roblox.com/v1/games?universeIds="..gameId)
@@ -7553,7 +7554,7 @@ Cmd("tpgame", {"gotogame","gametp"}, function(args)
         if ok and body and body.data and body.data[1] then
             local rootPlaceId = body.data[1].rootPlaceId
             if rootPlaceId then
-                Notify("🌐  Teleporting to '"..tostring(body.data[1].name).."'...")
+                Notify("ðŸŒ  Teleporting to '"..tostring(body.data[1].name).."'...")
                 task.delay(0.5, function()
                     pcall(function() TeleportService:Teleport(rootPlaceId, LP) end)
                 end)
@@ -7566,9 +7567,9 @@ Cmd("tpgame", {"gotogame","gametp"}, function(args)
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CONSTRAINT INSPECTOR  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CONSTRAINT INSPECTOR  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: listing Constraint instances, reading Attachment
 --           positions, visualising constraint connections.
 
@@ -7590,12 +7591,12 @@ Cmd("listconstraints", {"constraints","lconstraints"}, function(args)
     if #found == 0 then Notify("No constraints found","warn"); return end
     print(string.format("[S-Admin] Constraints (%d):", #found))
     for _, c in ipairs(found) do
-        print(string.format("  [%s] %s  |  %s ↔ %s", c.cls, c.path, c.a0, c.a1))
+        print(string.format("  [%s] %s  |  %s â†” %s", c.cls, c.path, c.a0, c.a1))
     end
-    Notify("⚙  "..#found.." constraint(s) — console","info")
+    Notify("âš™  "..#found.." constraint(s) â€” console","info")
 end)
 
--- removeconstraint <name>  — destroy a constraint by name
+-- removeconstraint <name>  â€” destroy a constraint by name
 Cmd("removeconstraint", {"delconstraint","rmconstraint"}, function(args)
     local name = args[1]; if not name then Notify("Usage: removeconstraint <name>","warn"); return end
     local n = 0
@@ -7604,18 +7605,18 @@ Cmd("removeconstraint", {"delconstraint","rmconstraint"}, function(args)
             pcall(function() v:Destroy() end); n=n+1
         end
     end
-    Notify("⚙  Removed "..n.." constraint(s) named '"..name.."'")
+    Notify("âš™  Removed "..n.." constraint(s) named '"..name.."'")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MISC USEFUL UTILITIES  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MISC USEFUL UTILITIES  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- waitfor <instance path>  — wait up to N seconds for an instance
+-- waitfor <instance path>  â€” wait up to N seconds for an instance
 Cmd("waitfor", {"wait","wf"}, function(args)
     local path   = args[1]; if not path then Notify("Usage: waitfor <name> [timeout]","warn"); return end
     local timeout = tonumber(args[2]) or 10
-    Notify("⏳  Waiting for '"..path.."'  (timeout "..timeout.."s)...", "info")
+    Notify("â³  Waiting for '"..path.."'  (timeout "..timeout.."s)...", "info")
     task.spawn(function()
         local start = tick()
         local found = nil
@@ -7625,14 +7626,14 @@ Cmd("waitfor", {"wait","wf"}, function(args)
             task.wait(0.1)
         end
         if found then
-            Notify("✅  Found: "..found:GetFullName(),"success")
+            Notify("âœ…  Found: "..found:GetFullName(),"success")
         else
-            Notify("❌  '"..path.."' not found in "..timeout.."s","error")
+            Notify("âŒ  '"..path.."' not found in "..timeout.."s","error")
         end
     end)
 end)
 
--- benchmark2 <iterations> <cmd>  — run a command N times and measure average
+-- benchmark2 <iterations> <cmd>  â€” run a command N times and measure average
 Cmd("benchmark2", {"bench2","timedloop"}, function(args)
     local n    = math.min(tonumber(args[1]) or 10, 100)
     local rest = table.concat(args," ",2)
@@ -7648,11 +7649,11 @@ Cmd("benchmark2", {"bench2","timedloop"}, function(args)
         pcall(function() Commands[name](parts) end)
         total = total + (tick()-t0)
     end
-    Notify(string.format("⏱  %s × %d  avg=%.3fms  total=%.2fms",
+    Notify(string.format("â±  %s Ã— %d  avg=%.3fms  total=%.2fms",
         name, n, (total/n)*1000, total*1000), "info")
 end)
 
--- matheval <expression>  — evaluate a math expression
+-- matheval <expression>  â€” evaluate a math expression
 Cmd("matheval", {"calc","math"}, function(args)
     local expr = table.concat(args," ")
     if expr == "" then Notify("Usage: matheval <expression>","warn"); return end
@@ -7662,13 +7663,13 @@ Cmd("matheval", {"calc","math"}, function(args)
     if ok then
         local str = tostring(result)
         pcall(function() setclipboard(str) end)
-        Notify("🔢  "..expr.." = "..str.."  (copied)","info")
+        Notify("ðŸ”¢  "..expr.." = "..str.."  (copied)","info")
     else
         Notify("Eval error: "..tostring(result),"error")
     end
 end)
 
--- sizeof <part name>  — get size of nearest matching part
+-- sizeof <part name>  â€” get size of nearest matching part
 Cmd("sizeof", {"partsize","getsize"}, function(args)
     local name  = table.concat(args," "):lower()
     local hrp   = GetHRP(); if not hrp then return end
@@ -7681,11 +7682,11 @@ Cmd("sizeof", {"partsize","getsize"}, function(args)
     end
     if not best then Notify("No matching part found","warn"); return end
     local s = best.Size
-    Notify(string.format("📏  %s  size=(%.2f, %.2f, %.2f)  mass≈%.2f",
+    Notify(string.format("ðŸ“  %s  size=(%.2f, %.2f, %.2f)  massâ‰ˆ%.2f",
         best.Name, s.X, s.Y, s.Z, best:GetMass()), "info")
 end)
 
--- distanceto <player>  — distance between you and a player
+-- distanceto <player>  â€” distance between you and a player
 Cmd("distanceto", {"dist","range"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or not target.Character then Notify("Target not found","error"); return end
@@ -7693,10 +7694,10 @@ Cmd("distanceto", {"dist","range"}, function(args)
     local tHRP  = target.Character:FindFirstChild("HumanoidRootPart")
     if not tHRP then return end
     local d = (tHRP.Position - myHRP.Position).Magnitude
-    Notify(string.format("📏  Distance to %s: %.1f studs", target.Name, d), "info")
+    Notify(string.format("ðŸ“  Distance to %s: %.1f studs", target.Name, d), "info")
 end)
 
--- getancestors <path>  — print ancestor chain of an instance
+-- getancestors <path>  â€” print ancestor chain of an instance
 Cmd("getancestors", {"ancestors","parents"}, function(args)
     local name = args[1]; if not name then Notify("Usage: getancestors <instance name>","warn"); return end
     local inst = game:FindFirstChild(name, true)
@@ -7704,13 +7705,13 @@ Cmd("getancestors", {"ancestors","parents"}, function(args)
     local chain = {}
     local cur   = inst
     while cur do table.insert(chain,1,cur.Name.." ("..cur.ClassName..")"); cur = cur.Parent end
-    print("[S-Admin] Ancestors of '"..inst.Name.."':\n  "..table.concat(chain," → "))
-    Notify("🔍  Ancestor chain — see console","info")
+    print("[S-Admin] Ancestors of '"..inst.Name.."':\n  "..table.concat(chain," â†’ "))
+    Notify("ðŸ”  Ancestor chain â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: LIGHTING PRESETS  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: LIGHTING PRESETS  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: bundling multiple Lighting properties into named
 --           presets, saving / restoring original state.
 
@@ -7737,7 +7738,7 @@ Cmd("lightpreset", {"lp","timepreset","setlighting"}, function(args)
     for prop, val in pairs(p) do
         pcall(function() Lighting[prop] = val end)
     end
-    Notify("💡  Lighting preset '"..key.."' applied")
+    Notify("ðŸ’¡  Lighting preset '"..key.."' applied")
 end)
 
 Cmd("savelighting", {"savellt","snaplight"}, function()
@@ -7749,19 +7750,19 @@ Cmd("savelighting", {"savellt","snaplight"}, function()
         FogStart      = Lighting.FogStart,
         GlobalShadows = Lighting.GlobalShadows,
     }
-    Notify("💡  Lighting state saved")
+    Notify("ðŸ’¡  Lighting state saved")
 end)
 
 Cmd("restorelighting", {"restorelt","resetlighting"}, function()
     for prop, val in pairs(OrigLight) do
         pcall(function() Lighting[prop] = val end)
     end
-    Notify("💡  Lighting restored to saved state")
+    Notify("ðŸ’¡  Lighting restored to saved state")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PART SEARCH & MODIFY  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PART SEARCH & MODIFY  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: filtering by color/size/material, batch property
 --           changes, nearest-part pattern.
 
@@ -7789,14 +7790,14 @@ Cmd("findbycolor", {"partcolor","searchcolor"}, function(args)
     end
     if #found == 0 then Notify("No parts matching that color","warn"); return end
     table.sort(found,function(a,b) return a.dist < b.dist end)
-    print(string.format("[S-Admin] Parts near RGB(%d,%d,%d) ±%d:",r,g,b,tol))
+    print(string.format("[S-Admin] Parts near RGB(%d,%d,%d) Â±%d:",r,g,b,tol))
     for _,v in ipairs(found) do
         print(string.format("  %-20s %.0f studs  %s",v.name,v.dist,v.path))
     end
-    Notify(string.format("🔍  %d part(s) found — console",#found),"info")
+    Notify(string.format("ðŸ”  %d part(s) found â€” console",#found),"info")
 end)
 
--- findbysize  — find parts within a size range
+-- findbysize  â€” find parts within a size range
 Cmd("findbysize", {"partsize2","searchsize"}, function(args)
     local minS = tonumber(args[1]) or 1
     local maxS = tonumber(args[2]) or 5
@@ -7814,14 +7815,14 @@ Cmd("findbysize", {"partsize2","searchsize"}, function(args)
     end
     if #found == 0 then Notify("No parts in that size range","warn"); return end
     table.sort(found,function(a,b) return a.dist < b.dist end)
-    print(string.format("[S-Admin] Parts size %.1f–%.1f:", minS, maxS))
+    print(string.format("[S-Admin] Parts size %.1fâ€“%.1f:", minS, maxS))
     for _,v in ipairs(found) do
         print(string.format("  %-20s size=%.2f  dist=%.0f", v.name, v.size, v.dist))
     end
-    Notify(string.format("🔍  %d part(s) found — console",#found),"info")
+    Notify(string.format("ðŸ”  %d part(s) found â€” console",#found),"info")
 end)
 
--- recolorpart <name> <R G B>  — change color of all parts with that name
+-- recolorpart <name> <R G B>  â€” change color of all parts with that name
 Cmd("recolorpart", {"partrecolor","colorpart"}, function(args)
     local name = args[1]; if not name then Notify("Usage: recolorpart <name> R G B","warn"); return end
     local r = tonumber(args[2]) or 255
@@ -7834,7 +7835,7 @@ Cmd("recolorpart", {"partrecolor","colorpart"}, function(args)
             pcall(function() v.Color = col end); n=n+1
         end
     end
-    Notify(string.format("🎨  Recolored %d '%s' part(s) to RGB(%d,%d,%d)",n,name,r,g,b))
+    Notify(string.format("ðŸŽ¨  Recolored %d '%s' part(s) to RGB(%d,%d,%d)",n,name,r,g,b))
 end)
 
 -- resizepart <name> <X Y Z>
@@ -7849,7 +7850,7 @@ Cmd("resizepart", {"partresize","scalepart"}, function(args)
             pcall(function() v.Size = Vector3.new(x,y,z) end); n=n+1
         end
     end
-    Notify(string.format("📏  Resized %d '%s' part(s) to %.1fx%.1fx%.1f",n,name,x,y,z))
+    Notify(string.format("ðŸ“  Resized %d '%s' part(s) to %.1fx%.1fx%.1f",n,name,x,y,z))
 end)
 
 -- renamepart <oldname> <newname>
@@ -7862,14 +7863,14 @@ Cmd("renamepart", {"partname","namepart"}, function(args)
             pcall(function() v.Name = new end); n=n+1
         end
     end
-    Notify(string.format("✏  Renamed %d '%s' → '%s'",n,old,new))
+    Notify(string.format("âœ  Renamed %d '%s' â†’ '%s'",n,old,new))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CUSTOM HEALTH BAR HUD  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CUSTOM HEALTH BAR HUD  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: live-updating Frame width from health ratio,
---           color interpolation green→yellow→red, TweenService
+--           color interpolation greenâ†’yellowâ†’red, TweenService
 --           for smooth bar transitions.
 
 local _healthBarGui  = nil
@@ -7879,7 +7880,7 @@ Cmd("healthbar", {"hpbar","customhp"}, function()
     if _healthBarGui then
         _healthBarGui:Destroy(); _healthBarGui = nil
         if _healthBarConn then _healthBarConn:Disconnect(); _healthBarConn=nil end
-        Notify("❤  Health bar OFF"); return
+        Notify("â¤  Health bar OFF"); return
     end
     _healthBarGui = Instance.new("ScreenGui", ScreenGui)
     _healthBarGui.Name         = "S_HealthBar"
@@ -7916,7 +7917,7 @@ Cmd("healthbar", {"hpbar","customhp"}, function()
         if math.abs(ratio-lastRatio) > 0.001 then
             lastRatio = ratio
             TweenObj(bar, 0.15, {Size = UDim2.new(ratio,0,1,0)}):Play()
-            -- Green → Yellow → Red
+            -- Green â†’ Yellow â†’ Red
             local col
             if ratio > 0.5 then
                 col = Color3.fromRGB(
@@ -7927,15 +7928,15 @@ Cmd("healthbar", {"hpbar","customhp"}, function()
             end
             bar.BackgroundColor3 = col
         end
-        lbl.Text = string.format("❤ %d / %d",
+        lbl.Text = string.format("â¤ %d / %d",
             math.floor(hum.Health), math.floor(hum.MaxHealth))
     end)
-    Notify("❤  Health bar ON")
+    Notify("â¤  Health bar ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SESSION STATISTICS TRACKER  (IY-ported)     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SESSION STATISTICS TRACKER  (IY-ported)     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: accumulating metrics across a session, storing
 --           per-session state, formatted summary output.
 
@@ -7969,20 +7970,20 @@ Cmd("sessionstats", {"session","mystats"}, function()
     local m = math.floor((elapsed%3600)/60)
     local s = math.floor(elapsed%60)
     local lines = {
-        string.format("⏱  Session time:   %02d:%02d:%02d",h,m,s),
-        string.format("💀  Deaths:         %d",_sessionDeaths),
-        string.format("📏  Distance walked: %.0f studs (%.2f km)",
+        string.format("â±  Session time:   %02d:%02d:%02d",h,m,s),
+        string.format("ðŸ’€  Deaths:         %d",_sessionDeaths),
+        string.format("ðŸ“  Distance walked: %.0f studs (%.2f km)",
             _sessionDist, _sessionDist*0.00028),
-        string.format("📍  Current pos:    %.0f, %.0f, %.0f",
+        string.format("ðŸ“  Current pos:    %.0f, %.0f, %.0f",
             _sessionLastPos and _sessionLastPos.X or 0,
             _sessionLastPos and _sessionLastPos.Y or 0,
             _sessionLastPos and _sessionLastPos.Z or 0),
-        string.format("👥  Players online:  %d/%d",
+        string.format("ðŸ‘¥  Players online:  %d/%d",
             #Players:GetPlayers(), Players.MaxPlayers),
-        string.format("🖥  Game:           %s  v%d",game.Name,game.PlaceVersion),
+        string.format("ðŸ–¥  Game:           %s  v%d",game.Name,game.PlaceVersion),
     }
     print("[S-Admin] Session Stats:\n  "..table.concat(lines,"\n  "))
-    Notify(string.format("📊  %.0f min  |  %d deaths  |  %.0f studs walked",
+    Notify(string.format("ðŸ“Š  %.0f min  |  %d deaths  |  %.0f studs walked",
         elapsed/60, _sessionDeaths, _sessionDist), "info")
 end)
 
@@ -7990,16 +7991,16 @@ Cmd("resetsessionstats", {"resetsession","clearstats"}, function()
     _sessionStart  = tick()
     _sessionDeaths = -1   -- -1 because CharacterAdded fires immediately
     _sessionDist   = 0
-    Notify("📊  Session stats reset")
+    Notify("ðŸ“Š  Session stats reset")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TWEEN PART TOOLS  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TWEEN PART TOOLS  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: TweenService on non-GUI objects, tweening BasePart
 --           CFrame/Color/Transparency, chaining tweens.
 
--- tweenpart <name> <X Y Z> <time>  — smoothly move a named part
+-- tweenpart <name> <X Y Z> <time>  â€” smoothly move a named part
 Cmd("tweenpart", {"movetween","tpart"}, function(args)
     local name = args[1]; if not name then Notify("Usage: tweenpart <name> X Y Z [t]","warn"); return end
     local x = tonumber(args[2]) or 0
@@ -8014,7 +8015,7 @@ Cmd("tweenpart", {"movetween","tpart"}, function(args)
             n=n+1
         end
     end
-    Notify(string.format("📦  Tweening %d '%s' to (%.0f,%.0f,%.0f) over %.1fs",n,name,x,y,z,t))
+    Notify(string.format("ðŸ“¦  Tweening %d '%s' to (%.0f,%.0f,%.0f) over %.1fs",n,name,x,y,z,t))
 end)
 
 -- tweenpartcolor <name> <R G B> <time>
@@ -8030,7 +8031,7 @@ Cmd("tweenpartcolor", {"tpartcolor","colorpulse"}, function(args)
             TweenObj(v, t, {Color=Color3.fromRGB(r,g,b)}):Play(); n=n+1
         end
     end
-    Notify(string.format("🎨  Color-tweening %d '%s' over %.1fs",n,name,t))
+    Notify(string.format("ðŸŽ¨  Color-tweening %d '%s' over %.1fs",n,name,t))
 end)
 
 -- tweenpartfade <name> <transparency> <time>
@@ -8044,12 +8045,12 @@ Cmd("tweenpartfade", {"tpartfade","fadepart"}, function(args)
             TweenObj(v, t, {Transparency=alpha}):Play(); n=n+1
         end
     end
-    Notify(string.format("🔍  Fading %d '%s' to %.2f over %.1fs",n,name,alpha,t))
+    Notify(string.format("ðŸ”  Fading %d '%s' to %.2f over %.1fs",n,name,alpha,t))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TERRAIN WATER  (IY-ported)                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TERRAIN WATER  (IY-ported)                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Terrain:FillBlock with Water material,
 --           Region3 for volume selection.
 
@@ -8061,7 +8062,7 @@ Cmd("fillwater", {"waterblock","addwater"}, function(args)
         CFrame.new(hrp.Position - Vector3.new(0,depth/2,0)),
         Vector3.new(size, depth, size),
         Enum.Material.Water)
-    Notify(string.format("💧  Water block created  %dx%d depth=%d",size,size,depth))
+    Notify(string.format("ðŸ’§  Water block created  %dx%d depth=%d",size,size,depth))
 end)
 
 Cmd("removewater", {"drainwater","nowater"}, function(args)
@@ -8071,12 +8072,12 @@ Cmd("removewater", {"drainwater","nowater"}, function(args)
         CFrame.new(hrp.Position),
         Vector3.new(size,size,size),
         Enum.Material.Air)
-    Notify(string.format("💧  Cleared %dx%d terrain block (air)",size,size))
+    Notify(string.format("ðŸ’§  Cleared %dx%d terrain block (air)",size,size))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: AMBIENT SOUNDS  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: AMBIENT SOUNDS  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Sound parented to workspace (global audio),
 --           ambient audio vs positional audio, RollOff modes.
 
@@ -8099,7 +8100,7 @@ Cmd("ambience", {"ambient2","ambientsound"}, function(args)
     local old = workspace:FindFirstChild("S_Ambience")
     if old then old:Destroy() end
     if key == "" or key == "off" or key == "stop" then
-        Notify("🎵  Ambience OFF"); return
+        Notify("ðŸŽµ  Ambience OFF"); return
     end
     local id = _ambientSounds[key]
     if not id then
@@ -8116,18 +8117,18 @@ Cmd("ambience", {"ambient2","ambientsound"}, function(args)
     snd.RollOffMaxDistance = 1e4
     snd.RollOffMode = Enum.RollOffMode.InverseTapered
     snd:Play()
-    Notify("🎵  Ambience: "..key.."  vol="..vol)
+    Notify("ðŸŽµ  Ambience: "..key.."  vol="..vol)
 end)
 
 Cmd("stopambience", {"noambience","endambient"}, function()
     local old = workspace:FindFirstChild("S_Ambience")
-    if old then old:Destroy(); Notify("🎵  Ambience stopped")
+    if old then old:Destroy(); Notify("ðŸŽµ  Ambience stopped")
     else Notify("No ambience playing","warn") end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: DEATH POSITION RECALL  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: DEATH POSITION RECALL  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: CharacterRemoving signal, saving HRP position
 --           on death, restoring after respawn.
 
@@ -8143,18 +8144,18 @@ Cmd("tpdeath", {"gotodie","lastdeath","deathtp"}, function()
     local hrp = GetHRP(); if not hrp then return end
     hrp.CFrame = _lastDeathPos
     local p    = _lastDeathPos.Position
-    Notify(string.format("💀  TP to last death  (%.0f,%.0f,%.0f)",p.X,p.Y,p.Z))
+    Notify(string.format("ðŸ’€  TP to last death  (%.0f,%.0f,%.0f)",p.X,p.Y,p.Z))
 end)
 
 Cmd("lastdeathpos", {"deathpos","wheredie"}, function()
     if not _lastDeathPos then Notify("No death recorded yet","warn"); return end
     local p = _lastDeathPos.Position
-    Notify(string.format("💀  Last death: %.0f,%.0f,%.0f",p.X,p.Y,p.Z),"info")
+    Notify(string.format("ðŸ’€  Last death: %.0f,%.0f,%.0f",p.X,p.Y,p.Z),"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: NEON / DARK MODE  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: NEON / DARK MODE  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: changing material to Neon for glow effect,
 --           batch dark color application.
 
@@ -8173,7 +8174,7 @@ Cmd("neonmode", {"neon","glowmode"}, function(args)
             n=n+1
         end
     end
-    Notify(string.format("✨  Neon mode ON  RGB(%d,%d,%d)  %d parts",r,g,b,n))
+    Notify(string.format("âœ¨  Neon mode ON  RGB(%d,%d,%d)  %d parts",r,g,b,n))
 end)
 
 Cmd("darkmode", {"dark","blackchar"}, function()
@@ -8188,40 +8189,40 @@ Cmd("darkmode", {"dark","blackchar"}, function()
             n=n+1
         end
     end
-    Notify("🌑  Dark mode applied to "..n.." parts")
+    Notify("ðŸŒ‘  Dark mode applied to "..n.." parts")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: STRING UTILITIES  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: STRING UTILITIES  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: string library (upper/lower/rep/reverse/len),
 --           Lua pattern matching, clipboard output.
 
 Cmd("strlen", {"stringlen","strlength"}, function(args)
     local s = table.concat(args," ")
     if s == "" then Notify("Usage: strlen <text>","warn"); return end
-    Notify(string.format("📏  Length: %d characters",#s),"info")
+    Notify(string.format("ðŸ“  Length: %d characters",#s),"info")
 end)
 
 Cmd("strupper", {"uppercase","toupper"}, function(args)
     local s = table.concat(args," ")
     local r = s:upper()
     pcall(function() setclipboard(r) end)
-    Notify("🔤  "..r.."  (copied)","info")
+    Notify("ðŸ”¤  "..r.."  (copied)","info")
 end)
 
 Cmd("strlower", {"lowercase","tolower"}, function(args)
     local s = table.concat(args," ")
     local r = s:lower()
     pcall(function() setclipboard(r) end)
-    Notify("🔤  "..r.."  (copied)","info")
+    Notify("ðŸ”¤  "..r.."  (copied)","info")
 end)
 
 Cmd("strreverse", {"reverse","strrev"}, function(args)
     local s = table.concat(args," ")
     local r = s:reverse()
     pcall(function() setclipboard(r) end)
-    Notify("🔤  "..r.."  (copied)","info")
+    Notify("ðŸ”¤  "..r.."  (copied)","info")
 end)
 
 Cmd("strrep", {"repeat2","strrepeat"}, function(args)
@@ -8229,8 +8230,8 @@ Cmd("strrep", {"repeat2","strrepeat"}, function(args)
     local s = table.concat(args," ",2)
     local r = s:rep(math.min(n,20))
     pcall(function() setclipboard(r) end)
-    print("[S-Admin] rep × "..n..": "..r)
-    Notify("🔤  Repeated ×"..n.."  (console + clipboard)","info")
+    print("[S-Admin] rep Ã— "..n..": "..r)
+    Notify("ðŸ”¤  Repeated Ã—"..n.."  (console + clipboard)","info")
 end)
 
 Cmd("charcode", {"ascii","charnum"}, function(args)
@@ -8240,12 +8241,12 @@ Cmd("charcode", {"ascii","charnum"}, function(args)
     for i=1,math.min(#s,20) do table.insert(codes,string.byte(s,i)) end
     local r = table.concat(codes," ")
     pcall(function() setclipboard(r) end)
-    Notify("🔢  "..r,"info")
+    Notify("ðŸ”¢  "..r,"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CAMERA CINEMATIC CUTS  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CAMERA CINEMATIC CUTS  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: sequencing multiple TweenService camera moves,
 --           coroutine / task.spawn for non-blocking sequences.
 
@@ -8265,12 +8266,12 @@ Cmd("camcut", {"cinematiccut","ccut"}, function(args)
     task.delay(t+0.1, function()
         cam.CameraType = Enum.CameraType.Custom
     end)
-    Notify(string.format("🎬  CamCut to (%.0f,%.0f,%.0f) over %.1fs",px,py,pz,t))
+    Notify(string.format("ðŸŽ¬  CamCut to (%.0f,%.0f,%.0f) over %.1fs",px,py,pz,t))
 end)
 
--- camsequence  — tween camera through all saved waypoints
+-- camsequence  â€” tween camera through all saved waypoints
 Cmd("camsequence", {"cseq","waypointcam"}, function(args)
-    if #_waypoints < 2 then Notify("Need at least 2 waypoints — use setwp","warn"); return end
+    if #_waypoints < 2 then Notify("Need at least 2 waypoints â€” use setwp","warn"); return end
     local t = tonumber(args[1]) or 3
     local cam = workspace.CurrentCamera
     cam.CameraType = Enum.CameraType.Scriptable
@@ -8281,14 +8282,14 @@ Cmd("camsequence", {"cseq","waypointcam"}, function(args)
             task.wait(t + 0.2)
         end
         cam.CameraType = Enum.CameraType.Custom
-        Notify("🎬  Camera sequence complete")
+        Notify("ðŸŽ¬  Camera sequence complete")
     end)
-    Notify(string.format("🎬  Camera touring %d waypoints  (%.1fs each)",#_waypoints,t))
+    Notify(string.format("ðŸŽ¬  Camera touring %d waypoints  (%.1fs each)",#_waypoints,t))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SERVER TICK RATE DISPLAY  (IY-ported)       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SERVER TICK RATE DISPLAY  (IY-ported)       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: HeartbeatTimeMs stat, measuring tick rate from
 --           Heartbeat signal timing.
 
@@ -8299,7 +8300,7 @@ Cmd("tickrate", {"serverrate","tickdisplay"}, function()
     if _tickRateGui then
         _tickRateGui:Destroy(); _tickRateGui = nil
         if _tickRateConn then _tickRateConn:Disconnect(); _tickRateConn=nil end
-        Notify("⚙  Tick rate display OFF"); return
+        Notify("âš™  Tick rate display OFF"); return
     end
 
     _tickRateGui = Instance.new("ScreenGui",ScreenGui)
@@ -8338,23 +8339,23 @@ Cmd("tickrate", {"serverrate","tickdisplay"}, function()
         local stats = game:GetService("Stats")
         local heartMs = 0
         pcall(function() heartMs = stats.HeartbeatTimeMs.Value end)
-        lbl.Text = string.format("⚙ Tick: %.0f Hz  |  %.1f ms", rate, heartMs)
+        lbl.Text = string.format("âš™ Tick: %.0f Hz  |  %.1f ms", rate, heartMs)
         lbl.TextColor3 = rate > 55 and Color3.fromRGB(80,220,100)
                        or rate > 30 and Color3.fromRGB(220,200,50)
                        or Color3.fromRGB(220,80,80)
     end)
-    Notify("⚙  Tick rate display ON")
+    Notify("âš™  Tick rate display ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FRIENDS LIST  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FRIENDS LIST  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Players:GetFriendsAsync(), page iteration,
 --           async HTTP patterns.
 
 Cmd("friends", {"friendslist","myfriends"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
-    Notify("👥  Loading "..target.Name.."'s friends...", "info")
+    Notify("ðŸ‘¥  Loading "..target.Name.."'s friends...", "info")
     task.spawn(function()
         local ok, pages = pcall(function()
             return Players:GetFriendsAsync(target.UserId)
@@ -8379,13 +8380,13 @@ Cmd("friends", {"friendslist","myfriends"}, function(args)
         print(string.format("[S-Admin] %s friends (%d):\n  %s",
             target.Name, #friends, table.concat(friends,"\n  ")))
         local msg = #inGame > 0 and ("  In-game: "..table.concat(inGame,", ")) or ""
-        Notify(string.format("👥  %d friend(s)%s — console",#friends,msg),"info")
+        Notify(string.format("ðŸ‘¥  %d friend(s)%s â€” console",#friends,msg),"info")
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SESSION NOTES / TEMP STORAGE  (IY-ported)   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SESSION NOTES / TEMP STORAGE  (IY-ported)   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: persistent in-session string storage, structured
 --           note-taking pattern, clip-to-clipboard export.
 
@@ -8395,7 +8396,7 @@ Cmd("note", {"addnote","remember"}, function(args)
     local text = table.concat(args," ")
     if text == "" then Notify("Usage: note <text>","warn"); return end
     table.insert(_notes, {time=tick(), text=text})
-    Notify("📝  Note saved  (#"..#_notes..")")
+    Notify("ðŸ“  Note saved  (#"..#_notes..")")
 end)
 
 Cmd("notes", {"listnotes","shownotes"}, function()
@@ -8406,19 +8407,19 @@ Cmd("notes", {"listnotes","shownotes"}, function()
         table.insert(lines, string.format("[%d] (%ds ago) %s",i,age,n.text))
     end
     print("[S-Admin] Notes:\n  "..table.concat(lines,"\n  "))
-    Notify("📝  "..#_notes.." note(s) — see console","info")
+    Notify("ðŸ“  "..#_notes.." note(s) â€” see console","info")
 end)
 
 Cmd("deletenote", {"delnote","removenote"}, function(args)
     local idx = tonumber(args[1])
     if not idx or not _notes[idx] then Notify("Usage: deletenote <number>","warn"); return end
     local removed = table.remove(_notes,idx)
-    Notify("📝  Deleted note #"..idx..": '"..removed.text:sub(1,30).."'")
+    Notify("ðŸ“  Deleted note #"..idx..": '"..removed.text:sub(1,30).."'")
 end)
 
 Cmd("clearnotes", {"deletenotes","nonotes"}, function()
     local n = #_notes; _notes = {}
-    Notify("📝  Cleared "..n.." note(s)")
+    Notify("ðŸ“  Cleared "..n.." note(s)")
 end)
 
 Cmd("copynotes", {"exportnotes","noteclip"}, function()
@@ -8428,22 +8429,22 @@ Cmd("copynotes", {"exportnotes","noteclip"}, function()
     local text = table.concat(lines,"\n")
     pcall(function() setclipboard(text) end)
     print("[S-Admin] Notes exported:\n"..text)
-    Notify("📝  "..#_notes.." note(s) copied to clipboard","info")
+    Notify("ðŸ“  "..#_notes.." note(s) copied to clipboard","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: UI HELPERS  (IY-ported)                     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: UI HELPERS  (IY-ported)                     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ScreenGui layout patterns, dynamic label sizing,
---           helper GUI building — porting IY's admin panel.
+--           helper GUI building â€” porting IY's admin panel.
 
--- adminpanel  — compact quick-action panel
+-- adminpanel  â€” compact quick-action panel
 local _adminPanelGui  = nil
 
 Cmd("adminpanel", {"panel","quickpanel"}, function()
     if _adminPanelGui then
         _adminPanelGui:Destroy(); _adminPanelGui = nil
-        Notify("🖥  Admin panel closed"); return
+        Notify("ðŸ–¥  Admin panel closed"); return
     end
 
     _adminPanelGui = Instance.new("ScreenGui",ScreenGui)
@@ -8464,7 +8465,7 @@ Cmd("adminpanel", {"panel","quickpanel"}, function()
     local title = Instance.new("TextLabel",panel)
     title.Size             = UDim2.new(1,0,0,28)
     title.BackgroundTransparency = 1
-    title.Text             = "⚡  Quick Actions"
+    title.Text             = "âš¡  Quick Actions"
     title.TextColor3       = Color3.fromRGB(200,200,200)
     title.Font             = Enum.Font.GothamBold
     title.TextSize         = 12
@@ -8472,16 +8473,16 @@ Cmd("adminpanel", {"panel","quickpanel"}, function()
 
     -- Quick-action button factory
     local quickCmds = {
-        {"✈ Fly",         "fly"},
-        {"👻 Noclip",     "noclip"},
-        {"🛡 God",        "god"},
-        {"💡 Fullbright", "fullbright"},
-        {"👁 ESP",        "esp"},
-        {"🌈 Rainbow",    "rainbow"},
-        {"❤ HP Bar",      "healthbar"},
-        {"🗺 Minimap",    "minimap"},
-        {"🔄 Respawn",    "respawn"},
-        {"📊 Session",    "sessionstats"},
+        {"âœˆ Fly",         "fly"},
+        {"ðŸ‘» Noclip",     "noclip"},
+        {"ðŸ›¡ God",        "god"},
+        {"ðŸ’¡ Fullbright", "fullbright"},
+        {"ðŸ‘ ESP",        "esp"},
+        {"ðŸŒˆ Rainbow",    "rainbow"},
+        {"â¤ HP Bar",      "healthbar"},
+        {"ðŸ—º Minimap",    "minimap"},
+        {"ðŸ”„ Respawn",    "respawn"},
+        {"ðŸ“Š Session",    "sessionstats"},
     }
     local btnH = 26
     local pad  = 4
@@ -8512,22 +8513,22 @@ Cmd("adminpanel", {"panel","quickpanel"}, function()
 
     local totalH = 28 + #quickCmds*(btnH+pad) + pad
     panel.Size = UDim2.new(0,190,0,totalH)
-    Notify("🖥  Admin panel opened")
+    Notify("ðŸ–¥  Admin panel opened")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: EXTRA PLAYER UTILITIES  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: EXTRA PLAYER UTILITIES  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- playerage  — how old is a player's Roblox account
+-- playerage  â€” how old is a player's Roblox account
 Cmd("playerage", {"prage","howold"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
     local years  = target.AccountAge / 365
-    Notify(string.format("👤  %s: %d days old (%.1f yrs)",
+    Notify(string.format("ðŸ‘¤  %s: %d days old (%.1f yrs)",
         target.Name, target.AccountAge, years), "info")
 end)
 
--- follow2  — follow nearest player automatically
+-- follow2  â€” follow nearest player automatically
 Cmd("follownearest", {"followclose","fn2"}, function()
     SafeDisconn("FollowNearest")
     local conn
@@ -8549,36 +8550,36 @@ Cmd("follownearest", {"followclose","fn2"}, function()
         end
     end)
     Conns.FollowNearest = conn
-    Notify("🏃  Following nearest player  (clip to stop)")
+    Notify("ðŸƒ  Following nearest player  (clip to stop)")
 end)
 
--- avatar <player>  — open avatar page in browser (setclipboard)
+-- avatar <player>  â€” open avatar page in browser (setclipboard)
 Cmd("avatar", {"openavatar","avatarpage"}, function(args)
     local target = GetPlayers(args[1])[1] or LP
     local url    = "https://www.roblox.com/users/"..target.UserId.."/profile"
     pcall(function() setclipboard(url) end)
-    Notify("🔗  Avatar URL copied: "..target.Name,"info")
+    Notify("ðŸ”—  Avatar URL copied: "..target.Name,"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FINAL UTILITY COMMANDS  (IY-ported)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FINAL UTILITY COMMANDS  (IY-ported)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- about  — show script information
+-- about  â€” show script information
 Cmd("about", {"credits","version"}, function()
     local lines = {
-        "⚡  S Command Bar Pro  v4.3",
+        "âš¡  S Command Bar Pro  v4.3",
         "Commands: "..tostring(#(function()
             local t={}; for k in pairs(Commands) do table.insert(t,k) end; return t end)()),
-        "Platform: "..(IsMobile and "Mobile 📱" or "PC 🖥"),
-        "Lua/LuaU admin suite — built iteratively",
+        "Platform: "..(IsMobile and "Mobile ðŸ“±" or "PC ðŸ–¥"),
+        "Lua/LuaU admin suite â€” built iteratively",
         "Based on IY (Infinite Yield) open-source reference",
     }
     print("[S-Admin]\n  "..table.concat(lines,"\n  "))
-    Notify("⚡  S Command Bar Pro v4.3 — see console","info")
+    Notify("âš¡  S Command Bar Pro v4.3 â€” see console","info")
 end)
 
--- togglehud  — toggle all S_ HUDs at once
+-- togglehud  â€” toggle all S_ HUDs at once
 Cmd("togglehud", {"hud2","allhuds"}, function()
     local hudNames = {
         "S_InfoBar","S_FPSCounter","S_SpeedDisplay","S_HealthBar",
@@ -8603,13 +8604,13 @@ Cmd("togglehud", {"hud2","allhuds"}, function()
         if _minimapConn then _minimapConn:Disconnect(); _minimapConn = nil end
         if _playerListConn then _playerListConn:Disconnect(); _playerListConn = nil end
         if _bindDisplayConn then _bindDisplayConn:Disconnect(); _bindDisplayConn = nil end
-        Notify("🖥  All HUDs closed")
+        Notify("ðŸ–¥  All HUDs closed")
     else
-        Notify("No HUDs currently open — use infobar, fpscounter, healthbar, etc.","warn")
+        Notify("No HUDs currently open â€” use infobar, fpscounter, healthbar, etc.","warn")
     end
 end)
 
--- listhuds  — list which HUDs are currently active
+-- listhuds  â€” list which HUDs are currently active
 Cmd("listhuds", {"activehuds","huds"}, function()
     local hudNames = {
         "S_InfoBar","S_FPSCounter","S_SpeedDisplay","S_HealthBar","S_NetStat",
@@ -8623,28 +8624,28 @@ Cmd("listhuds", {"activehuds","huds"}, function()
         end
     end
     if #active == 0 then Notify("No HUDs active","warn"); return end
-    Notify("🖥  Active: "..table.concat(active,", "),"info")
+    Notify("ðŸ–¥  Active: "..table.concat(active,", "),"info")
 end)
 
--- randomcolor  — apply a random color to character
+-- randomcolor  â€” apply a random color to character
 Cmd("randomcolor", {"randcolor","randomisecolor"}, function()
     local r = math.random(0,255)
     local g = math.random(0,255)
     local b = math.random(0,255)
     Commands["bodycolor"]({"all",tostring(r),tostring(g),tostring(b)})
-    Notify(string.format("🎨  Random color → RGB(%d,%d,%d)",r,g,b))
+    Notify(string.format("ðŸŽ¨  Random color â†’ RGB(%d,%d,%d)",r,g,b))
 end)
 
--- getversion  — print current version string to clipboard
+-- getversion  â€” print current version string to clipboard
 Cmd("getversion2", {"copyversion","ver"}, function()
     local ver = "S_CommandBar_Pro_v4.3"
     pcall(function() setclipboard(ver) end)
-    Notify("ℹ  "..ver.." (copied)","info")
+    Notify("â„¹  "..ver.." (copied)","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PING GRAPH HUD  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PING GRAPH HUD  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ring-buffer sample storage, drawing a bar graph
 --           from live data using Frame widths, color-coding.
 
@@ -8657,7 +8658,7 @@ Cmd("pinggraph", {"pingchart","pinghistory"}, function()
     if _pingGraphGui then
         _pingGraphGui:Destroy(); _pingGraphGui = nil
         if _pingGraphConn then _pingGraphConn:Disconnect(); _pingGraphConn = nil end
-        Notify("📶  Ping graph OFF"); return
+        Notify("ðŸ“¶  Ping graph OFF"); return
     end
 
     local W, H = 200, 60
@@ -8677,7 +8678,7 @@ Cmd("pinggraph", {"pingchart","pinghistory"}, function()
     local title = Instance.new("TextLabel", bg)
     title.Size             = UDim2.new(1, 0, 0, 18)
     title.BackgroundTransparency = 1
-    title.Text             = "📶 Ping"
+    title.Text             = "ðŸ“¶ Ping"
     title.TextColor3       = Color3.fromRGB(180, 180, 180)
     title.Font             = Enum.Font.GothamBold
     title.TextSize         = 11
@@ -8726,15 +8727,15 @@ Cmd("pinggraph", {"pingchart","pinghistory"}, function()
                                 or v < 150 and Color3.fromRGB(220,200,50)
                                 or             Color3.fromRGB(220,80,80)
         end
-        title.Text = string.format("📶 Ping  %dms  (max %dms)",
+        title.Text = string.format("ðŸ“¶ Ping  %dms  (max %dms)",
             math.floor(ms), math.floor(maxMs))
     end)
-    Notify("📶  Ping graph ON")
+    Notify("ðŸ“¶  Ping graph ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: INPUT LOGGER  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: INPUT LOGGER  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: UserInputService.InputBegan / InputEnded logging,
 --           filtering by InputType, session input history.
 
@@ -8744,7 +8745,7 @@ local _inputHistory = {}
 Cmd("inputlog", {"loginput","keylog"}, function()
     if _inputLogConn then
         _inputLogConn:Disconnect(); _inputLogConn = nil
-        Notify("⌨  Input log OFF  ("..#_inputHistory.." events recorded)"); return
+        Notify("âŒ¨  Input log OFF  ("..#_inputHistory.." events recorded)"); return
     end
     _inputHistory = {}
     _inputLogConn = UserInputService.InputBegan:Connect(function(i, gp)
@@ -8760,12 +8761,12 @@ Cmd("inputlog", {"loginput","keylog"}, function()
             print(string.format("[S-InputLog] %s  (game=%s  t=%.2f)", label, tostring(gp), entry.t))
         end
     end)
-    Notify("⌨  Input log ON — all keypresses printed to console")
+    Notify("âŒ¨  Input log ON â€” all keypresses printed to console")
 end)
 
 Cmd("inputhistory", {"inputhist","keyhistory"}, function(args)
     local n = tonumber(args[1]) or 10
-    if #_inputHistory == 0 then Notify("No input recorded — run inputlog first","warn"); return end
+    if #_inputHistory == 0 then Notify("No input recorded â€” run inputlog first","warn"); return end
     local start = math.max(1, #_inputHistory - n + 1)
     local lines = {}
     for i = start, #_inputHistory do
@@ -8774,19 +8775,19 @@ Cmd("inputhistory", {"inputhist","keyhistory"}, function(args)
         table.insert(lines, string.format("[%d] %s  game=%s", i, label, tostring(e.game)))
     end
     print("[S-Admin] Last "..#lines.." inputs:\n  "..table.concat(lines,"\n  "))
-    Notify("⌨  "..#lines.." input(s) — see console","info")
+    Notify("âŒ¨  "..#lines.." input(s) â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CHARACTER OUTLINE  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CHARACTER OUTLINE  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Highlight instance on own character, controlling
 --           FillTransparency and OutlineColor properties.
 
 Cmd("outline", {"charoutline","selfhl"}, function(args)
     local char = GetChar(); if not char then return end
     local old  = char:FindFirstChild("S_SelfHL")
-    if old then old:Destroy(); Notify("✨  Outline OFF"); return end
+    if old then old:Destroy(); Notify("âœ¨  Outline OFF"); return end
     local r = tonumber(args[1]) or 100
     local g = tonumber(args[2]) or 180
     local b = tonumber(args[3]) or 255
@@ -8795,12 +8796,12 @@ Cmd("outline", {"charoutline","selfhl"}, function(args)
     hl.FillTransparency   = 1          -- invisible fill, outline only
     hl.OutlineColor       = Color3.fromRGB(r, g, b)
     hl.OutlineTransparency = 0
-    Notify(string.format("✨  Outline ON  RGB(%d,%d,%d)", r, g, b))
+    Notify(string.format("âœ¨  Outline ON  RGB(%d,%d,%d)", r, g, b))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SUN TRACKER  (IY-ported)                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SUN TRACKER  (IY-ported)                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Lighting.ClockTime, computing sun direction from
 --           time, updating BodyGyro to always face the sun.
 
@@ -8809,7 +8810,7 @@ local _sunTrackConn = nil
 Cmd("suntrack", {"tracksun","facesun"}, function()
     if _sunTrackConn then
         _sunTrackConn:Disconnect(); _sunTrackConn = nil
-        Notify("☀  Sun tracker OFF"); return
+        Notify("â˜€  Sun tracker OFF"); return
     end
     _sunTrackConn = RunService.Heartbeat:Connect(function()
         local hrp = GetHRP(); if not hrp then return end
@@ -8820,12 +8821,12 @@ Cmd("suntrack", {"tracksun","facesun"}, function()
         local bg = hrp:FindFirstChild("S_FlyBG")
         if bg then bg.CFrame = CFrame.new(Vector3.zero, sunDir) end
     end)
-    Notify("☀  Sun tracker ON — character faces the sun")
+    Notify("â˜€  Sun tracker ON â€” character faces the sun")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: REGION HIGHLIGHT  (IY-ported)               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: REGION HIGHLIGHT  (IY-ported)               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Region3 construction, workspace:FindPartsInRegion3,
 --           SelectionBox per-part for area highlighting.
 
@@ -8855,18 +8856,18 @@ Cmd("highlightregion", {"region","rhl"}, function(args)
         box.SurfaceColor3 = Color3.fromRGB(255, 220, 50)
         table.insert(_regionHighlights, box)
     end
-    Notify(string.format("🟡  Highlighted %d parts in %.0f-stud radius", #parts, size))
+    Notify(string.format("ðŸŸ¡  Highlighted %d parts in %.0f-stud radius", #parts, size))
 end)
 
 Cmd("clearregion", {"noregion","clearhl"}, function()
     for _, v in ipairs(_regionHighlights) do pcall(function() v:Destroy() end) end
     _regionHighlights = {}
-    Notify("🟡  Region highlight cleared")
+    Notify("ðŸŸ¡  Region highlight cleared")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: OBJECT PIVOT VIEWER  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: OBJECT PIVOT VIEWER  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: GetPivot() API (R15+ models), CFrame display,
 --           visualising pivot with a small Part adornment.
 
@@ -8898,13 +8899,13 @@ Cmd("showpivot", {"pivot","getpivot"}, function(args)
     marker.Color       = Color3.fromRGB(255,50,200)
     marker.CFrame      = pivotCF
     game:GetService("Debris"):AddItem(marker, 8)
-    Notify(string.format("📍  Pivot of '%s' at (%.1f,%.1f,%.1f)  — marker for 8s",
+    Notify(string.format("ðŸ“  Pivot of '%s' at (%.1f,%.1f,%.1f)  â€” marker for 8s",
         best.Name, p.X, p.Y, p.Z), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: HOTKEY CHEATSHEET HUD  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: HOTKEY CHEATSHEET HUD  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: static reference HUD, scrollable list of custom
 --           keybinds, quick-reference UI pattern.
 
@@ -8913,12 +8914,12 @@ local _cheatsheetGui = nil
 Cmd("cheatsheet", {"hotkeys","keybinds2"}, function()
     if _cheatsheetGui then
         _cheatsheetGui:Destroy(); _cheatsheetGui = nil
-        Notify("📋  Cheatsheet closed"); return
+        Notify("ðŸ“‹  Cheatsheet closed"); return
     end
     local defaults = {
         {";",       "Toggle command bar"},
         {"Escape",  "Close command bar"},
-        {"↑ / ↓",  "Cycle command history (bar open)"},
+        {"â†‘ / â†“",  "Cycle command history (bar open)"},
         {"[Bind]",  "Custom binds (see listbinds)"},
         {"LMB",     "ClickTP target (clicktp mode)"},
         {"Space",   "Fly UP / Jetpack thrust"},
@@ -8944,7 +8945,7 @@ Cmd("cheatsheet", {"hotkeys","keybinds2"}, function()
     local hdr = Instance.new("TextLabel", panel)
     hdr.Size             = UDim2.new(1,0,0,26)
     hdr.BackgroundTransparency = 1
-    hdr.Text             = "⌨  Hotkey Cheatsheet"
+    hdr.Text             = "âŒ¨  Hotkey Cheatsheet"
     hdr.TextColor3       = Color3.fromRGB(200,200,200)
     hdr.Font             = Enum.Font.GothamBold
     hdr.TextSize         = 12
@@ -8981,22 +8982,22 @@ Cmd("cheatsheet", {"hotkeys","keybinds2"}, function()
         descLbl.TextXAlignment = Enum.TextXAlignment.Left
         descLbl.ZIndex         = 80
     end
-    Notify("📋  Cheatsheet open  (run again to close)")
+    Notify("ðŸ“‹  Cheatsheet open  (run again to close)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SOUND FADE  (IY-ported)                     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SOUND FADE  (IY-ported)                     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: gradual volume ramp via TweenService on Sound
 --           Volume property, fadeIn / fadeOut patterns.
 
 Cmd("soundfadein", {"fadein","volumefade"}, function(args)
     local targetVol = tonumber(args[1]) or 0.5
     local duration  = tonumber(args[2]) or 2
-    if not _adminSound then Notify("No sound playing — use 'play' first","warn"); return end
+    if not _adminSound then Notify("No sound playing â€” use 'play' first","warn"); return end
     _adminSound.Volume = 0
     TweenObj(_adminSound, duration, {Volume = targetVol}, Enum.EasingStyle.Linear):Play()
-    Notify(string.format("🎵  Fade in → vol %.2f over %.1fs", targetVol, duration))
+    Notify(string.format("ðŸŽµ  Fade in â†’ vol %.2f over %.1fs", targetVol, duration))
 end)
 
 Cmd("soundfadeout", {"fadeout","volumefadeout"}, function(args)
@@ -9007,12 +9008,12 @@ Cmd("soundfadeout", {"fadeout","volumefadeout"}, function(args)
     t.Completed:Connect(function()
         if _adminSound then _adminSound:Stop() end
     end)
-    Notify(string.format("🎵  Fade out over %.1fs", duration))
+    Notify(string.format("ðŸŽµ  Fade out over %.1fs", duration))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: AUTO-SCREENSHOT  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: AUTO-SCREENSHOT  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: interval-based task loop, CoreGui screenshot API.
 
 local _autoSsTask = nil
@@ -9020,22 +9021,22 @@ local _autoSsTask = nil
 Cmd("autoscreenshot", {"autoss","screenshotloop"}, function(args)
     if _autoSsTask then
         task.cancel(_autoSsTask); _autoSsTask = nil
-        Notify("📸  Auto-screenshot OFF"); return
+        Notify("ðŸ“¸  Auto-screenshot OFF"); return
     end
     local interval = math.max(tonumber(args[1]) or 30, 5)
     _autoSsTask = task.spawn(function()
         while true do
             task.wait(interval)
             pcall(function() game:GetService("CoreGui"):TakeScreenshot() end)
-            Notify("📸  Auto-screenshot taken  (next in "..interval.."s)","info")
+            Notify("ðŸ“¸  Auto-screenshot taken  (next in "..interval.."s)","info")
         end
     end)
-    Notify("📸  Auto-screenshot ON  (every "..interval.."s)")
+    Notify("ðŸ“¸  Auto-screenshot ON  (every "..interval.."s)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: DEBUG OVERLAY  (IY-ported)                  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: DEBUG OVERLAY  (IY-ported)                  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: comprehensive live-debug overlay combining
 --           multiple data sources, RunService-driven refresh.
 
@@ -9046,7 +9047,7 @@ Cmd("debug", {"debugoverlay","debugmode"}, function()
     if _debugGui then
         _debugGui:Destroy(); _debugGui = nil
         if _debugConn then _debugConn:Disconnect(); _debugConn = nil end
-        Notify("🐛  Debug overlay OFF"); return
+        Notify("ðŸ›  Debug overlay OFF"); return
     end
     _debugGui = Instance.new("ScreenGui", ScreenGui)
     _debugGui.Name         = "S_Debug"
@@ -9114,12 +9115,12 @@ Cmd("debug", {"debugoverlay","debugmode"}, function()
             fov, camT,
             grav, flying, noclip)
     end)
-    Notify("🐛  Debug overlay ON")
+    Notify("ðŸ›  Debug overlay ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: WORKSPACE STATS HUD  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: WORKSPACE STATS HUD  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: counting instances, live refresh, Stats service.
 
 local _wsStatsGui  = nil
@@ -9129,7 +9130,7 @@ Cmd("wsstats", {"workspacestats","wsinfo"}, function()
     if _wsStatsGui then
         _wsStatsGui:Destroy(); _wsStatsGui = nil
         if _wsStatsConn then _wsStatsConn:Disconnect(); _wsStatsConn = nil end
-        Notify("🖥  WS Stats OFF"); return
+        Notify("ðŸ–¥  WS Stats OFF"); return
     end
     _wsStatsGui = Instance.new("ScreenGui", ScreenGui)
     _wsStatsGui.Name         = "S_WSStats"
@@ -9167,35 +9168,35 @@ Cmd("wsstats", {"workspacestats","wsinfo"}, function()
             elseif v:IsA("Model") then models = models + 1 end
         end
         lbl.Text = string.format(
-            "🌐 Workspace\n  Instances: %d\n  BaseParts: %d\n  Models:    %d",
+            "ðŸŒ Workspace\n  Instances: %d\n  BaseParts: %d\n  Models:    %d",
             total, parts, models)
     end)
-    Notify("🖥  WS Stats ON  (refresh every 2s)")
+    Notify("ðŸ–¥  WS Stats ON  (refresh every 2s)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FINAL ALIAS & HELP IMPROVEMENTS             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FINAL ALIAS & HELP IMPROVEMENTS             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- help2 <command>  — detailed help for a specific command
+-- help2 <command>  â€” detailed help for a specific command
 local _cmdHints = {
-    fly         = "fly [speed]  — IY-style smooth camera-relative flight",
-    fling       = "fling  — velocity spike makes your char physically volatile",
-    noclip      = "noclip  — disable collision for all character parts",
-    killaura    = "killaura [range] [speed]  — affect nearby players continuously",
-    freecam     = "freecam  — spring-physics free camera (WASD+QE move, Shift=slow, ↑↓=speed)",
+    fly         = "fly [speed]  â€” IY-style smooth camera-relative flight",
+    fling       = "fling  â€” velocity spike makes your char physically volatile",
+    noclip      = "noclip  â€” disable collision for all character parts",
+    killaura    = "killaura [range] [speed]  â€” affect nearby players continuously",
+    freecam     = "freecam  â€” spring-physics free camera (WASD+QE move, Shift=slow, â†‘â†“=speed)",
     waypoint    = "setwp <name>  /  wp <name>  /  tweenwp <name>  /  listwp  /  clearwp",
-    bind        = "bind <Key> <command>  — e.g.  bind F fly 100",
-    esp         = "esp  — Highlight instance on all players, unesp to remove",
-    chams       = "chams  — BoxHandleAdornment per body part with team color",
-    orbit       = "orbit [player] [radius] [speed]  — camera circles a player",
-    sessionstats= "sessionstats  — time played, deaths, distance walked this session",
-    adminpanel  = "adminpanel  — quick-action panel with 10 toggle buttons",
-    debug       = "debug  — live overlay: fps/ping/pos/speed/health/camera/physics",
-    lightpreset = "lightpreset <name>  — presets: morning noon sunset night midnight foggy hdr horror",
-    sizepreset  = "sizepreset <name>  — presets: normal tiny big giant flat tall wide noodle",
-    rain        = "rain [density]  — particle rain above character",
-    ambience    = "ambience <name>  — names: rain wind birds thunder ocean fire crickets dungeon",
+    bind        = "bind <Key> <command>  â€” e.g.  bind F fly 100",
+    esp         = "esp  â€” Highlight instance on all players, unesp to remove",
+    chams       = "chams  â€” BoxHandleAdornment per body part with team color",
+    orbit       = "orbit [player] [radius] [speed]  â€” camera circles a player",
+    sessionstats= "sessionstats  â€” time played, deaths, distance walked this session",
+    adminpanel  = "adminpanel  â€” quick-action panel with 10 toggle buttons",
+    debug       = "debug  â€” live overlay: fps/ping/pos/speed/health/camera/physics",
+    lightpreset = "lightpreset <name>  â€” presets: morning noon sunset night midnight foggy hdr horror",
+    sizepreset  = "sizepreset <name>  â€” presets: normal tiny big giant flat tall wide noodle",
+    rain        = "rain [density]  â€” particle rain above character",
+    ambience    = "ambience <name>  â€” names: rain wind birds thunder ocean fire crickets dungeon",
 }
 
 Cmd("help2", {"helpme","cmdhelp","man"}, function(args)
@@ -9209,27 +9210,27 @@ Cmd("help2", {"helpme","cmdhelp","man"}, function(args)
     local exists = Commands[key] ~= nil or Aliases[key] ~= nil
     if hint then
         print("[S-Admin] help2 '"..key.."':\n  "..hint)
-        Notify("📖  "..hint:sub(1,60), "info")
+        Notify("ðŸ“–  "..hint:sub(1,60), "info")
     elseif exists then
         local resolved = Aliases[key] or key
-        Notify("📖  '"..key.."' exists (→"..resolved..") — no hint available","info")
+        Notify("ðŸ“–  '"..key.."' exists (â†’"..resolved..") â€” no hint available","info")
     else
-        Notify("📖  Unknown command: '"..key.."'  — try 'cmds' for list","warn")
+        Notify("ðŸ“–  Unknown command: '"..key.."'  â€” try 'cmds' for list","warn")
     end
 end)
 
--- cmdcount  — print how many commands are registered
+-- cmdcount  â€” print how many commands are registered
 Cmd("cmdcount", {"countcmds","totalcmds"}, function()
     local n = 0
     for _ in pairs(Commands) do n=n+1 end
     local a = 0
     for _ in pairs(Aliases) do a=a+1 end
-    Notify(string.format("⚡  %d commands  |  %d aliases registered", n, a), "info")
+    Notify(string.format("âš¡  %d commands  |  %d aliases registered", n, a), "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TOOL INFO DISPLAY  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TOOL INFO DISPLAY  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Tool properties, Handle, CanBeDropped, Grip,
 --           reading equipped tool stats from Humanoid.
 
@@ -9247,10 +9248,10 @@ Cmd("toolinfo", {"equippedinfo","currenttool"}, function()
         "Path:        " .. tool:GetFullName(),
     }
     print("[S-Admin] Tool info:\n  " .. table.concat(lines, "\n  "))
-    Notify("🔧  " .. tool.Name .. " — see console", "info")
+    Notify("ðŸ”§  " .. tool.Name .. " â€” see console", "info")
 end)
 
--- tooltoggle  — enable / disable tool activation
+-- tooltoggle  â€” enable / disable tool activation
 Cmd("tooltoggle", {"enabletool","disabletool"}, function(args)
     local query = table.concat(args," "):lower()
     local char  = GetChar(); if not char then return end
@@ -9267,12 +9268,12 @@ Cmd("tooltoggle", {"enabletool","disabletool"}, function(args)
             end
         end
     end
-    Notify("🔧  Toggled " .. n .. " tool(s) enabled state")
+    Notify("ðŸ”§  Toggled " .. n .. " tool(s) enabled state")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CHARACTER STATS HUD  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CHARACTER STATS HUD  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: combining multiple humanoid properties into a
 --           single live-reading HUD with color-coded values.
 
@@ -9283,7 +9284,7 @@ Cmd("charstats", {"characterstats","mystats2"}, function()
     if _charStatsGui then
         _charStatsGui:Destroy(); _charStatsGui = nil
         if _charStatsConn then _charStatsConn:Disconnect(); _charStatsConn = nil end
-        Notify("📊  Char stats OFF"); return
+        Notify("ðŸ“Š  Char stats OFF"); return
     end
     _charStatsGui = Instance.new("ScreenGui", ScreenGui)
     _charStatsGui.Name         = "S_CharStats"
@@ -9320,12 +9321,12 @@ Cmd("charstats", {"characterstats","mystats2"}, function()
         if not hum or not hrp then return end
         local state = hum:GetState().Name
         lbl.Text = string.format(
-            "❤  HP:      %.0f / %.0f\n"..
-            "🏃  Speed:  %.0f\n"..
-            "🦘  Jump:   %.0f\n"..
-            "⚖  Hip:    %.2f\n"..
-            "🎭  State:  %s\n"..
-            "💺  Seated: %s",
+            "â¤  HP:      %.0f / %.0f\n"..
+            "ðŸƒ  Speed:  %.0f\n"..
+            "ðŸ¦˜  Jump:   %.0f\n"..
+            "âš–  Hip:    %.2f\n"..
+            "ðŸŽ­  State:  %s\n"..
+            "ðŸ’º  Seated: %s",
             hum.Health, hum.MaxHealth,
             hum.WalkSpeed,
             hum.JumpPower,
@@ -9333,12 +9334,12 @@ Cmd("charstats", {"characterstats","mystats2"}, function()
             state,
             tostring(hum.SeatPart ~= nil))
     end)
-    Notify("📊  Char stats HUD ON")
+    Notify("ðŸ“Š  Char stats HUD ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: WAYPOINT MAP OVERLAY  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: WAYPOINT MAP OVERLAY  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: mapping 3D world positions onto a 2D mini-map
 --           surface, named labels, live-updating dots.
 
@@ -9349,9 +9350,9 @@ Cmd("waypointmap", {"wpmap","showwpmap"}, function()
     if _wpMapGui then
         _wpMapGui:Destroy(); _wpMapGui = nil
         if _wpMapConn then _wpMapConn:Disconnect(); _wpMapConn = nil end
-        Notify("📌  Waypoint map OFF"); return
+        Notify("ðŸ“Œ  Waypoint map OFF"); return
     end
-    if #_waypoints == 0 then Notify("No waypoints saved — use setwp first","warn"); return end
+    if #_waypoints == 0 then Notify("No waypoints saved â€” use setwp first","warn"); return end
 
     local SZ     = 180
     local SCALE  = 6   -- studs per pixel
@@ -9373,7 +9374,7 @@ Cmd("waypointmap", {"wpmap","showwpmap"}, function()
     local title = Instance.new("TextLabel", bg)
     title.Size             = UDim2.new(1, 0, 0, 20)
     title.BackgroundTransparency = 1
-    title.Text             = "📌  Waypoints"
+    title.Text             = "ðŸ“Œ  Waypoints"
     title.TextColor3       = Color3.fromRGB(200, 200, 200)
     title.Font             = Enum.Font.GothamBold
     title.TextSize         = 11
@@ -9447,12 +9448,12 @@ Cmd("waypointmap", {"wpmap","showwpmap"}, function()
         playerDot.Position = UDim2.new(0, math.clamp(px,2,SZ-6)-3, 0, math.clamp(pz,2,SZ-6)-3)
     end)
 
-    Notify("📌  Waypoint map ON  (" .. #_waypoints .. " waypoints)")
+    Notify("ðŸ“Œ  Waypoint map ON  (" .. #_waypoints .. " waypoints)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PART INFO COMMAND  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PART INFO COMMAND  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: reading comprehensive BasePart properties,
 --           formatting a structured property report.
 
@@ -9487,12 +9488,12 @@ Cmd("partinfo", {"pinfo","inspectpart"}, function(args)
         "Path:        " .. best:GetFullName(),
     }
     print("[S-Admin] Part info:\n  " .. table.concat(lines,"\n  "))
-    Notify("📦  " .. best.Name .. " (" .. best.ClassName .. ") — console", "info")
+    Notify("ðŸ“¦  " .. best.Name .. " (" .. best.ClassName .. ") â€” console", "info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SMOOTH CAMERA TILT  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SMOOTH CAMERA TILT  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: incremental CFrame rotation compositing,
 --           smooth approach via lerp on rotation angle.
 
@@ -9513,17 +9514,17 @@ Cmd("tilt", {"camtilt","tiltcam2"}, function(args)
         end
         cam.CFrame = cam.CFrame * CFrame.Angles(0, 0, _tiltAngle)
     end)
-    Notify(string.format("📷  Camera tilt → %.0f°", deg))
+    Notify(string.format("ðŸ“·  Camera tilt â†’ %.0fÂ°", deg))
 end)
 
 Cmd("untilt", {"notilt","resettilt"}, function()
     _tiltTarget = 0
-    Notify("📷  Camera tilt reset")
+    Notify("ðŸ“·  Camera tilt reset")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CLIPBOARD HISTORY  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CLIPBOARD HISTORY  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: session clipboard tracking, storing each
 --           setclipboard call in a searchable history.
 
@@ -9550,19 +9551,19 @@ Cmd("cliphistory", {"clipboard","pasthistory"}, function(args)
         table.insert(lines, string.format("[%d] (%ds ago) %s", i, age, e.text:sub(1,60)))
     end
     print("[S-Admin] Clipboard history:\n  "..table.concat(lines,"\n  "))
-    Notify("📋  "..#lines.." item(s) — see console","info")
+    Notify("ðŸ“‹  "..#lines.." item(s) â€” see console","info")
 end)
 
 Cmd("recopy", {"reclipboard","reuse"}, function(args)
     local idx = tonumber(args[1]) or #_clipHistory
     if not _clipHistory[idx] then Notify("No clipboard entry #"..idx,"warn"); return end
     pcall(function() setclipboard(_clipHistory[idx].text) end)
-    Notify("📋  Re-copied: ".._clipHistory[idx].text:sub(1,40))
+    Notify("ðŸ“‹  Re-copied: ".._clipHistory[idx].text:sub(1,40))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SESSION LOG EXPORT  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SESSION LOG EXPORT  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: aggregating session data into a report string,
 --           setclipboard export pattern, string.format usage.
 
@@ -9573,7 +9574,7 @@ Cmd("exportlog", {"sessionexport","savelog"}, function()
     local s = math.floor(elapsed%60)
 
     local lines = {
-        "=== S Command Bar Pro — Session Log ===",
+        "=== S Command Bar Pro â€” Session Log ===",
         os.date and ("Date:     "..os.date("%Y-%m-%d %H:%M")) or "",
         string.format("Duration: %02d:%02d:%02d", h, m, s),
         string.format("Game:     %s (PlaceId %d v%d)", game.Name, game.PlaceId, game.PlaceVersion),
@@ -9596,12 +9597,12 @@ Cmd("exportlog", {"sessionexport","savelog"}, function()
     local report = table.concat(lines,"\n")
     pcall(function() setclipboard(report) end)
     print(report)
-    Notify(string.format("📋  Session log exported (%d lines) — console + clipboard",#lines),"info")
+    Notify(string.format("ðŸ“‹  Session log exported (%d lines) â€” console + clipboard",#lines),"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GRAVITY HUD  (IY-ported)                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GRAVITY HUD  (IY-ported)                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: watching a workspace property with GetPropertyChangedSignal,
 --           live-reflecting external changes in a ScreenGui label.
 
@@ -9612,7 +9613,7 @@ Cmd("gravhud", {"gravityhud","showgrav"}, function()
     if _gravHudGui then
         _gravHudGui:Destroy(); _gravHudGui = nil
         if _gravHudConn then _gravHudConn:Disconnect(); _gravHudConn = nil end
-        Notify("🌍  Gravity HUD OFF"); return
+        Notify("ðŸŒ  Gravity HUD OFF"); return
     end
     _gravHudGui = Instance.new("ScreenGui", ScreenGui)
     _gravHudGui.Name         = "S_GravHUD"
@@ -9638,19 +9639,19 @@ Cmd("gravhud", {"gravityhud","showgrav"}, function()
     local function refresh()
         local g = workspace.Gravity
         local pct = g / _origGravity
-        lbl.Text = string.format("🌍  Gravity: %.1f  (%.0f%%)", g, pct * 100)
+        lbl.Text = string.format("ðŸŒ  Gravity: %.1f  (%.0f%%)", g, pct * 100)
         lbl.TextColor3 = pct > 1.2 and Color3.fromRGB(220,80,80)
                       or pct < 0.5 and Color3.fromRGB(80,200,255)
                       or Color3.fromRGB(180,180,180)
     end
     refresh()
     _gravHudConn = workspace:GetPropertyChangedSignal("Gravity"):Connect(refresh)
-    Notify("🌍  Gravity HUD ON")
+    Notify("ðŸŒ  Gravity HUD ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: BUILT-IN ANIMATION ID LIBRARY  (IY-ported)  ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: BUILT-IN ANIMATION ID LIBRARY  (IY-ported)  â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: storing a named ID dictionary, quick-access
 --           pattern, searchable table, extending the anim cmd.
 
@@ -9694,7 +9695,7 @@ Cmd("animlib", {"animlist","anims","lsanims"}, function(args)
     if #matches == 0 then Notify("No anims matching '"..query.."'","warn"); return end
     table.sort(matches)
     print("[S-Admin] Anim library (" .. #matches .. " results):\n" .. table.concat(matches,"\n"))
-    Notify(string.format("🎭  %d anim(s)%s — see console",
+    Notify(string.format("ðŸŽ­  %d anim(s)%s â€” see console",
         #matches, query~="" and " matching '"..query.."'" or ""), "info")
 end)
 
@@ -9702,15 +9703,15 @@ Cmd("playanim2", {"pa","libanim"}, function(args)
     local key = (args[1] or ""):lower()
     local id  = _animLibrary[key] or tonumber(key)
     if not id then
-        Notify("Usage: playanim2 <name or ID>  — run animlib to see names","warn"); return
+        Notify("Usage: playanim2 <name or ID>  â€” run animlib to see names","warn"); return
     end
     PlayAnim(id, true)
-    Notify("🎭  Playing: "..(key ~= "" and key or tostring(id)))
+    Notify("ðŸŽ­  Playing: "..(key ~= "" and key or tostring(id)))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: WORKSPACE VISIBILITY TOGGLE  (IY-ported)    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: WORKSPACE VISIBILITY TOGGLE  (IY-ported)    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: toggling Model/Part visibility via Transparency,
 --           storing original values for exact restore.
 
@@ -9725,23 +9726,23 @@ Cmd("hideworkspace", {"hidews2","wsvisoff"}, function()
             pcall(function() v.Transparency = 1 end)
         end
     end
-    Notify("🙈  Workspace hidden  (" .. #_wsVisibilityCache .. " parts) — showworkspace to restore")
+    Notify("ðŸ™ˆ  Workspace hidden  (" .. #_wsVisibilityCache .. " parts) â€” showworkspace to restore")
 end)
 
 Cmd("showworkspace", {"showws2","wsvisoon"}, function()
-    if #_wsVisibilityCache == 0 then Notify("Nothing cached — run hideworkspace first","warn"); return end
+    if #_wsVisibilityCache == 0 then Notify("Nothing cached â€” run hideworkspace first","warn"); return end
     local n = 0
     for _, entry in ipairs(_wsVisibilityCache) do
         pcall(function() if entry.part and entry.part.Parent then
             entry.part.Transparency = entry.trans; n=n+1 end end)
     end
     _wsVisibilityCache = {}
-    Notify("👁  Workspace restored  (" .. n .. " parts)")
+    Notify("ðŸ‘  Workspace restored  (" .. n .. " parts)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FOV PRESETS  (IY-ported)                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FOV PRESETS  (IY-ported)                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: named FOV constants, single-command switching,
 --           how FOV affects perceived speed and immersion.
 
@@ -9765,12 +9766,12 @@ Cmd("fovpreset", {"fp2","setfovpreset"}, function(args)
         Notify("FOV presets: "..table.concat(list, "  "), "warn"); return
     end
     workspace.CurrentCamera.FieldOfView = val
-    Notify(string.format("📷  FOV preset '%s' → %d°", key, val))
+    Notify(string.format("ðŸ“·  FOV preset '%s' â†’ %dÂ°", key, val))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: STARTUP BANNER  (displayed on load)         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: STARTUP BANNER  (displayed on load)         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: computing a final command count at runtime,
 --           printing a structured startup summary.
 
@@ -9779,27 +9780,27 @@ task.defer(function()
     for _ in pairs(Commands) do cmdCount = cmdCount + 1 end
     local aliasCount = 0
     for _ in pairs(Aliases) do aliasCount = aliasCount + 1 end
-    print(string.rep("═", 58))
-    print("  ⚡  S Command Bar Pro  v4.3  —  Final Edition")
+    print(string.rep("â•", 58))
+    print("  âš¡  S Command Bar Pro  v4.3  â€”  Final Edition")
     print(string.format("  Commands : %d  |  Aliases: %d", cmdCount, aliasCount))
     print(string.format("  Platform : %s  |  Player: %s",
-        IsMobile and "Mobile 📱" or "PC 🖥", LP.Name))
+        IsMobile and "Mobile ðŸ“±" or "PC ðŸ–¥", LP.Name))
     print(string.format("  Game     : %s  (PlaceId %d)", game.Name, game.PlaceId))
     print("  Tip      : type  cmds  to open the searchable command list")
     print("  Tip      : press  ;  to toggle the command bar (PC)")
-    print(string.rep("═", 58))
+    print(string.rep("â•", 58))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: FINAL POLISH  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: FINAL POLISH  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- tip  — print a random useful tip about the script
+-- tip  â€” print a random useful tip about the script
 local _tips = {
     "Press ; to toggle the command bar on PC.",
     "Use 'bind F fly' to toggle fly with the F key.",
     "Type 'cmds' then search in the list to find commands fast.",
-    "setwp home → wp home  saves and returns to any spot.",
+    "setwp home â†’ wp home  saves and returns to any spot.",
     "'help2 <cmd>' shows a description for key commands.",
     "Up/Down arrows in the bar cycle through your command history.",
     "Clicking a command in the cmds list auto-fills the bar.",
@@ -9807,8 +9808,8 @@ local _tips = {
     "'adminpanel' gives you 10 toggle buttons on one screen.",
     "'exportlog' copies your session summary to clipboard.",
     "'animlib' lists all built-in animation IDs you can play.",
-    "'lightpreset night' — instantly sets dark cinematic lighting.",
-    "'sizepreset giant' — scales your character to 2x size.",
+    "'lightpreset night' â€” instantly sets dark cinematic lighting.",
+    "'sizepreset giant' â€” scales your character to 2x size.",
     "'freecam' uses spring physics for a smooth cinematic camera.",
     "'sessionstats' shows time played, deaths, and studs walked.",
 }
@@ -9816,10 +9817,10 @@ local _tips = {
 Cmd("tip", {"hint","randomtip"}, function()
     local t = _tips[math.random(1, #_tips)]
     print("[S-Admin] Tip: " .. t)
-    Notify("💡  " .. t, "info")
+    Notify("ðŸ’¡  " .. t, "info")
 end)
 
--- status  — one-line summary of active states
+-- status  â€” one-line summary of active states
 Cmd("status", {"state","activestates"}, function()
     local active = {}
     local checks = {
@@ -9843,15 +9844,15 @@ Cmd("status", {"state","activestates"}, function()
         if c[1] then table.insert(active, c[2]) end
     end
     if #active == 0 then
-        Notify("⚙  All states inactive", "info")
+        Notify("âš™  All states inactive", "info")
     else
-        Notify("⚙  Active: " .. table.concat(active, "  ·  "), "info")
+        Notify("âš™  Active: " .. table.concat(active, "  Â·  "), "info")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MODEL TOOLS  (IY-ported)                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MODEL TOOLS  (IY-ported)                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Model hierarchy, PrimaryPart, GetChildren vs
 --           GetDescendants, pivot, bounding box.
 
@@ -9889,7 +9890,7 @@ Cmd("modelinfo", {"minfo","inspectmodel"}, function(args)
         "Path:        " .. best:GetFullName(),
     }
     print("[S-Admin] Model info:\n  "..table.concat(lines,"\n  "))
-    Notify("📦  "..best.Name.."  desc="..descCount.."  parts="..partCount.." — console","info")
+    Notify("ðŸ“¦  "..best.Name.."  desc="..descCount.."  parts="..partCount.." â€” console","info")
 end)
 
 Cmd("modelchildren", {"mchildren","listchildren"}, function(args)
@@ -9913,7 +9914,7 @@ Cmd("modelchildren", {"mchildren","listchildren"}, function(args)
     end
     print("[S-Admin] Children of '"..best.Name.."' ("..#lines.."):\n"
         ..table.concat(lines,"\n"))
-    Notify("📦  "..best.Name.." has "..#lines.." child(ren) — console","info")
+    Notify("ðŸ“¦  "..best.Name.." has "..#lines.." child(ren) â€” console","info")
 end)
 
 Cmd("anchormodel", {"modelanchor","anchorm"}, function(args)
@@ -9929,12 +9930,12 @@ Cmd("anchormodel", {"modelanchor","anchorm"}, function(args)
             end
         end
     end
-    Notify("🔒  Anchored "..n.." parts in models matching '"..query.."'")
+    Notify("ðŸ”’  Anchored "..n.." parts in models matching '"..query.."'")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: CAMERA SAVE / RESTORE  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: CAMERA SAVE / RESTORE  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: saving CFrame state to a variable, restoring
 --           with tween vs instant, CameraType management.
 
@@ -9946,12 +9947,12 @@ Cmd("savecam", {"cammark","camerasave"}, function()
     _savedCamCF   = cam.CFrame
     _savedCamFOV  = cam.FieldOfView
     local p       = cam.CFrame.Position
-    Notify(string.format("📷  Camera saved  (%.0f,%.0f,%.0f  FOV=%d)",
+    Notify(string.format("ðŸ“·  Camera saved  (%.0f,%.0f,%.0f  FOV=%d)",
         p.X,p.Y,p.Z,_savedCamFOV))
 end)
 
 Cmd("loadcam", {"cameraload","camrestore"}, function(args)
-    if not _savedCamCF then Notify("No camera saved — run savecam first","warn"); return end
+    if not _savedCamCF then Notify("No camera saved â€” run savecam first","warn"); return end
     local t    = tonumber(args[1]) or 0
     local cam  = workspace.CurrentCamera
     if t > 0 then
@@ -9961,17 +9962,17 @@ Cmd("loadcam", {"cameraload","camrestore"}, function(args)
         task.delay(t+0.1, function()
             cam.CameraType = Enum.CameraType.Custom
         end)
-        Notify(string.format("📷  Camera restored over %.1fs", t))
+        Notify(string.format("ðŸ“·  Camera restored over %.1fs", t))
     else
         cam.CFrame      = _savedCamCF
         cam.FieldOfView = _savedCamFOV
-        Notify("📷  Camera restored instantly")
+        Notify("ðŸ“·  Camera restored instantly")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SOUND SEARCH  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SOUND SEARCH  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: GetDescendants filtering for Sound class,
 --           reading SoundId, Volume, IsPlaying properties.
 
@@ -9997,9 +9998,9 @@ Cmd("listsounds", {"sounds","findsound"}, function(args)
     print("[S-Admin] Sounds ("..#found.."):")
     for _, s in ipairs(found) do
         print(string.format("  %-20s  vol=%.2f  %s  %s",
-            s.name, s.vol, s.playing and "▶" or "⏸", s.path))
+            s.name, s.vol, s.playing and "â–¶" or "â¸", s.path))
     end
-    Notify("🎵  "..#found.." sound(s) — see console","info")
+    Notify("ðŸŽµ  "..#found.." sound(s) â€” see console","info")
 end)
 
 Cmd("playsoundbyname", {"psbn","soundname"}, function(args)
@@ -10008,7 +10009,7 @@ Cmd("playsoundbyname", {"psbn","soundname"}, function(args)
     for _, v in ipairs(game:GetDescendants()) do
         if v:IsA("Sound") and v.Name:lower():find(query,1,true) then
             v:Play()
-            Notify("🎵  Playing: "..v.Name.."  ("..v.SoundId..")"); return
+            Notify("ðŸŽµ  Playing: "..v.Name.."  ("..v.SoundId..")"); return
         end
     end
     Notify("Sound not found: "..query,"error")
@@ -10023,12 +10024,12 @@ Cmd("stopsoundbyname", {"ssbn","stopname"}, function(args)
             v:Stop(); n=n+1
         end
     end
-    Notify(n>0 and "🎵  Stopped "..n.." sound(s)" or "No playing sounds matched","warn")
+    Notify(n>0 and "ðŸŽµ  Stopped "..n.." sound(s)" or "No playing sounds matched","warn")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MACRO RECORDER  (IY-ported)                 ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MACRO RECORDER  (IY-ported)                 â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: recording user commands with timestamps, playing
 --           them back with correct delays, stop mid-playback.
 
@@ -10038,23 +10039,21 @@ local _macroData      = {}    -- { {cmd=str, delay=n}, ... }
 local _macroStartTick = 0
 local _macroLastTick  = 0
 
--- Patch ExecCommand to capture while recording
-local _prevExecForMacro = ExecCommand
-ExecCommand = function(raw)
-    if _macroRecording and raw and raw:match("%S") then
-        local now = tick()
-        local delay = _macroData[1] and (now - _macroLastTick) or 0
-        table.insert(_macroData, {cmd=raw, delay=delay})
-        _macroLastTick = now
-        print(string.format("[S-Macro] Recorded (+%.2fs): %s", delay, raw))
-    end
-    _prevExecForMacro(raw)
+-- Macro recording helper
+-- (Called directly from ExecCommand in the controller section)
+local function _recordToMacro(raw)
+    if not _macroRecording or not raw or not raw:match("%S") then return end
+    local now   = tick()
+    local delay = (#_macroData > 0) and (now - _macroLastTick) or 0
+    table.insert(_macroData, {cmd = raw, delay = delay})
+    _macroLastTick = now
+    print(string.format("[S-Macro] Recorded (+%.2fs): %s", delay, raw))
 end
 
 Cmd("recordmacro", {"recmacro","startrecord","rec"}, function()
     if _macroRecording then
         _macroRecording = false
-        Notify(string.format("⏺  Macro recorded  (%d commands) — use playmacro",
+        Notify(string.format("âº  Macro recorded  (%d commands) â€” use playmacro",
             #_macroData))
         return
     end
@@ -10062,34 +10061,45 @@ Cmd("recordmacro", {"recmacro","startrecord","rec"}, function()
     _macroRecording = true
     _macroStartTick = tick()
     _macroLastTick  = tick()
-    Notify("⏺  Recording macro — run commands now, then recordmacro again to stop")
+    Notify("âº  Recording macro â€” run commands now, then recordmacro again to stop")
 end)
 
 Cmd("playmacro", {"runmacro","macro","pmacro"}, function(args)
     if _macroPlaying then Notify("Macro already playing","warn"); return end
-    if #_macroData == 0 then Notify("No macro recorded — use recordmacro first","warn"); return end
-    local loops = tonumber(args[1]) or 1
-    loops = math.min(loops, 10)
+    if #_macroData == 0 then Notify("No macro recorded â€” use recordmacro first","warn"); return end
+    local loops = math.min(tonumber(args[1]) or 1, 10)
     _macroPlaying = true
-    Notify(string.format("▶  Playing macro  (%d commands × %d loop(s))", #_macroData, loops))
+    Notify(string.format("â–¶  Playing macro  (%d commands Ã— %d loop(s))", #_macroData, loops))
     task.spawn(function()
         for i = 1, loops do
             for _, entry in ipairs(_macroData) do
                 if not _macroPlaying then break end
                 if entry.delay > 0.05 then task.wait(entry.delay) end
-                _prevExecForMacro(entry.cmd)
+                -- Call the real ExecCommand via a reference set in controller section
+                if type(ExecCommand) == "function" then
+                    ExecCommand(entry.cmd)
+                else
+                    -- Fallback: direct dispatch
+                    local parts = {}
+                    for w in entry.cmd:gmatch("%S+") do table.insert(parts, w) end
+                    local n = table.remove(parts, 1)
+                    if n then
+                        n = (Aliases[n:lower()] or n:lower())
+                        if Commands[n] then pcall(function() Commands[n](parts) end) end
+                    end
+                end
             end
             if not _macroPlaying then break end
         end
         _macroPlaying = false
-        Notify("▶  Macro playback complete")
+        Notify("â–¶  Macro playback complete")
     end)
 end)
 
 Cmd("stopmacro", {"cancelmacro","endmacro"}, function()
     _macroPlaying   = false
     _macroRecording = false
-    Notify("⏹  Macro stopped")
+    Notify("â¹  Macro stopped")
 end)
 
 Cmd("listmacro", {"showmacro","macrolist"}, function()
@@ -10102,17 +10112,17 @@ Cmd("listmacro", {"showmacro","macrolist"}, function()
     end
     print("[S-Admin] Macro ("..#_macroData.." commands  total ~"
         ..string.format("%.1f", t).."s):\n"..table.concat(lines,"\n"))
-    Notify("⏺  "..#_macroData.." macro command(s) — see console","info")
+    Notify("âº  "..#_macroData.." macro command(s) â€” see console","info")
 end)
 
 Cmd("clearmacro", {"resetmacro","delmacro"}, function()
     _macroData = {}
-    Notify("⏺  Macro cleared")
+    Notify("âº  Macro cleared")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MATH / VECTOR UTILITIES  (IY-ported)        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MATH / VECTOR UTILITIES  (IY-ported)        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: Vector3 arithmetic, distance formula, lerp,
 --           dot/cross product, CFrame from two points.
 
@@ -10122,7 +10132,7 @@ Cmd("v3add", {"vecadd","addvec"}, function(args)
     local r = Vector3.new(ax+bx, ay+by, az+bz)
     local s = string.format("(%.2f, %.2f, %.2f)", r.X, r.Y, r.Z)
     pcall(function() setclipboard(s) end)
-    Notify("🔢  "..s.."  (copied)","info")
+    Notify("ðŸ”¢  "..s.."  (copied)","info")
 end)
 
 Cmd("v3dist", {"vecdist","vecmag"}, function(args)
@@ -10131,7 +10141,7 @@ Cmd("v3dist", {"vecdist","vecmag"}, function(args)
     local d = Vector3.new(ax-bx, ay-by, az-bz).Magnitude
     local s = string.format("%.4f studs", d)
     pcall(function() setclipboard(tostring(d)) end)
-    Notify("📏  Distance: "..s.."  (copied)","info")
+    Notify("ðŸ“  Distance: "..s.."  (copied)","info")
 end)
 
 Cmd("v3lerp", {"veclerp","lerpvec"}, function(args)
@@ -10141,19 +10151,19 @@ Cmd("v3lerp", {"veclerp","lerpvec"}, function(args)
     local r = Vector3.new(ax,ay,az):Lerp(Vector3.new(bx,by,bz), t)
     local s = string.format("(%.2f, %.2f, %.2f)", r.X, r.Y, r.Z)
     pcall(function() setclipboard(s) end)
-    Notify("🔢  Lerp t="..t.."  →  "..s.."  (copied)","info")
+    Notify("ðŸ”¢  Lerp t="..t.."  â†’  "..s.."  (copied)","info")
 end)
 
 Cmd("v3dot", {"vecdot","dotproduct"}, function(args)
     local ax=tonumber(args[1]) or 0; local ay=tonumber(args[2]) or 0; local az=tonumber(args[3]) or 0
     local bx=tonumber(args[4]) or 0; local by=tonumber(args[5]) or 0; local bz=tonumber(args[6]) or 0
     local d = Vector3.new(ax,ay,az):Dot(Vector3.new(bx,by,bz))
-    Notify(string.format("🔢  Dot product: %.4f", d),"info")
+    Notify(string.format("ðŸ”¢  Dot product: %.4f", d),"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: PART WELDING  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: PART WELDING  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: WeldConstraint vs Motor6D, parenting strategy,
 --           batch-welding a model into one rigid assembly.
 
@@ -10182,19 +10192,19 @@ Cmd("weldmodel", {"weldm","rigidmodel"}, function(args)
             wc.Part0 = primary; wc.Part1 = v; n=n+1
         end
     end
-    Notify(string.format("🔗  Welded %d parts in '%s'", n, model.Name))
+    Notify(string.format("ðŸ”—  Welded %d parts in '%s'", n, model.Name))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: HIGHLIGHT BY MATERIAL  (IY-ported)          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: HIGHLIGHT BY MATERIAL  (IY-ported)          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 local _matHighlightFolder = nil
 
 Cmd("highlightmaterial", {"mathl","materialhl"}, function(args)
     if _matHighlightFolder then
         _matHighlightFolder:Destroy(); _matHighlightFolder = nil
-        Notify("🎨  Material highlight cleared"); return
+        Notify("ðŸŽ¨  Material highlight cleared"); return
     end
     local matName = args[1]
     if not matName then Notify("Usage: highlightmaterial <Material>","warn"); return end
@@ -10217,12 +10227,12 @@ Cmd("highlightmaterial", {"mathl","materialhl"}, function(args)
             n=n+1
         end
     end
-    Notify(string.format("🎨  Highlighted %d '%s' parts", n, matEnum.Name))
+    Notify(string.format("ðŸŽ¨  Highlighted %d '%s' parts", n, matEnum.Name))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TELEPORT EXTRAS  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TELEPORT EXTRAS  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("tpoffset", {"tprel","offsettp"}, function(args)
     local x = tonumber(args[1]) or 0
@@ -10230,7 +10240,7 @@ Cmd("tpoffset", {"tprel","offsettp"}, function(args)
     local z = tonumber(args[3]) or 0
     local hrp = GetHRP(); if not hrp then return end
     hrp.CFrame = hrp.CFrame * CFrame.new(x,y,z)
-    Notify(string.format("📍  Offset TP  (%.1f, %.1f, %.1f relative)",x,y,z))
+    Notify(string.format("ðŸ“  Offset TP  (%.1f, %.1f, %.1f relative)",x,y,z))
 end)
 
 Cmd("tpabove", {"above","tpup2"}, function(args)
@@ -10245,7 +10255,7 @@ Cmd("tpabove", {"above","tpup2"}, function(args)
         basePos = hrp.Position
     end
     hrp.CFrame = CFrame.new(basePos + Vector3.new(0, height, 0))
-    Notify(string.format("📍  TP'd %.0f studs above %s",
+    Notify(string.format("ðŸ“  TP'd %.0f studs above %s",
         height, target and target.Name or "self"))
 end)
 
@@ -10257,12 +10267,12 @@ Cmd("tpbehind", {"behind","tpback2"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local dist = tonumber(args[2]) or 5
     hrp.CFrame = tHRP.CFrame * CFrame.new(0, 0, dist)
-    Notify("📍  TP'd behind "..target.Name)
+    Notify("ðŸ“  TP'd behind "..target.Name)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SERVER TIME / SYNC  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SERVER TIME / SYNC  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("servertime", {"stime","gametime"}, function()
     local gt  = workspace.DistributedGameTime
@@ -10270,7 +10280,7 @@ Cmd("servertime", {"stime","gametime"}, function()
     local m   = math.floor((gt%3600)/60)
     local s   = math.floor(gt%60)
     local tck = tick()
-    Notify(string.format("⏱  Server: %02d:%02d:%02d  |  tick()=%.0f",h,m,s,tck),"info")
+    Notify(string.format("â±  Server: %02d:%02d:%02d  |  tick()=%.0f",h,m,s,tck),"info")
 end)
 
 Cmd("clocksync", {"timesync","synctime"}, function()
@@ -10279,12 +10289,12 @@ Cmd("clocksync", {"timesync","synctime"}, function()
     RunService.Heartbeat:Wait()
     local t1 = tick()
     local dt  = (t1-t0)*1000
-    Notify(string.format("⏱  Heartbeat Δ: %.2fms  |  tick=%.2f", dt, t1),"info")
+    Notify(string.format("â±  Heartbeat Î”: %.2fms  |  tick=%.2f", dt, t1),"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: STRING TOOLS  (IY-ported)                   ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: STRING TOOLS  (IY-ported)                   â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("strfind", {"sfind","strsearch"}, function(args)
     local haystack = args[1] or ""
@@ -10292,9 +10302,9 @@ Cmd("strfind", {"sfind","strsearch"}, function(args)
     if needle == "" then Notify("Usage: strfind <string> <pattern>","warn"); return end
     local s, e = haystack:find(needle, 1, true)
     if s then
-        Notify(string.format("🔍  Found '%s' at pos %d–%d", needle, s, e),"info")
+        Notify(string.format("ðŸ”  Found '%s' at pos %dâ€“%d", needle, s, e),"info")
     else
-        Notify("🔍  '"..needle.."' not found in '"..haystack.."'","warn")
+        Notify("ðŸ”  '"..needle.."' not found in '"..haystack.."'","warn")
     end
 end)
 
@@ -10305,7 +10315,7 @@ Cmd("strsplit", {"split","splitstr"}, function(args)
     local lines = {}
     for i, p in ipairs(parts) do table.insert(lines,"["..i.."] '"..p.."'") end
     print("[S-Admin] Split by '"..sep.."':\n  "..table.concat(lines,"\n  "))
-    Notify("🔤  "..#parts.." part(s) — see console","info")
+    Notify("ðŸ”¤  "..#parts.." part(s) â€” see console","info")
 end)
 
 Cmd("strformat", {"strfmt","format"}, function(args)
@@ -10319,15 +10329,15 @@ Cmd("strformat", {"strfmt","format"}, function(args)
     local ok, result = pcall(function() return string.format(fmt, table.unpack(fmtArgs)) end)
     if ok then
         pcall(function() setclipboard(result) end)
-        Notify("🔤  "..result.."  (copied)","info")
+        Notify("ðŸ”¤  "..result.."  (copied)","info")
     else
         Notify("Format error: "..tostring(result),"error")
     end
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ACHIEVEMENT TRACKER  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ACHIEVEMENT TRACKER  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: custom in-session goal tracking, checking
 --           conditions, toast notification on completion.
 
@@ -10350,7 +10360,7 @@ RunService.Heartbeat:Connect(function()
             end
             if val >= a.goal then
                 a.done = true
-                Notify("🏆  Achievement: "..a.label.."  — "..a.desc, "success")
+                Notify("ðŸ†  Achievement: "..a.label.."  â€” "..a.desc, "success")
             end
         end
     end
@@ -10367,17 +10377,17 @@ Cmd("achievements", {"achieve","myachievements"}, function()
         end
         local pct = math.min(100, math.floor(val/a.goal*100))
         table.insert(lines, string.format("  [%s] %-12s %3d%%  %s",
-            a.done and "✅" or "  ", a.label, pct, a.desc))
+            a.done and "âœ…" or "  ", a.label, pct, a.desc))
     end
     print("[S-Admin] Achievements:\n"..table.concat(lines,"\n"))
     local done = 0
     for _, a in ipairs(_achievements) do if a.done then done=done+1 end end
-    Notify(string.format("🏆  %d/%d achievements — see console",done,#_achievements),"info")
+    Notify(string.format("ðŸ†  %d/%d achievements â€” see console",done,#_achievements),"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: GUI COUNT / CLEANUP  (IY-ported)            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: GUI COUNT / CLEANUP  (IY-ported)            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("guicount", {"countgui","listguis"}, function()
     local pg = LP:FindFirstChildOfClass("PlayerGui"); if not pg then return end
@@ -10387,7 +10397,7 @@ Cmd("guicount", {"countgui","listguis"}, function()
         if (v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("TextLabel"))
         and v.Visible then visible = visible + 1 end
     end
-    Notify(string.format("🪟  PlayerGui: %d total  |  %d visible", total, visible),"info")
+    Notify(string.format("ðŸªŸ  PlayerGui: %d total  |  %d visible", total, visible),"info")
 end)
 
 Cmd("destroygameguis", {"clearplayergui","destroygui"}, function()
@@ -10398,12 +10408,12 @@ Cmd("destroygameguis", {"clearplayergui","destroygui"}, function()
             pcall(function() v:Destroy() end); n=n+1
         end
     end
-    Notify("🗑  Destroyed "..n.." game GUI(s)  (S_ GUIs preserved)")
+    Notify("ðŸ—‘  Destroyed "..n.." game GUI(s)  (S_ GUIs preserved)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: POINTLIGHT ON PART  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: POINTLIGHT ON PART  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("lightpart", {"partlight","addlighttopart"}, function(args)
     local query = args[1]; if not query then Notify("Usage: lightpart <name> [R G B] [range]","warn"); return end
@@ -10421,17 +10431,17 @@ Cmd("lightpart", {"partlight","addlighttopart"}, function(args)
     end
     if not best then Notify("Part not found: "..query,"error"); return end
     local old = best:FindFirstChildOfClass("PointLight")
-    if old then old:Destroy(); Notify("💡  Light removed from "..best.Name); return end
+    if old then old:Destroy(); Notify("ðŸ’¡  Light removed from "..best.Name); return end
     local pl = Instance.new("PointLight", best)
     pl.Color      = Color3.fromRGB(r,g,b)
     pl.Brightness = 5
     pl.Range      = range
-    Notify(string.format("💡  Light on '%s'  RGB(%d,%d,%d)  r=%d",best.Name,r,g,b,range))
+    Notify(string.format("ðŸ’¡  Light on '%s'  RGB(%d,%d,%d)  r=%d",best.Name,r,g,b,range))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: IMPULSE / FORCE  (IY-ported)                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: IMPULSE / FORCE  (IY-ported)                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: ApplyImpulse vs AssemblyLinearVelocity,
 --           world-space vs local-space force application.
 
@@ -10443,7 +10453,7 @@ Cmd("impulse", {"applyimpulse","addforce"}, function(args)
     pcall(function()
         hrp:ApplyImpulse(Vector3.new(x,y,z))
     end)
-    Notify(string.format("💥  Impulse applied  (%.0f,%.0f,%.0f)",x,y,z))
+    Notify(string.format("ðŸ’¥  Impulse applied  (%.0f,%.0f,%.0f)",x,y,z))
 end)
 
 Cmd("angularimpulse", {"angularimp","spinimpulse"}, function(args)
@@ -10454,19 +10464,19 @@ Cmd("angularimpulse", {"angularimp","spinimpulse"}, function(args)
     pcall(function()
         hrp:ApplyAngularImpulse(Vector3.new(x,y,z))
     end)
-    Notify(string.format("🔄  Angular impulse  (%.0f,%.0f,%.0f)",x,y,z))
+    Notify(string.format("ðŸ”„  Angular impulse  (%.0f,%.0f,%.0f)",x,y,z))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: DEFENSIVE COMMANDS                          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: DEFENSIVE COMMANDS                          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: velocity monitoring, position guard loops,
---           CFrame restoration, property change guards —
+--           CFrame restoration, property change guards â€”
 --           all client-side protective patterns.
 
--- ── Anti-Fling ────────────────────────────────────────────
+-- â”€â”€ Anti-Fling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Monitors AssemblyLinearVelocity every Stepped frame.
---  If magnitude exceeds threshold → clamp it back instantly.
+--  If magnitude exceeds threshold â†’ clamp it back instantly.
 
 local _antiFlingConn = nil
 local _afThreshold   = 250   -- studs/s spike threshold
@@ -10474,7 +10484,7 @@ local _afThreshold   = 250   -- studs/s spike threshold
 Cmd("antifling", {"af","noflinging","antiflung"}, function(args)
     if _antiFlingConn then
         _antiFlingConn:Disconnect(); _antiFlingConn = nil
-        Notify("🛡  Anti-Fling OFF"); return
+        Notify("ðŸ›¡  Anti-Fling OFF"); return
     end
     _afThreshold = tonumber(args[1]) or 250
     _antiFlingConn = RunService.Stepped:Connect(function()
@@ -10485,12 +10495,12 @@ Cmd("antifling", {"af","noflinging","antiflung"}, function(args)
             hrp.AssemblyAngularVelocity = Vector3.zero
         end
     end)
-    Notify("🛡  Anti-Fling ON  (threshold " .. _afThreshold .. " st/s)")
+    Notify("ðŸ›¡  Anti-Fling ON  (threshold " .. _afThreshold .. " st/s)")
 end)
 
--- ── Anti-Teleport ─────────────────────────────────────────
+-- â”€â”€ Anti-Teleport â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Saves your position every 0.5 s. If you suddenly appear
---  > N studs away without fly / noclip active → restore.
+--  > N studs away without fly / noclip active â†’ restore.
 
 local _antiTpConn     = nil
 local _antiTpLastPos  = nil
@@ -10500,7 +10510,7 @@ Cmd("antiteleport", {"atp","notp","antitp"}, function(args)
     if _antiTpConn then
         _antiTpConn:Disconnect(); _antiTpConn = nil
         _antiTpLastPos = nil
-        Notify("🛡  Anti-Teleport OFF"); return
+        Notify("ðŸ›¡  Anti-Teleport OFF"); return
     end
     _antiTpDist = tonumber(args[1]) or 80
     local elapsed = 0
@@ -10514,7 +10524,7 @@ Cmd("antiteleport", {"atp","notp","antitp"}, function(args)
             -- Allow large movement only when fly/noclip is on
             if moved > _antiTpDist and not State.Flying and not State.Noclipping then
                 hrp.CFrame = CFrame.new(_antiTpLastPos)
-                Notify("🛡  Anti-TP: unwanted teleport blocked!", "warn")
+                Notify("ðŸ›¡  Anti-TP: unwanted teleport blocked!", "warn")
                 return
             end
         end
@@ -10524,12 +10534,12 @@ Cmd("antiteleport", {"atp","notp","antitp"}, function(args)
             _antiTpLastPos = pos
         end
     end)
-    Notify("🛡  Anti-Teleport ON  (threshold " .. _antiTpDist .. " studs)")
+    Notify("ðŸ›¡  Anti-Teleport ON  (threshold " .. _antiTpDist .. " studs)")
 end)
 
--- ── Position Lock ─────────────────────────────────────────
+-- â”€â”€ Position Lock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Hard-freezes your HRP in place every Stepped frame.
---  Nothing — gravity, physics, forces — can move you.
+--  Nothing â€” gravity, physics, forces â€” can move you.
 
 local _posLockConn = nil
 local _posLockCF   = nil
@@ -10538,7 +10548,7 @@ Cmd("positionlock", {"poslock","lockpos","freeze2"}, function()
     if _posLockConn then
         _posLockConn:Disconnect(); _posLockConn = nil
         local hrp = GetHRP(); if hrp then hrp.Anchored = false end
-        Notify("🛡  Position lock OFF"); return
+        Notify("ðŸ›¡  Position lock OFF"); return
     end
     local hrp = GetHRP(); if not hrp then return end
     _posLockCF = hrp.CFrame
@@ -10547,20 +10557,20 @@ Cmd("positionlock", {"poslock","lockpos","freeze2"}, function()
         local h = GetHRP(); if not h then return end
         h.CFrame = _posLockCF
     end)
-    Notify("🛡  Position locked — nothing can move you  (run again to free)")
+    Notify("ðŸ›¡  Position locked â€” nothing can move you  (run again to free)")
 end)
 
 Cmd("updatelock", {"refreshlock","newlockpos"}, function()
     local hrp = GetHRP()
     if not hrp or not _posLockConn then
-        Notify("Position lock not active — run positionlock first", "warn"); return
+        Notify("Position lock not active â€” run positionlock first", "warn"); return
     end
     _posLockCF = hrp.CFrame
     local p = _posLockCF.Position
-    Notify(string.format("🛡  Lock position updated  (%.0f,%.0f,%.0f)", p.X,p.Y,p.Z))
+    Notify(string.format("ðŸ›¡  Lock position updated  (%.0f,%.0f,%.0f)", p.X,p.Y,p.Z))
 end)
 
--- ── Velocity Clamp ────────────────────────────────────────
+-- â”€â”€ Velocity Clamp â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Caps linear velocity to a max magnitude every frame.
 --  Softer than anti-fling; allows fast movement but prevents
 --  extreme spikes from physics glitches or exploits.
@@ -10571,7 +10581,7 @@ local _velClampMax  = 120
 Cmd("velocityclamp", {"velclamp","maxvelocity","clampvel"}, function(args)
     if _velClampConn then
         _velClampConn:Disconnect(); _velClampConn = nil
-        Notify("🛡  Velocity clamp OFF"); return
+        Notify("ðŸ›¡  Velocity clamp OFF"); return
     end
     _velClampMax = tonumber(args[1]) or 120
     _velClampConn = RunService.Stepped:Connect(function()
@@ -10581,12 +10591,12 @@ Cmd("velocityclamp", {"velclamp","maxvelocity","clampvel"}, function(args)
             hrp.AssemblyLinearVelocity = vel.Unit * _velClampMax
         end
     end)
-    Notify("🛡  Velocity clamp ON  (max " .. _velClampMax .. " st/s)")
+    Notify("ðŸ›¡  Velocity clamp ON  (max " .. _velClampMax .. " st/s)")
 end)
 
--- ── Anti-Aim / Camera Guard ───────────────────────────────
+-- â”€â”€ Anti-Aim / Camera Guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Watches CameraType and CameraSubject. If another script
---  changes them without your consent → restore instantly.
+--  changes them without your consent â†’ restore instantly.
 
 local _camGuardConn  = nil
 local _camGuardType  = nil
@@ -10595,7 +10605,7 @@ local _camGuardSubj  = nil
 Cmd("cameralock", {"camguard","anticam","lockscriptcam"}, function()
     if _camGuardConn then
         _camGuardConn:Disconnect(); _camGuardConn = nil
-        Notify("🛡  Camera guard OFF"); return
+        Notify("ðŸ›¡  Camera guard OFF"); return
     end
     local cam = workspace.CurrentCamera
     _camGuardType = cam.CameraType
@@ -10615,18 +10625,18 @@ Cmd("cameralock", {"camguard","anticam","lockscriptcam"}, function()
     end)
     -- Store both
     Conns.CamGuardSubj = subjConn
-    Notify("🛡  Camera guard ON  — CameraType and CameraSubject locked")
+    Notify("ðŸ›¡  Camera guard ON  â€” CameraType and CameraSubject locked")
 end)
 
 Cmd("uncameralock", {"uncamguard","freecamguard"}, function()
     if _camGuardConn then _camGuardConn:Disconnect(); _camGuardConn = nil end
     SafeDisconn("CamGuardSubj")
-    Notify("🛡  Camera guard OFF")
+    Notify("ðŸ›¡  Camera guard OFF")
 end)
 
--- ── Safe Position / Panic Restore ────────────────────────
+-- â”€â”€ Safe Position / Panic Restore â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Mark a "safe" CFrame. If you press the key or run the
---  command you instantly return — good for dangerous areas.
+--  command you instantly return â€” good for dangerous areas.
 
 local _safeCF    = nil
 local _panicBind = nil
@@ -10635,15 +10645,15 @@ Cmd("setsafe", {"safemark","marksafe","setpanic"}, function()
     local hrp = GetHRP(); if not hrp then return end
     _safeCF = hrp.CFrame
     local p = _safeCF.Position
-    Notify(string.format("🛡  Safe position set  (%.0f,%.0f,%.0f)", p.X,p.Y,p.Z))
+    Notify(string.format("ðŸ›¡  Safe position set  (%.0f,%.0f,%.0f)", p.X,p.Y,p.Z))
 end)
 
 Cmd("panic", {"returnsafe","gosafe","panictp"}, function()
-    if not _safeCF then Notify("No safe position set — run setsafe first","warn"); return end
+    if not _safeCF then Notify("No safe position set â€” run setsafe first","warn"); return end
     local hrp = GetHRP(); if not hrp then return end
     hrp.CFrame = _safeCF
     local p = _safeCF.Position
-    Notify(string.format("🛡  Panic TP → safe pos  (%.0f,%.0f,%.0f)", p.X,p.Y,p.Z))
+    Notify(string.format("ðŸ›¡  Panic TP â†’ safe pos  (%.0f,%.0f,%.0f)", p.X,p.Y,p.Z))
 end)
 
 -- Bind a key to panic (default: P)
@@ -10656,10 +10666,10 @@ Cmd("panickey", {"bindpanic","setpanickey"}, function(args)
             Commands["panic"]({})
         end
     end)
-    Notify("🛡  Panic key bound to ["..key.."]")
+    Notify("ðŸ›¡  Panic key bound to ["..key.."]")
 end)
 
--- ── Anti-Kick Guard ───────────────────────────────────────
+-- â”€â”€ Anti-Kick Guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Listens for the GuiService error signal and attempts an
 --  immediate rejoin before the kick screen appears.
 
@@ -10668,7 +10678,7 @@ local _antiKickActive = false
 Cmd("antikick", {"nkick","preventkick"}, function()
     if _antiKickActive then
         _antiKickActive = false
-        Notify("🛡  Anti-Kick OFF"); return
+        Notify("ðŸ›¡  Anti-Kick OFF"); return
     end
     _antiKickActive = true
     local GS = game:GetService("GuiService")
@@ -10681,10 +10691,10 @@ Cmd("antikick", {"nkick","preventkick"}, function()
             end
         end)
     end)
-    Notify("🛡  Anti-Kick ON  (auto-rejoin on error)")
+    Notify("ðŸ›¡  Anti-Kick ON  (auto-rejoin on error)")
 end)
 
--- ── Anti-Void ─────────────────────────────────────────────
+-- â”€â”€ Anti-Void â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  If your Y position drops below a threshold, TP to safety.
 
 local _antiVoidConn    = nil
@@ -10693,7 +10703,7 @@ local _antiVoidThresh  = -100
 Cmd("antivoid", {"av2","novoid","avoidvoid"}, function(args)
     if _antiVoidConn then
         _antiVoidConn:Disconnect(); _antiVoidConn = nil
-        Notify("🛡  Anti-Void OFF"); return
+        Notify("ðŸ›¡  Anti-Void OFF"); return
     end
     _antiVoidThresh = tonumber(args[1]) or -100
     _antiVoidConn = RunService.Heartbeat:Connect(function()
@@ -10705,16 +10715,16 @@ Cmd("antivoid", {"av2","novoid","avoidvoid"}, function(args)
             else
                 hrp.CFrame = CFrame.new(hrp.Position.X, 100, hrp.Position.Z)
             end
-            Notify("🛡  Anti-Void: caught at Y < " .. _antiVoidThresh, "warn")
+            Notify("ðŸ›¡  Anti-Void: caught at Y < " .. _antiVoidThresh, "warn")
         end
     end)
-    Notify("🛡  Anti-Void ON  (threshold Y < " .. _antiVoidThresh .. ")")
+    Notify("ðŸ›¡  Anti-Void ON  (threshold Y < " .. _antiVoidThresh .. ")")
 end)
 
--- ── Exploit Detector ─────────────────────────────────────
+-- â”€â”€ Exploit Detector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Monitors nearby players for suspicious patterns:
 --  extreme velocity, rapid position change, noclip through
---  geometry — and notifies you with player name + evidence.
+--  geometry â€” and notifies you with player name + evidence.
 
 local _exploitDetConn    = nil
 local _exploitCooldowns  = {}
@@ -10723,7 +10733,7 @@ Cmd("exploitdetect", {"edetect","hackdetect","cheatdetect"}, function(args)
     if _exploitDetConn then
         _exploitDetConn:Disconnect(); _exploitDetConn = nil
         _exploitCooldowns = {}
-        Notify("🔍  Exploit detector OFF"); return
+        Notify("ðŸ”  Exploit detector OFF"); return
     end
     local range   = tonumber(args[1]) or 200
     local elapsed = 0
@@ -10775,7 +10785,7 @@ Cmd("exploitdetect", {"edetect","hackdetect","cheatdetect"}, function(args)
                             local last = _exploitCooldowns[p.Name] or 0
                             if now - last > 5 then
                                 _exploitCooldowns[p.Name] = now
-                                local msg = "⚠  " .. p.Name .. ": " .. table.concat(flags, "  |  ")
+                                local msg = "âš   " .. p.Name .. ": " .. table.concat(flags, "  |  ")
                                 print("[S-ExploitDetect] " .. msg)
                                 Notify(msg, "warn")
                             end
@@ -10785,11 +10795,11 @@ Cmd("exploitdetect", {"edetect","hackdetect","cheatdetect"}, function(args)
             end   -- p ~= LP
         end   -- for players
     end)
-    Notify("🔍  Exploit detector ON  (range " .. range .. " studs)")
+    Notify("ðŸ”  Exploit detector ON  (range " .. range .. " studs)")
 end)
 
--- ── Health Guard ─────────────────────────────────────────
---  If health drops suddenly below a threshold → god mode
+-- â”€â”€ Health Guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+--  If health drops suddenly below a threshold â†’ god mode
 --  kicks in automatically.  Think of it as a "last-stand".
 
 local _healthGuardConn   = nil
@@ -10798,7 +10808,7 @@ local _healthGuardThresh = 20
 Cmd("healthguard", {"hguard","autogod","laststand"}, function(args)
     if _healthGuardConn then
         _healthGuardConn:Disconnect(); _healthGuardConn = nil
-        Notify("🛡  Health guard OFF"); return
+        Notify("ðŸ›¡  Health guard OFF"); return
     end
     _healthGuardThresh = tonumber(args[1]) or 20
     _healthGuardConn = RunService.Heartbeat:Connect(function()
@@ -10806,13 +10816,13 @@ Cmd("healthguard", {"hguard","autogod","laststand"}, function(args)
         if hum.Health > 0 and hum.Health < _healthGuardThresh then
             hum.MaxHealth = math.huge
             hum.Health    = math.huge
-            Notify("🛡  Health guard triggered — god mode activated!", "warn")
+            Notify("ðŸ›¡  Health guard triggered â€” god mode activated!", "warn")
         end
     end)
-    Notify("🛡  Health guard ON  (trigger at < " .. _healthGuardThresh .. " HP)")
+    Notify("ðŸ›¡  Health guard ON  (trigger at < " .. _healthGuardThresh .. " HP)")
 end)
 
--- ── Anti-Spin ────────────────────────────────────────────
+-- â”€â”€ Anti-Spin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Detects runaway angular velocity and resets it instantly.
 
 local _antiSpinConn = nil
@@ -10820,7 +10830,7 @@ local _antiSpinConn = nil
 Cmd("antispin", {"aspn","nospinned","antirotat"}, function()
     if _antiSpinConn then
         _antiSpinConn:Disconnect(); _antiSpinConn = nil
-        Notify("🛡  Anti-Spin OFF"); return
+        Notify("ðŸ›¡  Anti-Spin OFF"); return
     end
     _antiSpinConn = RunService.Stepped:Connect(function()
         local hrp = GetHRP(); if not hrp then return end
@@ -10828,10 +10838,10 @@ Cmd("antispin", {"aspn","nospinned","antirotat"}, function()
             hrp.AssemblyAngularVelocity = Vector3.zero
         end
     end)
-    Notify("🛡  Anti-Spin ON  (resets runaway angular velocity)")
+    Notify("ðŸ›¡  Anti-Spin ON  (resets runaway angular velocity)")
 end)
 
--- ── Anti-Gravity Exploit ──────────────────────────────────
+-- â”€â”€ Anti-Gravity Exploit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Monitors workspace.Gravity; if another script resets it,
 --  restore immediately.
 
@@ -10841,19 +10851,19 @@ local _gravGuardConn = nil
 Cmd("gravityguard", {"gravguard","antigravmod"}, function(args)
     if _gravGuardConn then
         _gravGuardConn:Disconnect(); _gravGuardConn = nil
-        Notify("🛡  Gravity guard OFF"); return
+        Notify("ðŸ›¡  Gravity guard OFF"); return
     end
     _gravGuardVal = tonumber(args[1]) or workspace.Gravity
     _gravGuardConn = workspace:GetPropertyChangedSignal("Gravity"):Connect(function()
         if workspace.Gravity ~= _gravGuardVal then
             workspace.Gravity = _gravGuardVal
-            Notify("🛡  Gravity guard: reset to " .. _gravGuardVal, "warn")
+            Notify("ðŸ›¡  Gravity guard: reset to " .. _gravGuardVal, "warn")
         end
     end)
-    Notify("🛡  Gravity guard ON  (locked at " .. _gravGuardVal .. ")")
+    Notify("ðŸ›¡  Gravity guard ON  (locked at " .. _gravGuardVal .. ")")
 end)
 
--- ── Shield Mode ───────────────────────────────────────────
+-- â”€â”€ Shield Mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  One command activating multiple defensive layers at once:
 --  Anti-Fling + Anti-Void + Health Guard + Anti-Spin.
 
@@ -10864,7 +10874,7 @@ Cmd("shieldmode", {"shield","defensemode","fulldefense"}, function(args)
         Commands["antivoid"]({})
         Commands["antispin"]({})
         Commands["healthguard"]({})
-        Notify("🛡  Shield mode OFF — all defenses down")
+        Notify("ðŸ›¡  Shield mode OFF â€” all defenses down")
         return
     end
     -- Activate all
@@ -10872,10 +10882,10 @@ Cmd("shieldmode", {"shield","defensemode","fulldefense"}, function(args)
     if not _antiVoidConn   then Commands["antivoid"]({})       end
     if not _antiSpinConn   then Commands["antispin"]({})       end
     if not _healthGuardConn then Commands["healthguard"]({})   end
-    Notify("🛡  Shield mode ON — Anti-Fling + Anti-Void + Anti-Spin + Health Guard")
+    Notify("ðŸ›¡  Shield mode ON â€” Anti-Fling + Anti-Void + Anti-Spin + Health Guard")
 end)
 
--- ── Defense Status ────────────────────────────────────────
+-- â”€â”€ Defense Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("defensestatus", {"defstatus","shields","dstatus"}, function()
     local statuses = {
         {"Anti-Fling",     _antiFlingConn   ~= nil},
@@ -10896,12 +10906,12 @@ Cmd("defensestatus", {"defstatus","shields","dstatus"}, function()
         else table.insert(off, s[1]) end
     end
     print("[S-Admin] Defense Status:")
-    print("  ✅  " .. (#on  > 0 and table.concat(on,", ")  or "none"))
-    print("  ❌  " .. (#off > 0 and table.concat(off,", ") or "none"))
-    Notify("🛡  " .. #on .. "/" .. #statuses .. " defenses active — console", "info")
+    print("  âœ…  " .. (#on  > 0 and table.concat(on,", ")  or "none"))
+    print("  âŒ  " .. (#off > 0 and table.concat(off,", ") or "none"))
+    Notify("ðŸ›¡  " .. #on .. "/" .. #statuses .. " defenses active â€” console", "info")
 end)
 
--- ── Disable All Defenses ─────────────────────────────────
+-- â”€â”€ Disable All Defenses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("undefend", {"nodefense","disabledefense","cleardefense"}, function()
     if _antiFlingConn   then Commands["antifling"]({})    end
     if _antiTpConn      then Commands["antiteleport"]({}) end
@@ -10913,14 +10923,14 @@ Cmd("undefend", {"nodefense","disabledefense","cleardefense"}, function()
     if _healthGuardConn then Commands["healthguard"]({})  end
     if _gravGuardConn   then Commands["gravityguard"]({}) end
     _antiKickActive = false
-    Notify("🛡  All defenses disabled")
+    Notify("ðŸ›¡  All defenses disabled")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADDITIONAL NEUTRAL UTILITIES                ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADDITIONAL NEUTRAL UTILITIES                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ── Instance Watcher ─────────────────────────────────────
+-- â”€â”€ Instance Watcher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Watches for a specific instance being added or removed
 --  from the game tree and notifies you.
 
@@ -10932,26 +10942,26 @@ Cmd("watch", {"watchfor","monitor"}, function(args)
     if _watchConn then _watchConn:Disconnect(); _watchConn = nil end
     _watchConn = game.DescendantAdded:Connect(function(v)
         if v.Name:lower():find(query,1,true) then
-            Notify("👁  Added: "..v:GetFullName().." ["..v.ClassName.."]","info")
+            Notify("ðŸ‘  Added: "..v:GetFullName().." ["..v.ClassName.."]","info")
         end
     end)
     local remConn
     remConn = game.DescendantRemoving:Connect(function(v)
         if v.Name:lower():find(query,1,true) then
-            Notify("👁  Removed: "..v.Name.." ["..v.ClassName.."]","warn")
+            Notify("ðŸ‘  Removed: "..v.Name.." ["..v.ClassName.."]","warn")
         end
     end)
     Conns.WatchRemove = remConn
-    Notify("👁  Watching for instances named '"..query.."'")
+    Notify("ðŸ‘  Watching for instances named '"..query.."'")
 end)
 
 Cmd("unwatch", {"stopwatch","nomonitor"}, function()
     if _watchConn then _watchConn:Disconnect(); _watchConn = nil end
     SafeDisconn("WatchRemove")
-    Notify("👁  Watch stopped")
+    Notify("ðŸ‘  Watch stopped")
 end)
 
--- ── Property Monitor ─────────────────────────────────────
+-- â”€â”€ Property Monitor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Watch a specific property of your HRP and alert on change.
 
 Cmd("watchprop", {"watchproperty","monitorprop"}, function(args)
@@ -10961,14 +10971,14 @@ Cmd("watchprop", {"watchproperty","monitorprop"}, function(args)
         hrp:GetPropertyChangedSignal(prop):Connect(function()
             local val = ""
             pcall(function() val = tostring(hrp[prop]) end)
-            Notify("👁  HRP."..prop.." changed → "..val, "info")
+            Notify("ðŸ‘  HRP."..prop.." changed â†’ "..val, "info")
         end)
     end)
-    Notify(ok and "👁  Watching HRP."..prop or "Property not found: "..prop,
+    Notify(ok and "ðŸ‘  Watching HRP."..prop or "Property not found: "..prop,
         ok and "info" or "error")
 end)
 
--- ── Network Receiver Spike Alert ─────────────────────────
+-- â”€â”€ Network Receiver Spike Alert â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Fires a warning when ping spikes above a threshold.
 
 local _pingAlertConn  = nil
@@ -10977,7 +10987,7 @@ local _pingAlertThresh = 300
 Cmd("pingalert", {"alertping","highpingwarn"}, function(args)
     if _pingAlertConn then
         _pingAlertConn:Disconnect(); _pingAlertConn = nil
-        Notify("📶  Ping alert OFF"); return
+        Notify("ðŸ“¶  Ping alert OFF"); return
     end
     _pingAlertThresh = tonumber(args[1]) or 300
     local cooldown, elapsed = false, 0
@@ -10988,14 +10998,14 @@ Cmd("pingalert", {"alertping","highpingwarn"}, function(args)
         local ms = LP:GetNetworkPing() * 1000
         if ms > _pingAlertThresh and not cooldown then
             cooldown = true
-            Notify(string.format("📶  High ping! %.0fms", ms), "warn")
+            Notify(string.format("ðŸ“¶  High ping! %.0fms", ms), "warn")
             task.delay(10, function() cooldown = false end)
         end
     end)
-    Notify("📶  Ping alert ON  (threshold "..(_pingAlertThresh).."ms)")
+    Notify("ðŸ“¶  Ping alert ON  (threshold "..(_pingAlertThresh).."ms)")
 end)
 
--- ── Character Integrity Check ────────────────────────────
+-- â”€â”€ Character Integrity Check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Verifies all expected parts exist in the character, and
 --  reports any that are missing (exploits sometimes delete
 --  parts like the HumanoidRootPart or arms).
@@ -11020,14 +11030,14 @@ Cmd("charintegrity", {"charint","checkchar","integritycheck"}, function()
         if not char:FindFirstChild(name) then table.insert(missing, name) end
     end
     if #missing == 0 then
-        Notify("✅  Character integrity OK  (" .. (isR6 and "R6" or "R15") .. ")")
+        Notify("âœ…  Character integrity OK  (" .. (isR6 and "R6" or "R15") .. ")")
     else
         print("[S-Admin] Missing parts: " .. table.concat(missing,", "))
-        Notify("⚠  "..#missing.." part(s) missing — see console", "warn")
+        Notify("âš   "..#missing.." part(s) missing â€” see console", "warn")
     end
 end)
 
--- ── Crash Protection ─────────────────────────────────────
+-- â”€â”€ Crash Protection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Detects when the script environment is under stress
 --  (extremely low FPS) and reduces all running loops.
 
@@ -11036,7 +11046,7 @@ local _crashProtConn = nil
 Cmd("crashprotection", {"crashprot","cprot","anticrash"}, function()
     if _crashProtConn then
         _crashProtConn:Disconnect(); _crashProtConn = nil
-        Notify("🛡  Crash protection OFF"); return
+        Notify("ðŸ›¡  Crash protection OFF"); return
     end
     local samples, elapsed = {}, 0
     _crashProtConn = RunService.Heartbeat:Connect(function(dt)
@@ -11049,18 +11059,18 @@ Cmd("crashprotection", {"crashprot","cprot","anticrash"}, function()
         for _, s in ipairs(samples) do avg=avg+s end
         avg = avg/#samples
         if avg < 8 then
-            -- FPS critically low — disable expensive loops
+            -- FPS critically low â€” disable expensive loops
             if _kaRunning        then Commands["unkillaura"]({}) end
             if _fpsCapTask       then Commands["unfpscap"]({})   end
             if _minimapConn      then Commands["minimap"]({})    end
             if _pingGraphConn    then Commands["pinggraph"]({})  end
-            Notify("⚠  FPS critical ("..math.floor(avg)..") — heavy features disabled", "warn")
+            Notify("âš   FPS critical ("..math.floor(avg)..") â€” heavy features disabled", "warn")
         end
     end)
-    Notify("🛡  Crash protection ON  (auto-disables heavy features at <8 FPS)")
+    Notify("ðŸ›¡  Crash protection ON  (auto-disables heavy features at <8 FPS)")
 end)
 
--- ── Respawn Protection ───────────────────────────────────
+-- â”€â”€ Respawn Protection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  After respawning, briefly activates god mode and noclip
 --  so you can orient before enemies can reach you.
 
@@ -11069,7 +11079,7 @@ local _respawnProtActive = false
 Cmd("respawnprotection", {"rprotect","spawnshield","spawnprot"}, function(args)
     _respawnProtActive = not _respawnProtActive
     if not _respawnProtActive then
-        Notify("🛡  Respawn protection OFF"); return
+        Notify("ðŸ›¡  Respawn protection OFF"); return
     end
     local duration = tonumber(args[1]) or 5
     LP.CharacterAdded:Connect(function(char)
@@ -11084,7 +11094,7 @@ Cmd("respawnprotection", {"rprotect","spawnshield","spawnprot"}, function(args)
                 if p:IsA("BasePart") then p.CanCollide = false end
             end
         end)
-        Notify("🛡  Respawn protection active for "..duration.."s")
+        Notify("ðŸ›¡  Respawn protection active for "..duration.."s")
         task.delay(duration, function()
             nc:Disconnect()
             -- Restore collision
@@ -11093,17 +11103,17 @@ Cmd("respawnprotection", {"rprotect","spawnshield","spawnprot"}, function(args)
             end
             -- Remove god
             if hum and hum.Parent then hum.MaxHealth=100; hum.Health=100 end
-            Notify("🛡  Respawn protection expired")
+            Notify("ðŸ›¡  Respawn protection expired")
         end)
     end)
-    Notify("🛡  Respawn protection ON  ("..duration.."s per spawn)")
+    Notify("ðŸ›¡  Respawn protection ON  ("..duration.."s per spawn)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: EXTENDED DEFENSIVE TOOLS                    ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: EXTENDED DEFENSIVE TOOLS                    â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ── Safe Fall / Landing Protection ───────────────────────
+-- â”€â”€ Safe Fall / Landing Protection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  When you fall faster than a threshold, slow velocity
 --  so landing damage is negated client-side.
 
@@ -11112,7 +11122,7 @@ local _safeFallConn = nil
 Cmd("safefall", {"antifall","nofalldmg","softlanding"}, function(args)
     if _safeFallConn then
         _safeFallConn:Disconnect(); _safeFallConn = nil
-        Notify("🛡  Safe fall OFF"); return
+        Notify("ðŸ›¡  Safe fall OFF"); return
     end
     local maxFall = -(tonumber(args[1]) or 90)   -- downward speed cap
     _safeFallConn = RunService.Stepped:Connect(function()
@@ -11123,10 +11133,10 @@ Cmd("safefall", {"antifall","nofalldmg","softlanding"}, function(args)
             hrp.AssemblyLinearVelocity = Vector3.new(cur.X, maxFall, cur.Z)
         end
     end)
-    Notify("🛡  Safe fall ON  (max fall speed " .. math.abs(maxFall) .. " st/s)")
+    Notify("ðŸ›¡  Safe fall ON  (max fall speed " .. math.abs(maxFall) .. " st/s)")
 end)
 
--- ── Anti-Weld Exploit ─────────────────────────────────────
+-- â”€â”€ Anti-Weld Exploit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Removes any WeldConstraint / Weld added to your character
 --  parts by another script (e.g. stuck-to-wall exploits).
 
@@ -11135,7 +11145,7 @@ local _antiWeldConn = nil
 Cmd("antiweld", {"noweld","removewelds","cleanwelds"}, function()
     if _antiWeldConn then
         _antiWeldConn:Disconnect(); _antiWeldConn = nil
-        Notify("🛡  Anti-Weld OFF"); return
+        Notify("ðŸ›¡  Anti-Weld OFF"); return
     end
     local function cleanChar(char)
         for _, v in ipairs(char:GetDescendants()) do
@@ -11155,11 +11165,11 @@ Cmd("antiweld", {"noweld","removewelds","cleanwelds"}, function()
             end
         end
     end)
-    Notify("🛡  Anti-Weld ON  (removes foreign welds from character)")
+    Notify("ðŸ›¡  Anti-Weld ON  (removes foreign welds from character)")
 end)
 
--- ── Auto-Heal on Low HP ───────────────────────────────────
---  Different from loopheal — only triggers when HP < threshold,
+-- â”€â”€ Auto-Heal on Low HP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+--  Different from loopheal â€” only triggers when HP < threshold,
 --  healing you back to full once, then waiting for next drop.
 
 local _autoHealConn   = nil
@@ -11169,7 +11179,7 @@ local _ahCooldown     = false
 Cmd("autoheal", {"ah","selfheal","autohealth"}, function(args)
     if _autoHealConn then
         _autoHealConn:Disconnect(); _autoHealConn = nil
-        Notify("🛡  Auto-Heal OFF"); return
+        Notify("ðŸ›¡  Auto-Heal OFF"); return
     end
     _ahThresh = tonumber(args[1]) or 40
     _autoHealConn = RunService.Heartbeat:Connect(function()
@@ -11178,14 +11188,14 @@ Cmd("autoheal", {"ah","selfheal","autohealth"}, function(args)
         if hum.Health > 0 and hum.Health < _ahThresh then
             _ahCooldown = true
             hum.Health = hum.MaxHealth
-            Notify("🛡  Auto-Heal: healed at " .. math.floor(hum.Health) .. " HP", "info")
+            Notify("ðŸ›¡  Auto-Heal: healed at " .. math.floor(hum.Health) .. " HP", "info")
             task.delay(3, function() _ahCooldown = false end)
         end
     end)
-    Notify("🛡  Auto-Heal ON  (triggers at < " .. _ahThresh .. " HP)")
+    Notify("ðŸ›¡  Auto-Heal ON  (triggers at < " .. _ahThresh .. " HP)")
 end)
 
--- ── Anti-Speed Clamp on Others (report mode) ─────────────
+-- â”€â”€ Anti-Speed Clamp on Others (report mode) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Watches nearby players and logs suspiciously fast movement
 --  without flagging our own fly/speed.
 
@@ -11194,7 +11204,7 @@ local _speedWatchConn = nil
 Cmd("speedwatch", {"watchspeed","reportspeed"}, function(args)
     if _speedWatchConn then
         _speedWatchConn:Disconnect(); _speedWatchConn = nil
-        Notify("🔍  Speed watch OFF"); return
+        Notify("ðŸ”  Speed watch OFF"); return
     end
     local threshold = tonumber(args[1]) or 150
     local cooldowns, elapsed = {}, 0
@@ -11214,17 +11224,17 @@ Cmd("speedwatch", {"watchspeed","reportspeed"}, function(args)
                         local last = cooldowns[p.Name] or 0
                         if now - last > 8 then
                             cooldowns[p.Name] = now
-                            Notify(string.format("⚠  %s speed=%.0f st/s", p.Name, spd),"warn")
+                            Notify(string.format("âš   %s speed=%.0f st/s", p.Name, spd),"warn")
                         end
                     end
                 end
             end
         end
     end)
-    Notify("🔍  Speed watch ON  (threshold " .. threshold .. " st/s)")
+    Notify("ðŸ”  Speed watch ON  (threshold " .. threshold .. " st/s)")
 end)
 
--- ── Network Anomaly Alert ─────────────────────────────────
+-- â”€â”€ Network Anomaly Alert â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Detects sudden jumps in DataReceiveKbps that may indicate
 --  a RemoteFire flood or heavy server payload.
 
@@ -11233,7 +11243,7 @@ local _netAnomalyConn = nil
 Cmd("networkwatch", {"netwatch","anomalydetect"}, function(args)
     if _netAnomalyConn then
         _netAnomalyConn:Disconnect(); _netAnomalyConn = nil
-        Notify("📶  Network watch OFF"); return
+        Notify("ðŸ“¶  Network watch OFF"); return
     end
     local threshold = tonumber(args[1]) or 500   -- kb/s
     local cooldown  = false
@@ -11248,18 +11258,18 @@ Cmd("networkwatch", {"netwatch","anomalydetect"}, function(args)
         pcall(function() recv = stats.DataReceiveKbps.Value end)
         if recv > threshold and not cooldown then
             cooldown = true
-            Notify(string.format("📶  Network spike: %.0f kb/s (threshold %d)", recv, threshold),"warn")
+            Notify(string.format("ðŸ“¶  Network spike: %.0f kb/s (threshold %d)", recv, threshold),"warn")
             task.delay(10, function() cooldown = false end)
         end
     end)
-    Notify("📶  Network watch ON  (alert at > " .. threshold .. " kb/s)")
+    Notify("ðŸ“¶  Network watch ON  (alert at > " .. threshold .. " kb/s)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: LOCOMOTION HELPERS  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: LOCOMOTION HELPERS  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ── Auto-Jump ─────────────────────────────────────────────
+-- â”€â”€ Auto-Jump â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Automatically jumps whenever the humanoid is on the ground
 --  and moving. Useful for parkour maps.
 
@@ -11268,7 +11278,7 @@ local _autoJumpConn = nil
 Cmd("autojump", {"aj","jumpspam","autoleap"}, function(args)
     if _autoJumpConn then
         _autoJumpConn:Disconnect(); _autoJumpConn = nil
-        Notify("🦘  Auto-jump OFF"); return
+        Notify("ðŸ¦˜  Auto-jump OFF"); return
     end
     local interval = tonumber(args[1]) or 0.4
     local elapsed  = 0
@@ -11282,10 +11292,10 @@ Cmd("autojump", {"aj","jumpspam","autoleap"}, function(args)
             hum:ChangeState(Enum.HumanoidStateType.Jumping)
         end
     end)
-    Notify("🦘  Auto-jump ON  (every " .. interval .. "s while moving)")
+    Notify("ðŸ¦˜  Auto-jump ON  (every " .. interval .. "s while moving)")
 end)
 
--- ── Auto-Sprint ───────────────────────────────────────────
+-- â”€â”€ Auto-Sprint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Sets WalkSpeed to sprint value when holding W, resets when
 --  stationary. Cleaner version of the run toggle.
 
@@ -11297,7 +11307,7 @@ Cmd("autosprint", {"asprint","automove"}, function(args)
     if _autoSprintConn then
         _autoSprintConn:Disconnect(); _autoSprintConn = nil
         local h = GetHuman(); if h then h.WalkSpeed = _baseSpeed end
-        Notify("🏃  Auto-sprint OFF"); return
+        Notify("ðŸƒ  Auto-sprint OFF"); return
     end
     _autoSprintSpeed = tonumber(args[1]) or 60
     _baseSpeed       = tonumber(args[2]) or 16
@@ -11307,10 +11317,10 @@ Cmd("autosprint", {"asprint","automove"}, function(args)
         local shift  = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
         hum.WalkSpeed = (moving and not shift) and _autoSprintSpeed or _baseSpeed
     end)
-    Notify(string.format("🏃  Auto-sprint ON  (move=%d  still=%d)", _autoSprintSpeed, _baseSpeed))
+    Notify(string.format("ðŸƒ  Auto-sprint ON  (move=%d  still=%d)", _autoSprintSpeed, _baseSpeed))
 end)
 
--- ── Step Over ────────────────────────────────────────────
+-- â”€â”€ Step Over â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Small upward nudge every N frames when moving, helpful
 --  for stepping over low obstacles without jumping.
 
@@ -11319,7 +11329,7 @@ local _stepOverConn = nil
 Cmd("stepover", {"autostep","smalljump"}, function(args)
     if _stepOverConn then
         _stepOverConn:Disconnect(); _stepOverConn = nil
-        Notify("👣  Step-over OFF"); return
+        Notify("ðŸ‘£  Step-over OFF"); return
     end
     local height = tonumber(args[1]) or 2.5
     local elapsed = 0
@@ -11341,12 +11351,12 @@ Cmd("stepover", {"autostep","smalljump"}, function(args)
             end
         end
     end)
-    Notify("👣  Step-over ON  (smooth climb over low obstacles)")
+    Notify("ðŸ‘£  Step-over ON  (smooth climb over low obstacles)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: TERRAIN INSPECTOR  (IY-ported)              ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: TERRAIN INSPECTOR  (IY-ported)              â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 Cmd("terraininfo", {"tinfo","groundinfo"}, function()
     local hrp = GetHRP(); if not hrp then return end
@@ -11358,7 +11368,7 @@ Cmd("terraininfo", {"tinfo","groundinfo"}, function()
     local mat  = result.Material.Name
     local pos  = result.Position
     local dist = (hrp.Position - pos).Magnitude
-    Notify(string.format("🗻  Ground: %s  mat=%s  dist=%.1f  pos=(%.0f,%.0f,%.0f)",
+    Notify(string.format("ðŸ—»  Ground: %s  mat=%s  dist=%.1f  pos=(%.0f,%.0f,%.0f)",
         inst.Name, mat, dist, pos.X,pos.Y,pos.Z), "info")
 end)
 
@@ -11373,17 +11383,17 @@ Cmd("terrainstats", {"terraincount","howmuchterrain"}, function()
         string.format("WaterWaveSpeed:   %.2f", Terrain.WaterWaveSpeed),
         string.format("WaterReflectance: %.2f", Terrain.WaterReflectance),
         string.format("Workspace extents: %.0f x %.0f x %.0f", ext.X,ext.Y,ext.Z),
-        string.format("Gravity: %.2f st/s²", workspace.Gravity),
+        string.format("Gravity: %.2f st/sÂ²", workspace.Gravity),
     }
     print("[S-Admin] Terrain info:\n  "..table.concat(lines,"\n  "))
-    Notify("🗻  Terrain info — see console","info")
+    Notify("ðŸ—»  Terrain info â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: WORLD EVENT LOGGER  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: WORLD EVENT LOGGER  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  Teaches: logging every Explosion, Fire, Smoke added to
---           workspace — useful for understanding game events.
+--           workspace â€” useful for understanding game events.
 
 local _worldLogConn = nil
 local _worldLogCount = 0
@@ -11391,7 +11401,7 @@ local _worldLogCount = 0
 Cmd("worldlog", {"logworld","gamelog"}, function()
     if _worldLogConn then
         _worldLogConn:Disconnect(); _worldLogConn = nil
-        Notify("📋  World log OFF  (" .. _worldLogCount .. " events)"); return
+        Notify("ðŸ“‹  World log OFF  (" .. _worldLogCount .. " events)"); return
     end
     _worldLogCount = 0
     _worldLogConn = workspace.DescendantAdded:Connect(function(v)
@@ -11407,14 +11417,14 @@ Cmd("worldlog", {"logworld","gamelog"}, function()
             end
         end
     end)
-    Notify("📋  World log ON — interesting instances printed to console")
+    Notify("ðŸ“‹  World log ON â€” interesting instances printed to console")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: ADVANCED GUI TOOLS  (IY-ported)             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: ADVANCED GUI TOOLS  (IY-ported)             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ── GUI Outline ───────────────────────────────────────────
+-- â”€â”€ GUI Outline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Draws a UIStroke on every visible Frame in PlayerGui.
 
 local _guiOutlineOn = false
@@ -11425,7 +11435,7 @@ Cmd("guioutline", {"outlinegui","strokegui"}, function(args)
         for _, s in ipairs(_guiStrokes) do pcall(function() s:Destroy() end) end
         _guiStrokes   = {}
         _guiOutlineOn = false
-        Notify("🪟  GUI outline OFF"); return
+        Notify("ðŸªŸ  GUI outline OFF"); return
     end
     local r = tonumber(args[1]) or 255
     local g = tonumber(args[2]) or 80
@@ -11443,10 +11453,10 @@ Cmd("guioutline", {"outlinegui","strokegui"}, function(args)
         end
     end
     _guiOutlineOn = true
-    Notify(string.format("🪟  GUI outline ON  RGB(%d,%d,%d)  %d frames", r,g,b,n))
+    Notify(string.format("ðŸªŸ  GUI outline ON  RGB(%d,%d,%d)  %d frames", r,g,b,n))
 end)
 
--- ── GUI Color Shift ───────────────────────────────────────
+-- â”€â”€ GUI Color Shift â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Shifts every Frame background colour toward a target tint.
 
 Cmd("guicolor", {"tintgui","guistain"}, function(args)
@@ -11461,12 +11471,12 @@ Cmd("guicolor", {"tintgui","guistain"}, function(args)
             v.BackgroundColor3 = col; n=n+1
         end
     end
-    Notify(string.format("🎨  GUI tinted RGB(%d,%d,%d)  %d frames",r,g,b,n))
+    Notify(string.format("ðŸŽ¨  GUI tinted RGB(%d,%d,%d)  %d frames",r,g,b,n))
 end)
 
--- ── GUI Size Dump ─────────────────────────────────────────
+-- â”€â”€ GUI Size Dump â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Lists all ScreenGui objects with their children count and
---  total element count — good for profiling heavy UIs.
+--  total element count â€” good for profiling heavy UIs.
 
 Cmd("guilayout", {"uilayout","guiprofile"}, function()
     local pg = LP:FindFirstChildOfClass("PlayerGui"); if not pg then return end
@@ -11481,13 +11491,13 @@ Cmd("guilayout", {"uilayout","guiprofile"}, function()
         print(string.format("  %-30s  %4d elements  enabled=%s",
             r.name, r.desc, tostring(r.enabled)))
     end
-    Notify("🪟  " .. #rows .. " ScreenGui(s) — see console","info")
+    Notify("ðŸªŸ  " .. #rows .. " ScreenGui(s) â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: SERVER QUEUE / SCHEDULER DISPLAY            ║
--- ╚══════════════════════════════════════════════════════════╝
---  Teaches: HeartbeatTimeMs, RenderSteppedTimeMs — engine
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: SERVER QUEUE / SCHEDULER DISPLAY            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+--  Teaches: HeartbeatTimeMs, RenderSteppedTimeMs â€” engine
 --           scheduler stats for understanding server load.
 
 Cmd("schedulerstats", {"scheduler","enginestats"}, function()
@@ -11506,15 +11516,15 @@ Cmd("schedulerstats", {"scheduler","enginestats"}, function()
         string.format("Instance count:   %d",      #game:GetDescendants()),
     }
     print("[S-Admin] Scheduler:\n  " .. table.concat(lines,"\n  "))
-    Notify(string.format("⚙  Heartbeat=%.1fms  Physics=%.1fms — console",
+    Notify(string.format("âš™  Heartbeat=%.1fms  Physics=%.1fms â€” console",
         heartMs, physicsMs),"info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY: MISC QUALITY-OF-LIFE  (IY-ported)           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY: MISC QUALITY-OF-LIFE  (IY-ported)           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ── Auto-Collect Tools ────────────────────────────────────
+-- â”€â”€ Auto-Collect Tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Picks up any Tool dropped near your character by parenting
 --  it to your Backpack.
 
@@ -11523,7 +11533,7 @@ local _autoCollectConn = nil
 Cmd("autocollect", {"ac","autoloot","pickedup"}, function()
     if _autoCollectConn then
         _autoCollectConn:Disconnect(); _autoCollectConn = nil
-        Notify("🎒  Auto-collect OFF"); return
+        Notify("ðŸŽ’  Auto-collect OFF"); return
     end
     _autoCollectConn = RunService.Heartbeat:Connect(function()
         local hrp = GetHRP(); if not hrp then return end
@@ -11535,24 +11545,24 @@ Cmd("autocollect", {"ac","autoloot","pickedup"}, function()
                     local d = (handle.Position - hrp.Position).Magnitude
                     if d < 12 then
                         v.Parent = bp
-                        Notify("🎒  Picked up: " .. v.Name)
+                        Notify("ðŸŽ’  Picked up: " .. v.Name)
                     end
                 end
             end
         end
     end)
-    Notify("🎒  Auto-collect ON  (picks up tools within 12 studs)")
+    Notify("ðŸŽ’  Auto-collect ON  (picks up tools within 12 studs)")
 end)
 
--- ── Repeat Last Command ───────────────────────────────────
+-- â”€â”€ Repeat Last Command â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("redo", {"again","repeat2","repeast"}, function()
     if #_cmdHistory == 0 then Notify("No command history","warn"); return end
     local last = _cmdHistory[#_cmdHistory]
-    Notify("🔁  Re-running: " .. last,"info")
+    Notify("ðŸ”  Re-running: " .. last,"info")
     task.defer(function() ExecCommand(last) end)
 end)
 
--- ── Command Frequency Stats ───────────────────────────────
+-- â”€â”€ Command Frequency Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("cmdstats", {"commandstats","mostused"}, function()
     if #_cmdHistory == 0 then Notify("No history yet","warn"); return end
     local freq = {}
@@ -11567,10 +11577,10 @@ Cmd("cmdstats", {"commandstats","mostused"}, function()
     for i=1,math.min(10,#sorted) do
         print(string.format("  [%2dx] %s", sorted[i].v, sorted[i].k))
     end
-    Notify("📊  Top command: " .. sorted[1].k .. " ×" .. sorted[1].v .. " — console","info")
+    Notify("ðŸ“Š  Top command: " .. sorted[1].k .. " Ã—" .. sorted[1].v .. " â€” console","info")
 end)
 
--- ── Swap Team ─────────────────────────────────────────────
+-- â”€â”€ Swap Team â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("swapteam", {"nextteam","cycleteam"}, function()
     local teams = TeamsService:GetTeams()
     if #teams == 0 then Notify("No teams","warn"); return end
@@ -11582,10 +11592,10 @@ Cmd("swapteam", {"nextteam","cycleteam"}, function()
     local next = teams[idx]
     LP.Team      = next
     LP.TeamColor = next.TeamColor
-    Notify("👥  Swapped to team: " .. next.Name)
+    Notify("ðŸ‘¥  Swapped to team: " .. next.Name)
 end)
 
--- ── Color Invert Character ────────────────────────────────
+-- â”€â”€ Color Invert Character â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("invertcolor", {"invertchar","negativecolor"}, function()
     local char = GetChar(); if not char then return end
     local bc   = char:FindFirstChildOfClass("BodyColors"); if not bc then return end
@@ -11598,14 +11608,14 @@ Cmd("invertcolor", {"invertchar","negativecolor"}, function()
     bc.RightArmColor3 = inv(bc.RightArmColor3)
     bc.LeftLegColor3  = inv(bc.LeftLegColor3)
     bc.RightLegColor3 = inv(bc.RightLegColor3)
-    Notify("🎨  Body colors inverted")
+    Notify("ðŸŽ¨  Body colors inverted")
 end)
 
--- ── Highlight Self to Others ─────────────────────────────
+-- â”€â”€ Highlight Self to Others â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("highlightself", {"selfhighlight","myhl"}, function(args)
     local char = GetChar(); if not char then return end
     local old  = char:FindFirstChild("S_SelfHL2")
-    if old then old:Destroy(); Notify("✨  Self-highlight OFF"); return end
+    if old then old:Destroy(); Notify("âœ¨  Self-highlight OFF"); return end
     local r = tonumber(args[1]) or 255
     local g = tonumber(args[2]) or 200
     local b = tonumber(args[3]) or 50
@@ -11615,10 +11625,10 @@ Cmd("highlightself", {"selfhighlight","myhl"}, function(args)
     hl.FillTransparency   = 0.6
     hl.OutlineColor       = Color3.fromRGB(r,g,b)
     hl.OutlineTransparency = 0
-    Notify(string.format("✨  Self-highlight ON  RGB(%d,%d,%d)",r,g,b))
+    Notify(string.format("âœ¨  Self-highlight ON  RGB(%d,%d,%d)",r,g,b))
 end)
 
--- ── Trail Color Presets ───────────────────────────────────
+-- â”€â”€ Trail Color Presets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 local _trailColorPresets = {
     fire   = {Color3.fromRGB(255,80,0),   Color3.fromRGB(255,220,0)},
     ice    = {Color3.fromRGB(100,220,255), Color3.fromRGB(200,240,255)},
@@ -11645,10 +11655,10 @@ Cmd("trailpreset", {"tp3","trailtheme"}, function(args)
     end
     if not tr then Notify("Could not create trail","error"); return end
     tr.Color = ColorSequence.new(p[1], p[2])
-    Notify("✨  Trail preset: " .. key)
+    Notify("âœ¨  Trail preset: " .. key)
 end)
 
--- ── Describe Self ─────────────────────────────────────────
+-- â”€â”€ Describe Self â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Prints a full HumanoidDescription dump to console.
 
 Cmd("describeme", {"mydesc","describeself","dumpchar"}, function()
@@ -11673,25 +11683,25 @@ Cmd("describeme", {"mydesc","describeself","dumpchar"}, function()
             end
         end)
     end
-    Notify("📋  Description dumped — see console","info")
+    Notify("ðŸ“‹  Description dumped â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: MOVEMENT EXTRAS                        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: MOVEMENT EXTRAS                        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- surfacecheck  — raycast beneath you and report surface angle
+-- surfacecheck  â€” raycast beneath you and report surface angle
 Cmd("surfacecheck", {"surface","groundangle"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local result = workspace:Raycast(hrp.Position, Vector3.new(0,-10,0))
     if not result then Notify("No surface below","warn"); return end
     local normal = result.Normal
     local angle  = math.deg(math.acos(normal:Dot(Vector3.new(0,1,0))))
-    Notify(string.format("🗺  Surface: %s  angle=%.1f°  mat=%s",
+    Notify(string.format("ðŸ—º  Surface: %s  angle=%.1fÂ°  mat=%s",
         result.Instance.Name, angle, result.Material.Name), "info")
 end)
 
--- nogravchar  — set gravity to 0 for character only via BodyForce
+-- nogravchar  â€” set gravity to 0 for character only via BodyForce
 local _noGravConn = nil
 Cmd("nogravchar", {"floatchar","zerograv"}, function()
     if _noGravConn then
@@ -11701,7 +11711,7 @@ Cmd("nogravchar", {"floatchar","zerograv"}, function()
             local bf = hrp:FindFirstChild("S_NoGravBF")
             if bf then bf:Destroy() end
         end
-        Notify("🌍  Character gravity restored"); return
+        Notify("ðŸŒ  Character gravity restored"); return
     end
     local hrp = GetHRP(); if not hrp then return end
     local bf = Instance.new("BodyForce", hrp)
@@ -11719,20 +11729,20 @@ Cmd("nogravchar", {"floatchar","zerograv"}, function()
         end
         bf.Force = Vector3.new(0, workspace.Gravity * mass, 0)
     end)
-    Notify("🌍  Zero-gravity for character only (world gravity unchanged)")
+    Notify("ðŸŒ  Zero-gravity for character only (world gravity unchanged)")
 end)
 
--- boost  — apply a burst of velocity in camera direction
+-- boost  â€” apply a burst of velocity in camera direction
 Cmd("boost", {"dash2","cameradash"}, function(args)
     local power = tonumber(args[1]) or 80
     local hrp   = GetHRP(); if not hrp then return end
     local cam   = workspace.CurrentCamera
     local dir   = cam.CFrame.LookVector
     hrp.AssemblyLinearVelocity = dir * power
-    Notify(string.format("🚀  Boost %.0f in camera direction", power))
+    Notify(string.format("ðŸš€  Boost %.0f in camera direction", power))
 end)
 
--- wallstick  — anchor yourself to whatever surface you're touching
+-- wallstick  â€” anchor yourself to whatever surface you're touching
 Cmd("wallstick", {"stickwall","magnetwall"}, function()
     local hrp = GetHRP(); if not hrp then return end
     -- Raycast in 6 directions, anchor at first hit
@@ -11746,25 +11756,25 @@ Cmd("wallstick", {"stickwall","magnetwall"}, function()
         if r then
             hrp.CFrame = CFrame.new(r.Position - d*2, r.Position - d*2 - r.Normal)
             hrp.Anchored = true
-            Notify("🧲  Stuck to: "..r.Instance.Name)
+            Notify("ðŸ§²  Stuck to: "..r.Instance.Name)
             return
         end
     end
     Notify("No surface within 5 studs","warn")
 end)
 
--- unstick  — unanchor from wall
+-- unstick  â€” unanchor from wall
 Cmd("unstick", {"nowall","detachwall"}, function()
     local hrp = GetHRP()
     if hrp and hrp.Anchored then hrp.Anchored = false end
-    Notify("🧲  Unstuck from wall")
+    Notify("ðŸ§²  Unstuck from wall")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: CAMERA EXTRAS                          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: CAMERA EXTRAS                          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- camlookdown  — tilt camera to look straight down
+-- camlookdown  â€” tilt camera to look straight down
 Cmd("camlookdown", {"lookdown","birdseye"}, function(args)
     local height = tonumber(args[1]) or 50
     local hrp    = GetHRP(); if not hrp then return end
@@ -11777,10 +11787,10 @@ Cmd("camlookdown", {"lookdown","birdseye"}, function(args)
             cam.CameraType = Enum.CameraType.Custom
         end
     end)
-    Notify(string.format("📷  Bird's-eye view (%.0f studs up, restores in 5s)", height))
+    Notify(string.format("ðŸ“·  Bird's-eye view (%.0f studs up, restores in 5s)", height))
 end)
 
--- pointatpart  — aim camera at nearest named part
+-- pointatpart  â€” aim camera at nearest named part
 Cmd("pointatpart", {"aimpart","camerapart"}, function(args)
     local query = table.concat(args," "):lower()
     if query == "" then Notify("Usage: pointatpart <name>","warn"); return end
@@ -11795,30 +11805,30 @@ Cmd("pointatpart", {"aimpart","camerapart"}, function(args)
     if not best then Notify("Part not found","error"); return end
     workspace.CurrentCamera.CFrame = CFrame.new(
         workspace.CurrentCamera.CFrame.Position, best.Position)
-    Notify("📷  Pointing at: "..best.Name.." ("..math.floor(bestDist).." studs)")
+    Notify("ðŸ“·  Pointing at: "..best.Name.." ("..math.floor(bestDist).." studs)")
 end)
 
--- camforward  — move camera forward by N studs (freecam helper)
+-- camforward  â€” move camera forward by N studs (freecam helper)
 Cmd("camforward", {"cforward","pushcam"}, function(args)
     local d   = tonumber(args[1]) or 10
     local cam = workspace.CurrentCamera
     cam.CFrame = cam.CFrame + cam.CFrame.LookVector * d
-    Notify(string.format("📷  Camera moved %.0f studs forward", d))
+    Notify(string.format("ðŸ“·  Camera moved %.0f studs forward", d))
 end)
 
--- camup  — move camera up by N studs
+-- camup  â€” move camera up by N studs
 Cmd("camup", {"cup","raisecam"}, function(args)
     local d   = tonumber(args[1]) or 10
     local cam = workspace.CurrentCamera
     cam.CFrame = cam.CFrame + Vector3.new(0, d, 0)
-    Notify(string.format("📷  Camera raised %.0f studs", d))
+    Notify(string.format("ðŸ“·  Camera raised %.0f studs", d))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: WORKSPACE EXTRAS                       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: WORKSPACE EXTRAS                       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- paintpart <name> <R G B>  — alias-safe recolor
+-- paintpart <name> <R G B>  â€” alias-safe recolor
 Cmd("paintpart", {"paint2","colornearest"}, function(args)
     local hrp = GetHRP(); if not hrp then return end
     local r   = tonumber(args[1]) or 255
@@ -11835,11 +11845,11 @@ Cmd("paintpart", {"paint2","colornearest"}, function(args)
     end
     if not best then Notify("No part found","warn"); return end
     pcall(function() best.Color = Color3.fromRGB(r,g,b) end)
-    Notify(string.format("🎨  Painted '%s' RGB(%d,%d,%d)  (%.0f studs)",
+    Notify(string.format("ðŸŽ¨  Painted '%s' RGB(%d,%d,%d)  (%.0f studs)",
         best.Name, r, g, b, bestDist))
 end)
 
--- anchornearest  — toggle anchor on nearest part
+-- anchornearest  â€” toggle anchor on nearest part
 Cmd("anchornearest", {"anchorn","toggleanchor"}, function()
     local hrp = GetHRP(); if not hrp then return end
     local char = GetChar()
@@ -11852,11 +11862,11 @@ Cmd("anchornearest", {"anchorn","toggleanchor"}, function()
     end
     if not best then Notify("No part found","warn"); return end
     best.Anchored = not best.Anchored
-    Notify(string.format("🔒  %s: Anchored=%s  (%.0f studs)",
+    Notify(string.format("ðŸ”’  %s: Anchored=%s  (%.0f studs)",
         best.Name, tostring(best.Anchored), bestDist))
 end)
 
--- deletenearest  — delete the nearest workspace part to you
+-- deletenearest  â€” delete the nearest workspace part to you
 Cmd("deletenearest", {"deln","deleteclose"}, function()
     local hrp  = GetHRP(); if not hrp then return end
     local char = GetChar()
@@ -11871,10 +11881,10 @@ Cmd("deletenearest", {"deln","deleteclose"}, function()
     local name = best.Name
     local dist = bestDist
     pcall(function() best:Destroy() end)
-    Notify(string.format("🗑  Deleted '%s'  (%.0f studs away)", name, dist))
+    Notify(string.format("ðŸ—‘  Deleted '%s'  (%.0f studs away)", name, dist))
 end)
 
--- selectpart  — highlight nearest part with SelectionBox for 5s
+-- selectpart  â€” highlight nearest part with SelectionBox for 5s
 Cmd("selectpart", {"select","pickepart"}, function(args)
     local query = args[1] and args[1]:lower() or ""
     local hrp   = GetHRP(); if not hrp then return end
@@ -11896,14 +11906,14 @@ Cmd("selectpart", {"select","pickepart"}, function(args)
     box.SurfaceTransparency = 0.85
     box.SurfaceColor3 = Color3.fromRGB(100,200,255)
     game:GetService("Debris"):AddItem(box, 5)
-    Notify(string.format("✅  Selected: %s  (%.0f studs)  — 5s highlight", best.Name, bestDist))
+    Notify(string.format("âœ…  Selected: %s  (%.0f studs)  â€” 5s highlight", best.Name, bestDist))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: INFO EXTRAS                            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: INFO EXTRAS                            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- lookingat  — raycast from camera and report what you're looking at
+-- lookingat  â€” raycast from camera and report what you're looking at
 Cmd("lookingat", {"whatlook","aiminfo"}, function()
     local cam    = workspace.CurrentCamera
     local origin = cam.CFrame.Position
@@ -11922,11 +11932,11 @@ Cmd("lookingat", {"whatlook","aiminfo"}, function()
         "Path:     " .. inst:GetFullName(),
     }
     print("[S-Admin] Looking at:\n  "..table.concat(lines,"\n  "))
-    Notify(string.format("👁  %s (%s) — %.0f studs — console",
+    Notify(string.format("ðŸ‘  %s (%s) â€” %.0f studs â€” console",
         inst.Name, inst.ClassName, dist),"info")
 end)
 
--- nearbyplayers  — list players within N studs with distances
+-- nearbyplayers  â€” list players within N studs with distances
 Cmd("nearbyplayers", {"nearby","whonear"}, function(args)
     local range = tonumber(args[1]) or 50
     local hrp   = GetHRP(); if not hrp then return end
@@ -11948,10 +11958,10 @@ Cmd("nearbyplayers", {"nearby","whonear"}, function(args)
     for _, v in ipairs(found) do
         table.insert(parts, v.name.." ("..math.floor(v.dist)..")")
     end
-    Notify("👥  Nearby: "..table.concat(parts,", "),"info")
+    Notify("ðŸ‘¥  Nearby: "..table.concat(parts,", "),"info")
 end)
 
--- serverlag  — estimate lag by measuring time between Heartbeat fires
+-- serverlag  â€” estimate lag by measuring time between Heartbeat fires
 Cmd("serverlag", {"lagtest","lagcheck"}, function()
     local samples = {}
     local c
@@ -11964,23 +11974,23 @@ Cmd("serverlag", {"lagtest","lagcheck"}, function()
                 avg=avg+s; if s>max2 then max2=s end
             end
             avg = avg/#samples
-            Notify(string.format("⚙  Heartbeat avg=%.2fms  max=%.2fms  (~%.0f Hz)",
+            Notify(string.format("âš™  Heartbeat avg=%.2fms  max=%.2fms  (~%.0f Hz)",
                 avg, max2, 1000/avg),"info")
         end
     end)
-    Notify("⚙  Measuring server lag over 30 frames...","info")
+    Notify("âš™  Measuring server lag over 30 frames...","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: DEFENSE EXTRAS                         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: DEFENSE EXTRAS                         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- antibrick  — delete any BasePart added inside your character
+-- antibrick  â€” delete any BasePart added inside your character
 local _antiBrickConn = nil
 Cmd("antibrick", {"noparts2","charclean"}, function()
     if _antiBrickConn then
         _antiBrickConn:Disconnect(); _antiBrickConn = nil
-        Notify("🛡  Anti-Brick OFF"); return
+        Notify("ðŸ›¡  Anti-Brick OFF"); return
     end
     local char = GetChar(); if not char then return end
     _antiBrickConn = char.DescendantAdded:Connect(function(v)
@@ -11994,36 +12004,36 @@ Cmd("antibrick", {"noparts2","charclean"}, function()
             end
         end
     end)
-    Notify("🛡  Anti-Brick ON — removes foreign parts added to character")
+    Notify("ðŸ›¡  Anti-Brick ON â€” removes foreign parts added to character")
 end)
 
--- saferespawn  — respawn and immediately activate shield mode
+-- saferespawn  â€” respawn and immediately activate shield mode
 Cmd("saferespawn", {"sr","shieldrespawn"}, function()
     Commands["shieldmode"]({})
     Commands["respawn"]({})
-    Notify("🛡  Safe respawn triggered — shields + respawn")
+    Notify("ðŸ›¡  Safe respawn triggered â€” shields + respawn")
 end)
 
--- lockcharacter  — prevent HP changes (combined protections)
+-- lockcharacter  â€” prevent HP changes (combined protections)
 local _lockCharConn = nil
 Cmd("lockcharacter", {"lockchar","godlock"}, function()
     if _lockCharConn then
         _lockCharConn:Disconnect(); _lockCharConn = nil
-        Notify("🛡  Character lock OFF"); return
+        Notify("ðŸ›¡  Character lock OFF"); return
     end
     _lockCharConn = RunService.Heartbeat:Connect(function()
         local hum = GetHuman(); if not hum then return end
         if hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
         if hum.MaxHealth ~= math.huge then hum.MaxHealth = math.huge end
     end)
-    Notify("🛡  Character locked — health forced to max every frame")
+    Notify("ðŸ›¡  Character locked â€” health forced to max every frame")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: HUD EXTRAS                             ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: HUD EXTRAS                             â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- compass  — cardinal direction HUD based on camera facing
+-- compass  â€” cardinal direction HUD based on camera facing
 local _compassGui  = nil
 local _compassConn = nil
 
@@ -12031,7 +12041,7 @@ Cmd("compass", {"showcompass","direction"}, function()
     if _compassGui then
         _compassGui:Destroy(); _compassGui = nil
         if _compassConn then _compassConn:Disconnect(); _compassConn=nil end
-        Notify("🧭  Compass OFF"); return
+        Notify("ðŸ§­  Compass OFF"); return
     end
     _compassGui = Instance.new("ScreenGui",ScreenGui)
     _compassGui.Name="S_Compass"; _compassGui.ResetOnSpawn=false
@@ -12053,12 +12063,12 @@ Cmd("compass", {"showcompass","direction"}, function()
         local look  = cam.CFrame.LookVector
         local angle = math.deg(math.atan2(-look.X, -look.Z)) % 360
         local idx   = math.floor((angle+22.5)/45) % 8 + 1
-        lbl.Text    = "🧭 "..dirs[idx].."  "..string.format("%.0f°",angle)
+        lbl.Text    = "ðŸ§­ "..dirs[idx].."  "..string.format("%.0fÂ°",angle)
     end)
-    Notify("🧭  Compass ON")
+    Notify("ðŸ§­  Compass ON")
 end)
 
--- clock  — live real-time clock HUD using os.time
+-- clock  â€” live real-time clock HUD using os.time
 local _clockGui  = nil
 local _clockConn = nil
 
@@ -12066,7 +12076,7 @@ Cmd("clockhud", {"clock2","timehud"}, function()
     if _clockGui then
         _clockGui:Destroy(); _clockGui=nil
         if _clockConn then _clockConn:Disconnect(); _clockConn=nil end
-        Notify("🕐  Clock HUD OFF"); return
+        Notify("ðŸ•  Clock HUD OFF"); return
     end
     _clockGui=Instance.new("ScreenGui",ScreenGui)
     _clockGui.Name="S_Clock"; _clockGui.ResetOnSpawn=false
@@ -12087,16 +12097,16 @@ Cmd("clockhud", {"clock2","timehud"}, function()
         elapsed=elapsed+dt
         if elapsed<1 then return end; elapsed=0
         local ok,str=pcall(function() return os.date("%H:%M:%S") end)
-        lbl.Text="🕐 "..(ok and str or "??:??:??")
+        lbl.Text="ðŸ• "..(ok and str or "??:??:??")
     end)
-    Notify("🕐  Clock HUD ON")
+    Notify("ðŸ•  Clock HUD ON")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: APPEARANCE EXTRAS                      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: APPEARANCE EXTRAS                      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- charcolor  — single command: set all body colors at once
+-- charcolor  â€” single command: set all body colors at once
 Cmd("charcolor", {"cc2","allcolor","setcharcolor"}, function(args)
     local r = tonumber(args[1]) or 255
     local g = tonumber(args[2]) or 255
@@ -12104,7 +12114,7 @@ Cmd("charcolor", {"cc2","allcolor","setcharcolor"}, function(args)
     Commands["bodycolor"]({"all",tostring(r),tostring(g),tostring(b)})
 end)
 
--- transparency  — set own character transparency
+-- transparency  â€” set own character transparency
 Cmd("transparency", {"chartrans","charfade"}, function(args)
     local alpha = math.clamp(tonumber(args[1]) or 0.5, 0, 1)
     local char  = GetChar(); if not char then return end
@@ -12114,10 +12124,10 @@ Cmd("transparency", {"chartrans","charfade"}, function(args)
             pcall(function() v.Transparency = alpha end); n=n+1
         end
     end
-    Notify(string.format("👤  Character transparency → %.2f  (%d parts)", alpha, n))
+    Notify(string.format("ðŸ‘¤  Character transparency â†’ %.2f  (%d parts)", alpha, n))
 end)
 
--- chrome  — reflectance max + metallic look
+-- chrome  â€” reflectance max + metallic look
 Cmd("chrome", {"metal","metallic"}, function()
     local char = GetChar(); if not char then return end
     local n = 0
@@ -12130,10 +12140,10 @@ Cmd("chrome", {"metal","metallic"}, function()
             end); n=n+1
         end
     end
-    Notify("✨  Chrome material applied ("..n.." parts)")
+    Notify("âœ¨  Chrome material applied ("..n.." parts)")
 end)
 
--- wooden  — wood material + brown tone
+-- wooden  â€” wood material + brown tone
 Cmd("wooden", {"wood","woodchar"}, function()
     local char = GetChar(); if not char then return end
     local n = 0
@@ -12145,17 +12155,17 @@ Cmd("wooden", {"wood","woodchar"}, function()
             end); n=n+1
         end
     end
-    Notify("🪵  Wood material applied ("..n.." parts)")
+    Notify("ðŸªµ  Wood material applied ("..n.." parts)")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: SOUND EXTRAS                           ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: SOUND EXTRAS                           â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- soundinfo  — print info about the currently playing admin sound
+-- soundinfo  â€” print info about the currently playing admin sound
 Cmd("soundinfo", {"currentmusic","nowplaying"}, function()
     if not _adminSound or not _adminSound.Parent then
-        Notify("No sound currently playing — use 'play'","warn"); return
+        Notify("No sound currently playing â€” use 'play'","warn"); return
     end
     local lines = {
         "Name:     " .. _adminSound.Name,
@@ -12167,26 +12177,26 @@ Cmd("soundinfo", {"currentmusic","nowplaying"}, function()
         "Duration: " .. string.format("%.1fs", _adminSound.TimeLength),
     }
     print("[S-Admin] Now Playing:\n  "..table.concat(lines,"\n  "))
-    Notify("🎵  "..(_adminSound.SoundId:match("%d+") or "?").."  —  see console","info")
+    Notify("ðŸŽµ  "..(_adminSound.SoundId:match("%d+") or "?").."  â€”  see console","info")
 end)
 
--- rewind  — restart the current admin sound from beginning
+-- rewind  â€” restart the current admin sound from beginning
 Cmd("rewind", {"restart","soundrestart"}, function()
     if not _adminSound or not _adminSound.Parent then
         Notify("No sound playing","warn"); return
     end
     _adminSound:Stop()
     _adminSound:Play()
-    Notify("🎵  Sound restarted from beginning")
+    Notify("ðŸŽµ  Sound restarted from beginning")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: UTILITY EXTRAS                         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: UTILITY EXTRAS                         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ping3  — run 5 pings and show average
+-- ping3  â€” run 5 pings and show average
 Cmd("pingavg", {"avgping","pingtest2"}, function()
-    Notify("📶  Sampling 5 pings...", "info")
+    Notify("ðŸ“¶  Sampling 5 pings...", "info")
     task.spawn(function()
         local total = 0
         for i = 1, 5 do
@@ -12194,11 +12204,11 @@ Cmd("pingavg", {"avgping","pingtest2"}, function()
             task.wait(0.2)
         end
         local avg = total / 5
-        Notify(string.format("📶  Avg ping (5 samples): %.1fms", avg), "info")
+        Notify(string.format("ðŸ“¶  Avg ping (5 samples): %.1fms", avg), "info")
     end)
 end)
 
--- taskcount  — count running coroutines/tasks (approximate)
+-- taskcount  â€” count running coroutines/tasks (approximate)
 Cmd("taskcount", {"tasks","threadcount"}, function()
     -- Lua doesn't expose active coroutines directly;
     -- approximate by counting our known active connections
@@ -12211,44 +12221,43 @@ Cmd("taskcount", {"tasks","threadcount"}, function()
     }
     local extra = 0
     for _, v in ipairs(named) do if v then extra = extra + 1 end end
-    Notify(string.format("⚙  Active connections: Conns=%d  known=%d",
+    Notify(string.format("âš™  Active connections: Conns=%d  known=%d",
         conns, extra), "info")
 end)
 
--- varset  — set a named Lua global variable
+-- varset  â€” set a named variable in the executor environment
 Cmd("varset", {"setvar","globalset"}, function(args)
     local name = args[1]; local val = args[2]
     if not name or not val then Notify("Usage: varset <name> <value>","warn"); return end
     local num = tonumber(val)
-    getgenv()[name] = num ~= nil and num or val
-    Notify(string.format("📦  getgenv().%s = %s", name, val), "info")
+    _genv[name] = num ~= nil and num or val
+    Notify(string.format("ðŸ“¦  _genv.%s = %s", name, val), "info")
 end)
 
--- varget  — get a named Lua global variable
+-- varget  â€” get a named variable from the executor environment
 Cmd("varget", {"getvar","globalget"}, function(args)
     local name = args[1]
     if not name then Notify("Usage: varget <name>","warn"); return end
-    local val = getgenv()[name]
-    Notify(string.format("📦  getgenv().%s = %s", name, tostring(val)), "info")
+    local val = _genv[name]
+    Notify(string.format("ðŸ“¦  _genv.%s = %s", name, tostring(val)), "info")
 end)
 
--- garbage  — run Lua garbage collector
+-- garbage  â€” run Lua garbage collector
 Cmd("garbage", {"gc","collectgarbage"}, function()
     local before = collectgarbage("count")
     collectgarbage("collect")
     local after  = collectgarbage("count")
-    Notify(string.format("🗑  GC: %.1f KB → %.1f KB  (freed %.1f KB)",
+    Notify(string.format("ðŸ—‘  GC: %.1f KB â†’ %.1f KB  (freed %.1f KB)",
         before, after, before-after), "info")
 end)
 
--- typeof  — print Lua type of a value
 -- typeof moved to final batch below
 
--- printtable  — dump a Lua table from getgenv() to console
+-- printtable  â€” dump a Lua table from executor environment to console
 Cmd("printtable", {"dumptable","showtable"}, function(args)
     local name = args[1]
     if not name then Notify("Usage: printtable <global table name>","warn"); return end
-    local t = getgenv()[name]
+    local t = _genv[name]
     if type(t) ~= "table" then
         Notify(name.." is "..type(t).." not a table","error"); return
     end
@@ -12256,28 +12265,28 @@ Cmd("printtable", {"dumptable","showtable"}, function(args)
     for k,v in pairs(t) do
         print(string.format("  %-20s = %s", tostring(k), tostring(v):sub(1,60)))
     end
-    Notify("📦  Dumped "..name.." — see console","info")
+    Notify("ðŸ“¦  Dumped "..name.." â€” see console","info")
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: INTERACTION EXTRAS                     ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: INTERACTION EXTRAS                     â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- alarm  — set a timed alarm that notifies after N seconds
+-- alarm  â€” set a timed alarm that notifies after N seconds
 Cmd("alarm", {"setalarm","remindme"}, function(args)
     local secs = tonumber(args[1])
     if not secs or secs <= 0 then Notify("Usage: alarm <seconds>","warn"); return end
     local msg  = table.concat(args," ",2)
-    msg = msg ~= "" and msg or "⏰  Alarm!"
-    Notify(string.format("⏰  Alarm set for %.0f seconds", secs))
+    msg = msg ~= "" and msg or "â°  Alarm!"
+    Notify(string.format("â°  Alarm set for %.0f seconds", secs))
     task.delay(secs, function()
-        Notify("⏰  "..msg.."  (alarm after "..secs.."s)", "warn")
+        Notify("â°  "..msg.."  (alarm after "..secs.."s)", "warn")
         pcall(function() StarterGui:SetCore("SendNotification",{
             Title="S Admin", Text=msg, Duration=8}) end)
     end)
 end)
 
--- looptask  — loop any shell command at interval with label
+-- looptask  â€” loop any shell command at interval with label
 -- (same logic as loopexec but with optional label shown in notify)
 Cmd("looptask", {"taskloop","namedloop"}, function(args)
     local label    = args[1]; if not label then Notify("Usage: looptask <label> <interval> <cmd>","warn"); return end
@@ -12291,14 +12300,14 @@ Cmd("looptask", {"taskloop","namedloop"}, function(args)
             task.wait(math.max(0.5, interval))
         end
     end)
-    Notify(string.format("🔁  [%s] Loop every %.1fs: '%s'", label, interval, cmd))
+    Notify(string.format("ðŸ”  [%s] Loop every %.1fs: '%s'", label, interval, cmd))
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CATEGORY FILL: SURVIVAL / COMBAT EXTRAS               ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CATEGORY FILL: SURVIVAL / COMBAT EXTRAS               â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- revive  — restore a downed player's health (client-side)
+-- revive  â€” restore a downed player's health (client-side)
 Cmd("revive", {"reviveplayer","healplayer"}, function(args)
     local targets = GetPlayers(args[1])
     local n = 0
@@ -12306,10 +12315,10 @@ Cmd("revive", {"reviveplayer","healplayer"}, function(args)
         local hum = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
         if hum then hum.Health = hum.MaxHealth; n=n+1 end
     end
-    Notify("💚  Revived "..n.." player(s)")
+    Notify("ðŸ’š  Revived "..n.." player(s)")
 end)
 
--- stun  — freeze a player temporarily (client)
+-- stun  â€” freeze a player temporarily (client)
 Cmd("stun", {"stunplayer","freeze3"}, function(args)
     local target = GetPlayers(args[1])[1]
     if not target or not target.Character then Notify("Target not found","error"); return end
@@ -12317,18 +12326,18 @@ Cmd("stun", {"stunplayer","freeze3"}, function(args)
     if not tHRP then return end
     local dur = tonumber(args[2]) or 3
     tHRP.Anchored = true
-    Notify("🧊  Stunned "..target.Name.." for "..dur.."s")
+    Notify("ðŸ§Š  Stunned "..target.Name.." for "..dur.."s")
     task.delay(dur, function()
         if tHRP and tHRP.Parent then tHRP.Anchored = false end
-        Notify("🧊  "..target.Name.." unstunned")
+        Notify("ðŸ§Š  "..target.Name.." unstunned")
     end)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   FINAL BATCH: POLISH & COMPLETION                      ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   FINAL BATCH: POLISH & COMPLETION                      â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ── Clean State Reset ────────────────────────────────────
+-- â”€â”€ Clean State Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Turns off every active toggle in State, removes physics
 --  instances, restores Humanoid. One-command cleanup.
 
@@ -12379,10 +12388,10 @@ Cmd("cleanstate", {"resetstate","clearstate","cleanall"}, function()
         hrp.Anchored = false
     end
 
-    Notify("🧹  All states cleared — character reset to default")
+    Notify("ðŸ§¹  All states cleared â€” character reset to default")
 end)
 
--- ── Safe Mode ────────────────────────────────────────────
+-- â”€â”€ Safe Mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Cleans state, hides all HUDs, restores lighting,
 --  removes all S_ character effects.
 
@@ -12402,10 +12411,10 @@ Cmd("safemode", {"safe","stealth","hideall"}, function()
     Lighting.FogEnd     = OrigLight.FogEnd
     -- Remove char FX
     Commands["clear"]({})
-    Notify("🛡  Safe mode — all effects off, fully restored")
+    Notify("ðŸ›¡  Safe mode â€” all effects off, fully restored")
 end)
 
--- ── Full Reset ───────────────────────────────────────────
+-- â”€â”€ Full Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Nuclear option: safe mode + workspace gravity + camera.
 
 Cmd("fullreset", {"nuclear","resetall","nuke2"}, function()
@@ -12421,10 +12430,10 @@ Cmd("fullreset", {"nuclear","resetall","nuke2"}, function()
         StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
         StarterGui:SetCore("ResetButtonCallback", true)
     end)
-    Notify("🔄  Full reset complete — everything restored")
+    Notify("ðŸ”„  Full reset complete â€” everything restored")
 end)
 
--- ── UI Theme Switcher ────────────────────────────────────
+-- â”€â”€ UI Theme Switcher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Cycles the command bar and list through colour themes.
 
 local _themes = {
@@ -12467,10 +12476,10 @@ Cmd("theme", {"uitheme","settheme","colortheme"}, function(args)
         or  Color3.fromRGB(230,230,230)
     TweenObj(TextBox, 0.3, {TextColor3 = textCol}):Play()
 
-    Notify("🎨  Theme → "..found.name)
+    Notify("ðŸŽ¨  Theme â†’ "..found.name)
 end)
 
--- ── Floating Hotbar ──────────────────────────────────────
+-- â”€â”€ Floating Hotbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Compact row of icon buttons for the 8 most-used toggles.
 --  Teaches: dynamic button grid, state-aware icon changes,
 --           live text update based on State flags.
@@ -12482,18 +12491,18 @@ Cmd("hotbar", {"quickbar","hb"}, function()
     if _hotbarGui then
         _hotbarGui:Destroy(); _hotbarGui = nil
         if _hotbarConn then _hotbarConn:Disconnect(); _hotbarConn=nil end
-        Notify("⚡  Hotbar OFF"); return
+        Notify("âš¡  Hotbar OFF"); return
     end
 
     local entries = {
-        {icon="✈", cmd="fly",        stateKey="Flying"},
-        {icon="👻", cmd="noclip",     stateKey="Noclipping"},
-        {icon="🛡", cmd="shieldmode", stateKey=nil},
-        {icon="👁", cmd="esp",        stateKey="ESP"},
-        {icon="💡", cmd="fullbright", stateKey="Fullbright"},
-        {icon="🏃", cmd="run",        stateKey=nil},
-        {icon="❤", cmd="loopheal",   stateKey="LoopHeal"},
-        {icon="♻", cmd="respawn",    stateKey=nil},
+        {icon="âœˆ", cmd="fly",        stateKey="Flying"},
+        {icon="ðŸ‘»", cmd="noclip",     stateKey="Noclipping"},
+        {icon="ðŸ›¡", cmd="shieldmode", stateKey=nil},
+        {icon="ðŸ‘", cmd="esp",        stateKey="ESP"},
+        {icon="ðŸ’¡", cmd="fullbright", stateKey="Fullbright"},
+        {icon="ðŸƒ", cmd="run",        stateKey=nil},
+        {icon="â¤", cmd="loopheal",   stateKey="LoopHeal"},
+        {icon="â™»", cmd="respawn",    stateKey=nil},
     }
 
     local BW = IsMobile and 50 or 40
@@ -12558,30 +12567,30 @@ Cmd("hotbar", {"quickbar","hb"}, function()
         end
     end)
 
-    Notify("⚡  Hotbar ON  (drag to reposition)")
+    Notify("âš¡  Hotbar ON  (drag to reposition)")
 end)
 
--- ── Interactive Tutorial ─────────────────────────────────
+-- â”€â”€ Interactive Tutorial â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Steps the user through 5 essential commands with timed
---  notifications — good for first-run onboarding.
+--  notifications â€” good for first-run onboarding.
 
 Cmd("tutorial", {"tut","getstarted","guide"}, function()
     local steps = {
-        {delay=0,   msg="👋  Welcome!  S Command Bar Pro — type ; to open the bar"},
-        {delay=3.5, msg="🚀  Try:  fly 80  — smooth IY-style flight"},
-        {delay=7,   msg="👻  Try:  noclip  — phase through walls"},
-        {delay=10.5,msg="📌  Try:  setwp home  then  wp home  — waypoint system"},
-        {delay=14,  msg="🛡  Try:  shieldmode  — anti-fling + anti-void + health guard"},
-        {delay=17.5,msg="📋  Try:  cmds  — browse all 590+ commands by category"},
-        {delay=21,  msg="✅  Tutorial complete!  Run  about  for version info"},
+        {delay=0,   msg="ðŸ‘‹  Welcome!  S Command Bar Pro â€” type ; to open the bar"},
+        {delay=3.5, msg="ðŸš€  Try:  fly 80  â€” smooth IY-style flight"},
+        {delay=7,   msg="ðŸ‘»  Try:  noclip  â€” phase through walls"},
+        {delay=10.5,msg="ðŸ“Œ  Try:  setwp home  then  wp home  â€” waypoint system"},
+        {delay=14,  msg="ðŸ›¡  Try:  shieldmode  â€” anti-fling + anti-void + health guard"},
+        {delay=17.5,msg="ðŸ“‹  Try:  cmds  â€” browse all 590+ commands by category"},
+        {delay=21,  msg="âœ…  Tutorial complete!  Run  about  for version info"},
     }
     for _, s in ipairs(steps) do
         task.delay(s.delay, function() Notify(s.msg, "info") end)
     end
-    Notify("📖  Tutorial started — follow the notifications")
+    Notify("ðŸ“–  Tutorial started â€” follow the notifications")
 end)
 
--- ── typeof (was missing from category map) ───────────────
+-- â”€â”€ typeof (was missing from category map) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("typeof", {"luatype","gettype"}, function(args)
     local raw = table.concat(args," ")
     if raw=="" then Notify("Usage: typeof <expression>","warn"); return end
@@ -12589,78 +12598,78 @@ Cmd("typeof", {"luatype","gettype"}, function(args)
     if not fn then Notify("Syntax error","error"); return end
     local ok, val = pcall(fn)
     if ok then
-        Notify(string.format("🔢  type=%s  val=%s", type(val), tostring(val):sub(1,40)),"info")
+        Notify(string.format("ðŸ”¢  type=%s  val=%s", type(val), tostring(val):sub(1,40)),"info")
     else
         Notify("Eval error: "..tostring(val),"error")
     end
 end)
 
--- ── Quick Commands ───────────────────────────────────────
+-- â”€â”€ Quick Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Single-word shorthand for common action combos.
 
 Cmd("godmode2", {"gm","fullgod"}, function()
     Commands["god"]({})
     Commands["infjump"]({})
     Commands["antifling"]({})
-    Notify("🛡  God combo ON — infinite health + jump + anti-fling")
+    Notify("ðŸ›¡  God combo ON â€” infinite health + jump + anti-fling")
 end)
 
 Cmd("explorer2", {"ex","explorermode"}, function()
     Commands["fly"]({})
     Commands["noclip"]({})
     Commands["fullbright"]({})
-    Notify("🗺  Explorer mode ON — fly + noclip + fullbright")
+    Notify("ðŸ—º  Explorer mode ON â€” fly + noclip + fullbright")
 end)
 
 Cmd("stealthmode", {"sm","gostealth"}, function()
     Commands["invisible"]({})
     Commands["noclip"]({})
     Commands["fly"]({})
-    Notify("👻  Stealth mode ON — invisible + noclip + fly")
+    Notify("ðŸ‘»  Stealth mode ON â€” invisible + noclip + fly")
 end)
 
--- ── All-HUD Toggle ───────────────────────────────────────
+-- â”€â”€ All-HUD Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Cmd("hudon", {"allhudson","starthuds"}, function()
     Commands["infobar"]({})
     Commands["healthbar"]({})
     Commands["speeddisplay"]({})
     Commands["fpscounter"]({})
     Commands["minimap"]({})
-    Notify("🖥  Core HUDs activated")
+    Notify("ðŸ–¥  Core HUDs activated")
 end)
 
--- ── Final Version Banner ──────────────────────────────────
+-- â”€â”€ Final Version Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 --  Overwrite the about command to reflect v5.0 Final.
 
 Commands["about"] = function()
     local cmdCount, aliasCount = 0, 0
     for _ in pairs(Commands) do cmdCount = cmdCount + 1 end
     for _ in pairs(Aliases)  do aliasCount = aliasCount + 1 end
-    print(string.rep("═",60))
-    print("  ⚡  S Command Bar Pro  v5.0  —  Final Edition")
+    print(string.rep("â•",60))
+    print("  âš¡  S Command Bar Pro  v5.0  â€”  Final Edition")
     print(string.format("  Commands  : %d  |  Aliases: %d", cmdCount, aliasCount))
     print(string.format("  Platform  : %s  |  Player: %s",
-        IsMobile and "Mobile 📱" or "PC 🖥", LP.Name))
+        IsMobile and "Mobile ðŸ“±" or "PC ðŸ–¥", LP.Name))
     print(string.format("  Game      : %s  (PlaceId %d v%d)",
         game.Name, game.PlaceId, game.PlaceVersion))
-    print("  Features  : Categorised cmds · IY fly · Spring freecam")
-    print("              Waypoints · Hotbar · Themes · Defensive suite")
-    print("              Session stats · Macro recorder · 33 categories")
+    print("  Features  : Categorised cmds Â· IY fly Â· Spring freecam")
+    print("              Waypoints Â· Hotbar Â· Themes Â· Defensive suite")
+    print("              Session stats Â· Macro recorder Â· 33 categories")
     print("  Tip       : type  tutorial  for a guided walkthrough")
-    print(string.rep("═",60))
-    Notify("⚡  S Command Bar Pro v5.0 Final — see console","info")
+    print(string.rep("â•",60))
+    Notify("âš¡  S Command Bar Pro v5.0 Final â€” see console","info")
 end
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --                   CMDS LIST TOGGLE
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   COMMAND CATEGORY MAP                                  ║
--- ║   Every command name maps to one category key.          ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   COMMAND CATEGORY MAP                                  â•‘
+-- â•‘   Every command name maps to one category key.          â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local CmdCategories = {
-    -- 🚀 Movement
+    -- ðŸš€ Movement
     fly="movement",unfly="movement",noclip="movement",clip="movement",
     speed="movement",jp="movement",sit="movement",hipheight="movement",
     blink="movement",blinkback="movement",blinkup="movement",
@@ -12671,7 +12680,7 @@ local CmdCategories = {
     togglenoclip="movement",stopmove="movement",ragdoll="movement",
     unragdoll="movement",walktowp="movement",
 
-    -- 🎭 Animations
+    -- ðŸŽ­ Animations
     anim="animations",stopanim="animations",emote="animations",
     dance="animations",loopemote="animations",animspeed="animations",
     animweight="animations",freezepose="animations",unpose="animations",
@@ -12679,7 +12688,7 @@ local CmdCategories = {
     autoemote="animations",playanim2="animations",animlib="animations",
     animinfo="animations",
 
-    -- 👤 Character
+    -- ðŸ‘¤ Character
     size="character",headsize="character",bodycolor="character",
     shirt="character",pants="character",face="character",
     resetappearance="character",sizepreset="character",
@@ -12688,7 +12697,7 @@ local CmdCategories = {
     chardeleteclass="character",chardelete="character",
     deletevelocity="character",charmat="character",charmaterial="character",
 
-    -- 💥 Effects
+    -- ðŸ’¥ Effects
     fire="effects",nofire="effects",smoke="effects",nosmoke="effects",
     sparkles="effects",nosparkles="effects",forcefield="effects",
     trail="effects",notrail="effects",rainbowtrail="effects",
@@ -12698,7 +12707,7 @@ local CmdCategories = {
     lightbrightness="effects",lightpart="effects",
     explode="effects",cursortrail="effects",
 
-    -- 🌍 Environment
+    -- ðŸŒ Environment
     fog="environment",nofog="environment",ambient="environment",
     sky="environment",sunpos="environment",atmosphere="environment",
     noatmosphere="environment",["time"]="environment",
@@ -12708,12 +12717,12 @@ local CmdCategories = {
     restorelighting="environment",gravityinfo="environment",
     gravhud="environment",colorgrade="environment",
 
-    -- 🌦 Weather
+    -- ðŸŒ¦ Weather
     rain="weather",norain="weather",snow="weather",nosnow="weather",
     sandstorm="weather",nosandstorm="weather",clearweather="weather",
     ambience="weather",stopambience="weather",
 
-    -- 📷 Camera
+    -- ðŸ“· Camera
     freecam="camera",unfreecam="camera",freecampos="camera",
     fcgoto="camera",freecamwp="camera",fcspeed="camera",fcfov="camera",
     orbit="camera",attachcam="camera",unattachcam="camera",
@@ -12726,20 +12735,20 @@ local CmdCategories = {
     camcut="camera",camsequence="camera",zoom="camera",
     fovpreset="camera",minzoom="camera",maxzoom="camera",
 
-    -- 🎵 Sound
+    -- ðŸŽµ Sound
     play="sound",stopsound="sound",volume="sound",reverb="sound",
     echo="sound",pitch="sound",distortion="sound",equalizer="sound",
     clearfx="sound",loopsound="sound",unloopsound="sound",
     soundfadein="sound",soundfadeout="sound",listsounds="sound",
     playsoundbyname="sound",stopsoundbyname="sound",mastervolume="sound",
 
-    -- 👁 ESP & Visual
+    -- ðŸ‘ ESP & Visual
     esp="esp",unesp="esp",chams="esp",nochams="esp",
     partesp="esp",nopartesp="esp",nametagesp="esp",
     hitboxesp="esp",highlightregion="esp",clearregion="esp",
     showpivot="esp",highlightmaterial="esp",
 
-    -- 🛡 Defense
+    -- ðŸ›¡ Defense
     antifling="defense",antiteleport="defense",positionlock="defense",
     updatelock="defense",velocityclamp="defense",cameralock="defense",
     uncameralock="defense",setsafe="defense",panic="defense",
@@ -12751,18 +12760,18 @@ local CmdCategories = {
     crashprotection="defense",respawnprotection="defense",
     exploitdetect="defense",
 
-    -- 📌 Waypoints
+    -- ðŸ“Œ Waypoints
     setwp="waypoints",wp="waypoints",tweenwp="waypoints",
     deletewp="waypoints",clearwp="waypoints",listwp="waypoints",
     pathtowp="waypoints",waypointmap="waypoints",savepos="waypoints",
     loadpos="waypoints",
 
-    -- 🗺 Pathfinding
+    -- ðŸ—º Pathfinding
     pathto="pathfinding",stoppath="pathfinding",
     follow="pathfinding",unfollow="pathfinding",
     follownearest="pathfinding",
 
-    -- 📍 Teleport
+    -- ðŸ“ Teleport
     tp="teleport",tpme="teleport",gotocam="teleport",
     tpcoords="teleport",home="teleport",tpall="teleport",
     tpoffset="teleport",tpabove="teleport",tpbehind="teleport",
@@ -12770,7 +12779,7 @@ local CmdCategories = {
     randomtp="teleport",rejoin="teleport",serverhop="teleport",
     cancelteleport="teleport",
 
-    -- 👥 Players
+    -- ðŸ‘¥ Players
     view="players",unview="players",specnext="players",
     specprev="players",specrandom="players",inspect="players",
     playerinfo="players",players="players",age="players",
@@ -12781,18 +12790,18 @@ local CmdCategories = {
     freezetarget="players",unfreezettarget="players",
     pull="players",forcepush="players",
 
-    -- 🔧 Tools
+    -- ðŸ”§ Tools
     listtools="tools",equiptool="tools",droptool="tools",
     removetool="tools",cleartools="tools",activatetool="tools",
     tooltoggle="tools",toolinfo="tools",autocollect="tools",
     seatpart="tools",unseat="tools",ejectall="tools",
 
-    -- 💬 Chat
+    -- ðŸ’¬ Chat
     chat="chat",chatprefix="chat",chatsuffix="chat",
     clearchatformat="chat",chatrepeat="chat",chatlog="chat",
     unchatlog="chat",globalmsg="chat",sysnotify="chat",notify="chat",
 
-    -- 📊 Info
+    -- ðŸ“Š Info
     serverinfo="info",sessionstats="info",resetsessionstats="info",
     physicsinfo="info",terraininfo="info",terrainstats="info",
     coords="info",ping="info",fps="info",uptime="info",
@@ -12802,7 +12811,7 @@ local CmdCategories = {
     getexecutor="info",schedulerstats="info",cmdcount="info",
     cmdstats="info",about="info",rigtype="info",
 
-    -- 🗺 Workspace
+    -- ðŸ—º Workspace
     delete="workspace",createpart="workspace",createplatform="workspace",
     lockws="workspace",unlockws="workspace",deleteclass="workspace",
     clonepart="workspace",freezeall="workspace",unfreezeall="workspace",
@@ -12818,33 +12827,33 @@ local CmdCategories = {
     findclass="workspace",getprops="workspace",getancestors="workspace",
     partinfo="workspace",vehicleflip="workspace",
 
-    -- 🗻 Terrain
+    -- ðŸ—» Terrain
     fillterrain="terrain",clearterrain="terrain",
     replaceterrain="terrain",fillwater="terrain",
     removewater="terrain",
 
-    -- 🏗 Constraints
+    -- ðŸ— Constraints
     ropeto="constraints",unrope="constraints",
     springto="constraints",unspring="constraints",
     listconstraints="constraints",removeconstraint="constraints",
     weldmodel="constraints",
 
-    -- 🔑 Binds
+    -- ðŸ”‘ Binds
     bind="binds",unbind="binds",listbinds="binds",clearbinds="binds",
     showbindgui="binds",cheatsheet="binds",
 
-    -- ⏺ Macros
+    -- âº Macros
     recordmacro="macros",playmacro="macros",stopmacro="macros",
     listmacro="macros",clearmacro="macros",
     loopexec="macros",stoploopexec="macros",
     ["repeat"]="macros",loopkill="macros",unloopkill="macros",
 
-    -- 📜 Scripts
+    -- ðŸ“œ Scripts
     listscripts="scripts",scriptcount="scripts",listmodules="scripts",
     exec="scripts",loadurl="scripts",remotelog="scripts",
     unremotelog="scripts",
 
-    -- 🖥 HUD & GUI
+    -- ðŸ–¥ HUD & GUI
     hideguis="hud",showguis="hud",guioutline="hud",guicolor="hud",
     guilayout="hud",guicount="hud",destroygameguis="hud",
     guitransparency="hud",cinematic="hud",crosshair="hud",
@@ -12855,7 +12864,7 @@ local CmdCategories = {
     debug="hud",togglehud="hud",listhuds="hud",
     charstats="hud",fpscap="hud",unfpscap="hud",
 
-    -- 🎨 Appearance
+    -- ðŸŽ¨ Appearance
     rainbow="appearance",neonmode="appearance",darkmode="appearance",
     invertcolor="appearance",highlightself="appearance",
     randomcolor="appearance",addaccessory="appearance",
@@ -12864,14 +12873,14 @@ local CmdCategories = {
     setmaterial="appearance",bodycolor="appearance",
     resetappearance="appearance",
 
-    -- 🔢 Math & String
+    -- ðŸ”¢ Math & String
     v3add="math",v3dist="math",v3lerp="math",v3dot="math",
     rgb2hex="math",color="math",charcode="math",
     strlen="math",strupper="math",strlower="math",
     strreverse="math",strrep="math",strfind="math",
     strsplit="math",strformat="math",matheval="math",
 
-    -- 📋 Utilities
+    -- ðŸ“‹ Utilities
     history="utils",clearhistory="utils",tip="utils",
     status="utils",redo="utils",exectime="utils",
     benchmark2="utils",waitfor="utils",countdown="utils",
@@ -12881,55 +12890,55 @@ local CmdCategories = {
     recopy="utils",exportlog="utils",
     draw="utils",cleardrawing="utils",
 
-    -- 📝 Notes
+    -- ðŸ“ Notes
     note="notes",notes="notes",deletenote="notes",
     clearnotes="notes",copynotes="notes",
 
-    -- 🏆 Achievements
+    -- ðŸ† Achievements
     achievements="achievements",
 
-    -- 🔭 Proximity & Interaction
+    -- ðŸ”­ Proximity & Interaction
     triggerproximity="interaction",proximityalert="interaction",
     watch="interaction",unwatch="interaction",watchprop="interaction",
     eventmonitor="interaction",worldlog="interaction",
     pingalert="interaction",alarm="interaction",
 
-    -- ➕ Recently added: movement
+    -- âž• Recently added: movement
     surfacecheck="movement",nogravchar="movement",boost="movement",
     wallstick="movement",unstick="movement",
 
-    -- ➕ Recently added: camera
+    -- âž• Recently added: camera
     camlookdown="camera",pointatpart="camera",
     camforward="camera",camup="camera",
 
-    -- ➕ Recently added: workspace
+    -- âž• Recently added: workspace
     paintpart="workspace",anchornearest="workspace",
     deletenearest="workspace",selectpart="workspace",
 
-    -- ➕ Recently added: info
+    -- âž• Recently added: info
     lookingat="info",nearbyplayers="info",serverlag="info",
 
-    -- ➕ Recently added: defense
+    -- âž• Recently added: defense
     antibrick="defense",saferespawn="defense",lockcharacter="defense",
 
-    -- ➕ Recently added: hud
+    -- âž• Recently added: hud
     compass="hud",clockhud="hud",
 
-    -- ➕ Recently added: appearance
+    -- âž• Recently added: appearance
     charcolor="appearance",transparency="appearance",
     chrome="appearance",wooden="appearance",
 
-    -- ➕ Recently added: sound
+    -- âž• Recently added: sound
     soundinfo="sound",rewind="sound",
 
-    -- ➕ Recently added: utils
+    -- âž• Recently added: utils
     pingavg="utils",taskcount="utils",varset="utils",varget="utils",
     garbage="utils",printtable="utils",looptask="macros",
 
-    -- ➕ Recently added: survival
+    -- âž• Recently added: survival
     revive="survival",stun="survival",
 
-    -- 🎮 God / Survival
+    -- ðŸŽ® God / Survival
     god="survival",ungod="survival",loopheal="survival",
     unloopheal="survival",heal="survival",freeze="survival",
     unfreeze="survival",respawn="survival",infjump="survival",
@@ -12942,12 +12951,12 @@ local CmdCategories = {
     attach="survival",detach="survival",
     rotateto="survival",offset="survival",faceplayer="survival",
 
-    -- 🕹 Control
+    -- ðŸ•¹ Control
     control="control",uncontrol="control",
     setstat="control",alias="control",unalias="control",
     preload="control",preloadchar="control",
 
-    -- 📡 Network
+    -- ðŸ“¡ Network
     serverinfo="network",serverhop="network",rejoin="network",
     autorejoin="network",netstat="network",
     networkwatch="network",pingalert="network",
@@ -12956,52 +12965,52 @@ local CmdCategories = {
 
 -- Category display config: {key, icon+label, header color}
 local CategoryDef = {
-    {"movement",    "🚀  Movement",       Color3.fromRGB(80,160,255)},
-    {"animations",  "🎭  Animations",     Color3.fromRGB(200,120,255)},
-    {"character",   "👤  Character",      Color3.fromRGB(255,180,80)},
-    {"appearance",  "🎨  Appearance",     Color3.fromRGB(255,120,180)},
-    {"effects",     "💥  Effects",        Color3.fromRGB(255,100,60)},
-    {"environment", "🌍  Environment",    Color3.fromRGB(80,200,100)},
-    {"weather",     "🌦  Weather",        Color3.fromRGB(120,200,255)},
-    {"camera",      "📷  Camera",         Color3.fromRGB(150,230,200)},
-    {"sound",       "🎵  Sound",          Color3.fromRGB(255,230,80)},
-    {"esp",         "👁  ESP & Visual",   Color3.fromRGB(180,255,180)},
-    {"defense",     "🛡  Defense",        Color3.fromRGB(255,80,80)},
-    {"waypoints",   "📌  Waypoints",      Color3.fromRGB(255,200,100)},
-    {"pathfinding", "🗺  Pathfinding",    Color3.fromRGB(100,220,160)},
-    {"teleport",    "📍  Teleport",       Color3.fromRGB(120,180,255)},
-    {"players",     "👥  Players",        Color3.fromRGB(200,200,255)},
-    {"tools",       "🔧  Tools",          Color3.fromRGB(200,160,100)},
-    {"chat",        "💬  Chat",           Color3.fromRGB(180,220,255)},
-    {"survival",    "🎮  Combat/Survival",Color3.fromRGB(255,120,120)},
-    {"hud",         "🖥  HUD & GUI",      Color3.fromRGB(160,220,255)},
-    {"workspace",   "🗺  Workspace",      Color3.fromRGB(180,180,180)},
-    {"terrain",     "🗻  Terrain",        Color3.fromRGB(140,200,120)},
-    {"constraints", "🏗  Constraints",    Color3.fromRGB(200,180,140)},
-    {"binds",       "🔑  Binds",          Color3.fromRGB(255,200,80)},
-    {"macros",      "⏺  Macros",         Color3.fromRGB(220,160,255)},
-    {"scripts",     "📜  Scripts",        Color3.fromRGB(160,200,160)},
-    {"math",        "🔢  Math & String",  Color3.fromRGB(200,255,200)},
-    {"interaction", "🔭  Interaction",    Color3.fromRGB(180,240,220)},
-    {"info",        "📊  Info & Stats",   Color3.fromRGB(220,220,220)},
-    {"notes",       "📝  Notes",          Color3.fromRGB(255,240,160)},
-    {"achievements","🏆  Achievements",   Color3.fromRGB(255,215,0)},
-    {"control",     "🕹  Control",        Color3.fromRGB(200,200,180)},
-    {"network",     "📡  Network",        Color3.fromRGB(100,200,255)},
-    {"utils",       "⚙  Utilities",      Color3.fromRGB(180,180,200)},
+    {"movement",    "ðŸš€  Movement",       Color3.fromRGB(80,160,255)},
+    {"animations",  "ðŸŽ­  Animations",     Color3.fromRGB(200,120,255)},
+    {"character",   "ðŸ‘¤  Character",      Color3.fromRGB(255,180,80)},
+    {"appearance",  "ðŸŽ¨  Appearance",     Color3.fromRGB(255,120,180)},
+    {"effects",     "ðŸ’¥  Effects",        Color3.fromRGB(255,100,60)},
+    {"environment", "ðŸŒ  Environment",    Color3.fromRGB(80,200,100)},
+    {"weather",     "ðŸŒ¦  Weather",        Color3.fromRGB(120,200,255)},
+    {"camera",      "ðŸ“·  Camera",         Color3.fromRGB(150,230,200)},
+    {"sound",       "ðŸŽµ  Sound",          Color3.fromRGB(255,230,80)},
+    {"esp",         "ðŸ‘  ESP & Visual",   Color3.fromRGB(180,255,180)},
+    {"defense",     "ðŸ›¡  Defense",        Color3.fromRGB(255,80,80)},
+    {"waypoints",   "ðŸ“Œ  Waypoints",      Color3.fromRGB(255,200,100)},
+    {"pathfinding", "ðŸ—º  Pathfinding",    Color3.fromRGB(100,220,160)},
+    {"teleport",    "ðŸ“  Teleport",       Color3.fromRGB(120,180,255)},
+    {"players",     "ðŸ‘¥  Players",        Color3.fromRGB(200,200,255)},
+    {"tools",       "ðŸ”§  Tools",          Color3.fromRGB(200,160,100)},
+    {"chat",        "ðŸ’¬  Chat",           Color3.fromRGB(180,220,255)},
+    {"survival",    "ðŸŽ®  Combat/Survival",Color3.fromRGB(255,120,120)},
+    {"hud",         "ðŸ–¥  HUD & GUI",      Color3.fromRGB(160,220,255)},
+    {"workspace",   "ðŸ—º  Workspace",      Color3.fromRGB(180,180,180)},
+    {"terrain",     "ðŸ—»  Terrain",        Color3.fromRGB(140,200,120)},
+    {"constraints", "ðŸ—  Constraints",    Color3.fromRGB(200,180,140)},
+    {"binds",       "ðŸ”‘  Binds",          Color3.fromRGB(255,200,80)},
+    {"macros",      "âº  Macros",         Color3.fromRGB(220,160,255)},
+    {"scripts",     "ðŸ“œ  Scripts",        Color3.fromRGB(160,200,160)},
+    {"math",        "ðŸ”¢  Math & String",  Color3.fromRGB(200,255,200)},
+    {"interaction", "ðŸ”­  Interaction",    Color3.fromRGB(180,240,220)},
+    {"info",        "ðŸ“Š  Info & Stats",   Color3.fromRGB(220,220,220)},
+    {"notes",       "ðŸ“  Notes",          Color3.fromRGB(255,240,160)},
+    {"achievements","ðŸ†  Achievements",   Color3.fromRGB(255,215,0)},
+    {"control",     "ðŸ•¹  Control",        Color3.fromRGB(200,200,180)},
+    {"network",     "ðŸ“¡  Network",        Color3.fromRGB(100,200,255)},
+    {"utils",       "âš™  Utilities",      Color3.fromRGB(180,180,200)},
 }
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║   CMDS LIST COMMAND (Categorized)                       ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘   CMDS LIST COMMAND (Categorized)                       â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Cmd("cmds", {"help","list","?","commands"}, function()
     -- Clear existing rows
     for _, c in ipairs(ScrollFrame:GetChildren()) do
         if c:IsA("GuiObject") then c:Destroy() end
     end
 
-    -- Build category → [cmdName] table
-    local catMap = {}     -- {catKey → {cmdName, ...}}
+    -- Build category â†’ [cmdName] table
+    local catMap = {}     -- {catKey â†’ {cmdName, ...}}
     local uncatList = {}  -- commands with no category
     for n in pairs(Commands) do
         local cat = CmdCategories[n]
@@ -13110,7 +13119,7 @@ Cmd("cmds", {"help","list","?","commands"}, function()
 
     -- Uncategorized (safety net)
     if #uncatList > 0 then
-        makeHeader("misc", "❓  Misc (" .. #uncatList .. ")", Color3.fromRGB(140,140,140))
+        makeHeader("misc", "â“  Misc (" .. #uncatList .. ")", Color3.fromRGB(140,140,140))
         for _, n in ipairs(uncatList) do
             makeRow(n, Color3.fromRGB(120,120,120))
         end
@@ -13121,9 +13130,9 @@ Cmd("cmds", {"help","list","?","commands"}, function()
     if ListFrame.Visible then SearchBox.Text = "" end
 end)
 
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 --  LIVE SEARCH FILTER  (hides category headers when empty)
--- ════════════════════════════════════════════════════════════
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
     local q = SearchBox.Text:lower()
@@ -13176,11 +13185,16 @@ SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
     ScrollFrame.CanvasSize = UDim2.new(0,0,0, h + 8)
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║              EXECUTE COMMAND                            ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘              EXECUTE COMMAND                            â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local function ExecCommand(raw)
     if not raw or raw:match("^%s*$") then return end
+
+    -- Record to history and macro (helpers defined in commands section)
+    _recordToHistory(raw)
+    _recordToMacro(raw)
+
     local parts = {}
     for word in raw:gmatch("%S+") do table.insert(parts, word) end
     if #parts == 0 then return end
@@ -13192,16 +13206,16 @@ local function ExecCommand(raw)
         local ok, err = pcall(function() Commands[name](parts) end)
         if not ok then
             warn("[S-Bar] " .. name .. ": " .. tostring(err))
-            Notify("⚠  Error: " .. name, "error")
+            Notify("âš   Error: " .. name, "error")
         end
     else
-        Notify("❓  Unknown: " .. name, "warn")
+        Notify("â“  Unknown: " .. name, "warn")
     end
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                BAR OPEN / CLOSE                         ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                BAR OPEN / CLOSE                         â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 local isBarOpen = false
 
 local function OpenBar()
@@ -13247,9 +13261,9 @@ CloseBtn.Activated:Connect(function()
     ListFrame.Visible = false
 end)
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║             LOGO HOVER (PC only)                        ║
--- ╚══════════════════════════════════════════════════════════╝
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘             LOGO HOVER (PC only)                        â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 if not IsMobile then
     Logo.MouseEnter:Connect(function()
         TweenObj(Logo, 0.15, {BackgroundColor3 = Color3.fromRGB(30,30,30)}):Play()
@@ -13259,7 +13273,7 @@ if not IsMobile then
     end)
 end
 
--- ╔══════════════════════════════════════════════════════════╗
--- ║                    READY                                ║
--- ╚══════════════════════════════════════════════════════════╝
-Notify("⚡  S Command Bar Pro  v5.0 Final  " .. (IsMobile and "📱" or "🖥️"))
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+-- â•‘                    READY                                â•‘
+-- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+Notify("âš¡  S Command Bar Pro  v5.0 Final  " .. (IsMobile and "ðŸ“±" or "ðŸ–¥ï¸"))
