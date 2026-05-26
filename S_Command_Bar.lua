@@ -174,31 +174,28 @@ local function Notify(msg, kind)
 end
 
 -- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
--- â•‘           LOGO BUTTON + FULL ANIMATION SUITE            â•‘
+-- â•‘   LOGO BUTTON  (always visible â€” full size on creation) â•‘
 -- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- â”€â”€ Glow ring (sits behind logo, pulses independently) â”€â”€â”€
+-- Glow ring behind the logo (purely decorative pulse)
 local _glowSzOff = C.LogoSize.X.Offset + 16
-local _glowPosX  = IsMobile and (14 - 8)                          or (0)
-local _glowPosXS = IsMobile and (0)                               or (0.5)
-local _glowPosY  = IsMobile and C.LogoPos.Y.Offset - 8            or C.LogoPos.Y.Offset - 8
-local _glowPosYS = IsMobile and C.LogoPos.Y.Scale                 or C.LogoPos.Y.Scale
-
-local GlowRing = Instance.new("Frame", ScreenGui)
+local GlowRing   = Instance.new("Frame", ScreenGui)
 GlowRing.Size             = UDim2.new(0, _glowSzOff, 0, _glowSzOff)
-GlowRing.Position         = UDim2.new(_glowPosXS, _glowPosX, _glowPosYS, _glowPosY)
-GlowRing.AnchorPoint      = IsMobile and Vector2.new(0,0) or Vector2.new(0.5, 0)
+GlowRing.Position         = UDim2.new(
+    C.LogoPos.X.Scale, C.LogoPos.X.Offset - 8,
+    C.LogoPos.Y.Scale, C.LogoPos.Y.Offset - 8)
+GlowRing.AnchorPoint      = Vector2.new(0, 0)
 GlowRing.BackgroundTransparency = 1
 GlowRing.ZIndex           = 23
 Corner(GlowRing, 14)
-local GlowStroke = Instance.new("UIStroke", GlowRing)
+local GlowStroke          = Instance.new("UIStroke", GlowRing)
 GlowStroke.Thickness      = 2.5
 GlowStroke.Color          = Color3.fromRGB(80, 160, 255)
-GlowStroke.Transparency   = 0.2
+GlowStroke.Transparency   = 0.4
 
--- â”€â”€ Logo button (starts at size 0 for pop-in) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+-- Logo â€” FULL SIZE from the first frame so it is always visible
 local Logo = Instance.new("TextButton", ScreenGui)
-Logo.Size             = UDim2.new(0, 0, 0, 0)   -- entrance starts hidden
+Logo.Size             = C.LogoSize
 Logo.Position         = C.LogoPos
 Logo.AnchorPoint      = Vector2.new(0, 0)
 Logo.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
@@ -211,44 +208,32 @@ Logo.ClipsDescendants = false
 Corner(Logo, 10)
 local LogoStroke = Stroke(Logo, 1.5, Color3.fromRGB(80, 160, 255))
 
--- â”€â”€ ENTRANCE: pop-in with Back overshoot after 0.15s â”€â”€â”€â”€â”€
-task.delay(0.15, function()
-    TweenObj(Logo, 0.5, {Size = C.LogoSize},
-        Enum.EasingStyle.Back, Enum.EasingDirection.Out):Play()
-end)
-
--- â”€â”€ GLOW RING: color-cycle + breathe transparency â”€â”€â”€â”€â”€â”€â”€â”€
+-- Glow ring color-cycle
 task.spawn(function()
-    local glowPalette = {
-        Color3.fromRGB(80,  160, 255),   -- blue
-        Color3.fromRGB(160, 80,  255),   -- purple
-        Color3.fromRGB(50,  210, 150),   -- teal
-        Color3.fromRGB(255, 120, 60),    -- orange
+    local palette = {
+        Color3.fromRGB(80,  160, 255),
+        Color3.fromRGB(160, 80,  255),
+        Color3.fromRGB(50,  210, 150),
+        Color3.fromRGB(255, 120, 60),
     }
     local gi = 1
     while ScreenGui.Parent do
-        local nextCol = glowPalette[gi % #glowPalette + 1]
-        -- Breathe in
-        TweenObj(GlowStroke, 1.5, {
-            Color        = nextCol,
-            Transparency = 0.05,
-        }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut):Play()
-        TweenObj(LogoStroke, 1.5, {
-            Color = nextCol,
-        }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut):Play()
+        local col = palette[gi % #palette + 1]
+        TweenObj(GlowStroke, 1.5, {Color=col, Transparency=0.05},
+            Enum.EasingStyle.Sine, Enum.EasingDirection.InOut):Play()
+        TweenObj(LogoStroke, 1.5, {Color=col},
+            Enum.EasingStyle.Sine, Enum.EasingDirection.InOut):Play()
         task.wait(1.55)
-        -- Breathe out
-        TweenObj(GlowStroke, 1.0, {
-            Transparency = 0.55,
-        }, Enum.EasingStyle.Sine, Enum.EasingDirection.Out):Play()
+        TweenObj(GlowStroke, 1.0, {Transparency=0.55},
+            Enum.EasingStyle.Sine, Enum.EasingDirection.Out):Play()
         task.wait(1.05)
         gi = gi + 1
     end
 end)
 
--- â”€â”€ TEXT: 3-color cycle synced with glow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+-- Logo text color cycle
 task.spawn(function()
-    local textCols = {
+    local cols = {
         Color3.fromRGB(255, 255, 255),
         Color3.fromRGB(140, 205, 255),
         Color3.fromRGB(190, 140, 255),
@@ -256,46 +241,45 @@ task.spawn(function()
     }
     local ti = 1
     while ScreenGui.Parent do
-        TweenObj(Logo, 1.8, {TextColor3 = textCols[ti]},
+        TweenObj(Logo, 1.8, {TextColor3 = cols[ti]},
             Enum.EasingStyle.Sine, Enum.EasingDirection.InOut):Play()
-        ti = ti % #textCols + 1
+        ti = ti % #cols + 1
         task.wait(1.85)
     end
 end)
 
--- â”€â”€ CLICK RIPPLE: expanding ring on every press â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+-- Click ripple effect
 local function LogoRipple()
     local abs = Logo.AbsolutePosition
     local sz  = Logo.AbsoluteSize
     local cx  = abs.X + sz.X / 2
     local cy  = abs.Y + sz.Y / 2
     local s0  = math.max(sz.X, sz.Y)
-
-    local ripple = Instance.new("Frame", ScreenGui)
-    ripple.Size             = UDim2.new(0, s0, 0, s0)
-    ripple.Position         = UDim2.new(0, cx - s0/2, 0, cy - s0/2)
-    ripple.BackgroundColor3 = Color3.fromRGB(120, 190, 255)
-    ripple.BackgroundTransparency = 0.45
-    ripple.BorderSizePixel  = 0
-    ripple.ZIndex           = 24
-    Corner(ripple, 50)
-
+    local r   = Instance.new("Frame", ScreenGui)
+    r.Size             = UDim2.new(0, s0, 0, s0)
+    r.Position         = UDim2.new(0, cx-s0/2, 0, cy-s0/2)
+    r.BackgroundColor3 = Color3.fromRGB(120, 190, 255)
+    r.BackgroundTransparency = 0.45
+    r.BorderSizePixel  = 0
+    r.ZIndex           = 24
+    Corner(r, 50)
     local s1 = s0 * 2.8
-    TweenObj(ripple, 0.45, {
-        Size     = UDim2.new(0, s1, 0, s1),
-        Position = UDim2.new(0, cx - s1/2, 0, cy - s1/2),
+    TweenObj(r, 0.45, {
+        Size = UDim2.new(0,s1,0,s1),
+        Position = UDim2.new(0,cx-s1/2,0,cy-s1/2),
         BackgroundTransparency = 1,
     }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out):Play()
-    task.delay(0.46, function() ripple:Destroy() end)
+    task.delay(0.46, function() r:Destroy() end)
 end
 
--- â”€â”€ PRESS SQUISH: logo briefly scales smaller on tap â”€â”€â”€â”€â”€
+-- Press squish
 Logo.InputBegan:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.MouseButton1
     or i.UserInputType == Enum.UserInputType.Touch then
-        local sq = C.LogoSize
-        local small = UDim2.new(0, sq.X.Offset - 6, 0, sq.Y.Offset - 6)
-        TweenObj(Logo, 0.08, {Size = small}, Enum.EasingStyle.Quad, Enum.EasingDirection.Out):Play()
+        local s = C.LogoSize
+        TweenObj(Logo, 0.08,
+            {Size = UDim2.new(0, s.X.Offset-6, 0, s.Y.Offset-6)},
+            Enum.EasingStyle.Quad, Enum.EasingDirection.Out):Play()
     end
 end)
 Logo.InputEnded:Connect(function(i)
